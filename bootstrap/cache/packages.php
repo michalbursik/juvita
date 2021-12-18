@@ -1,4 +1,11 @@
 <?php return array (
+  'barryvdh/laravel-ide-helper' => 
+  array (
+    'providers' => 
+    array (
+      0 => 'Barryvdh\\LaravelIdeHelper\\IdeHelperServiceProvider',
+    ),
+  ),
   'facade/ignition' => 
   array (
     'providers' => 
@@ -43,6 +50,13 @@
     'providers' => 
     array (
       0 => 'Laravel\\Ui\\UiServiceProvider',
+    ),
+  ),
+  'laravel/vapor-core' => 
+  array (
+    'providers' => 
+    array (
+      0 => 'Laravel\\Vapor\\VaporServiceProvider',
     ),
   ),
   'nesbot/carbon' => 

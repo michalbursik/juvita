@@ -1,10 +1,11 @@
 <?php
 
+use App\Models\Warehouse;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateGoodsReceiptsTable extends Migration
+class CreateWarehousesTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,14 +14,10 @@ class CreateGoodsReceiptsTable extends Migration
      */
     public function up()
     {
-        Schema::create('goods_receipts', function (Blueprint $table) {
+        Schema::create('warehouses', function (Blueprint $table) {
             $table->id();
-
-            $table->float('amount');
-            $table->float('price');
-
-            $table->foreignId('product_id')->constrained('products');
-
+            $table->string('name');
+            $table->string('type')->default(Warehouse::TYPE_MAIN);
             $table->timestamps();
         });
     }
@@ -32,6 +29,6 @@ class CreateGoodsReceiptsTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('goods_receipts');
+        Schema::dropIfExists('warehouses');
     }
 }

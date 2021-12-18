@@ -18,6 +18,7 @@ class CreateProductsTable extends Migration
             $table->id();
 
             $table->string('name');
+            $table->string('image')->nullable();
             $table->string('unit')->default(Product::DEFAULT_UNIT);
 
             $table->timestamps();

@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateGoodsIssuesTable extends Migration
+class CreateProductWarehouseTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,14 +13,14 @@ class CreateGoodsIssuesTable extends Migration
      */
     public function up()
     {
-        Schema::create('goods_issues', function (Blueprint $table) {
-            $table->id();
+        Schema::create('product_warehouse', function (Blueprint $table) {
+            $table->primary(['product_id', 'warehouse_id']);
 
             $table->float('amount');
-            $table->float('price');
+            $table->decimal('price');
 
-            $table->foreignId('user_id')->constrained('users');
             $table->foreignId('product_id')->constrained('products');
+            $table->foreignId('warehouse_id')->constrained('warehouses');
 
             $table->timestamps();
         });
@@ -33,6 +33,6 @@ class CreateGoodsIssuesTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('goods_issues');
+        Schema::dropIfExists('product_warehouse');
     }
 }

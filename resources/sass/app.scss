@@ -6,3 +6,23 @@
 
 // Bootstrap
 @import '~bootstrap/scss/bootstrap';
+
+// Icons
+@import '~bootstrap-icons/font/bootstrap-icons';
+
+.numeric-pad {
+    .col {
+        padding: .5rem;
+        .pad {
+            border: 1px solid gray;
+            width: 100%;
+            min-height: 75px;
+            text-align: center;
+            margin-top: 1rem;
+            font-size: 2rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+    }
+}

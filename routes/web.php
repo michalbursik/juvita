@@ -1,5 +1,8 @@
 <?php
 
+use App\Http\Controllers\ProductController;
+use App\Http\Controllers\WarehouseController;
+use App\Http\Controllers\WarehouseMovementController;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
@@ -13,11 +16,19 @@ use Illuminate\Support\Facades\Route;
 | contains the "web" middleware group. Now create something great!
 |
 */
-
-Route::get('/', function () {
-    return view('welcome');
-});
-
 Auth::routes();
 
-Route::get('/storage-status', [App\Http\Controllers\StorageStatusController::class, 'index'])->name('storage-status.index');
+Route::get('/', function () {
+    return redirect('/warehouses');
+});
+
+Route::middleware('auth')->group(function () {
+    Route::resource('warehouses', WarehouseController::class);
+    Route::get('warehouses/{warehouse}/products/{product}/receipt', [WarehouseController::class, 'receipt'])
+        ->name('warehouses.products.receipt');
+    Route::get('warehouses/{warehouse}/products/{product}/issue', [WarehouseController::class, 'issue'])
+        ->name('warehouses.products.issue');
+
+    Route::resource('warehouse-movements', WarehouseMovementController::class);
+    Route::resource('products', ProductController::class);
+});

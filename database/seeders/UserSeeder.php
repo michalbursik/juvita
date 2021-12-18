@@ -3,6 +3,7 @@
 namespace Database\Seeders;
 
 use App\Models\User;
+use App\Models\Warehouse;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
 
@@ -19,27 +20,32 @@ class UserSeeder extends Seeder
             [
                 'name' => 'Josef Bursík',
                 'email' => 'josef.bursik@seznam.cz',
-                'password' => Hash::make('samuraj')
+                'password' => Hash::make('samuraj'),
+                'warehouse_id' => 1,
             ],
             [
                 'name' => 'Martin Bahula',
                 'email' => 'bahula@seznam.cz',
-                'password' => Hash::make('loupežník')
+                'password' => Hash::make('loupežník'),
+                'warehouse_id' => 1,
             ],
             [
                 'name' => 'Jaroslav Nožička',
                 'email' => 'FAKE_TILL_YOU_MAKE_IT_1',
-                'password' => Hash::make('okurek')
+                'password' => Hash::make('okurek'),
+                'warehouse_id' => 2,
             ],
             [
                 'name' => 'Honza',
                 'email' => 'FAKE_TILL_YOU_MAKE_IT_2',
-                'password' => Hash::make('okurek')
+                'password' => Hash::make('okurek'),
+                'warehouse_id' => 3,
             ],
             [
                 'name' => 'Tomáš',
                 'email' => 'FAKE_TILL_YOU_MAKE_IT_3',
-                'password' => Hash::make('okurek')
+                'password' => Hash::make('okurek'),
+                'warehouse_id' => 4,
             ],
         ];
 
