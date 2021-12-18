@@ -24,6 +24,10 @@
                                     <div class="invalid-feedback d-block">{{ $message }}</div>
                                     @enderror
                                 </div>
+                                <div class="col">
+                                    <label for="product">Produkt</label>
+                                    <input class="form-control" readonly type="text" value="{{ $product->name }}">
+                                </div>
                             </div>
 
                             <div class="row numeric-pad">
@@ -60,7 +64,7 @@
                         </div>
                     </div>
 
-                    <div class="card mt-3">
+                    <div class="card mt-3 d-none">
                         <div class="card-body">
                             <div class="form-group">
                                 <div class="row">
@@ -113,7 +117,7 @@
                         </div>
                     </div>
 
-                    <button type="submit" class="btn btn-primary mt-2">Uložit</button>
+                    <button type="submit" class="btn btn-primary mt-2 d-none">Uložit</button>
                 </form>
             </div>
         </div>

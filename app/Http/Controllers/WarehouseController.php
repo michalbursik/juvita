@@ -7,6 +7,7 @@ use App\Http\Requests\UpdateWarehouseRequest;
 use App\Models\Product;
 use App\Models\User;
 use App\Models\Warehouse;
+use Illuminate\Support\Facades\Auth;
 
 class WarehouseController extends Controller
 {
@@ -29,6 +30,13 @@ class WarehouseController extends Controller
 
     public function show(Warehouse $warehouse)
     {
+        $user = auth()->user();
+        if ($user->role === User::ROLE_EMPLOYEE && $user->warehouse_id !== $warehouse->id) {
+            return redirect()->route('warehouses.show', [
+                'warehouse' => $user->warehouse_id
+            ]);
+        }
+
         $currentWarehouse = $warehouse;
         $warehouses = Warehouse::all();
 
@@ -37,14 +45,14 @@ class WarehouseController extends Controller
 
     public function receipt(Warehouse $warehouse, Product $product)
     {
-        $user = User::query()->first(); // Auth::user();
+        $user = Auth::user();
 
         return view('warehouses.products.receipt', compact('warehouse', 'product', 'user'));
     }
 
     public function issue(Warehouse $warehouse, Product $product)
     {
-        $user = User::query()->first(); // Auth::user();
+        $user = Auth::user();
 
         return view('warehouses.products.issue', compact('warehouse', 'product', 'user'));
     }
@@ -52,7 +60,7 @@ class WarehouseController extends Controller
     public function transmission(Warehouse $warehouse, Product $product)
     {
         $warehouseFrom = $warehouse;
-        $user = User::query()->first(); // Auth::user();
+        $user = Auth::user();
 
         $warehouses = Warehouse::all();
 

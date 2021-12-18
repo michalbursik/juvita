@@ -36,9 +36,15 @@
                                 </div>
                                 <div class="col">
                                     <label for="receipt_warehouse_id">Sklad - příjem</label>
-                                    <select class="form-control" name="receipt_warehouse_id" id="receipt_warehouse_id">
+                                    <select @if($user->role === \App\Models\User::ROLE_EMPLOYEE) {{ 'readonly' }} @endif class="form-control" name="receipt_warehouse_id" id="receipt_warehouse_id">
                                         @foreach($warehouses as $warehouse)
-                                            <option value="{{ $warehouse->id }}">{{ $warehouse->name }}</option>
+                                            @if($user->role === \App\Models\User::ROLE_EMPLOYEE)
+                                                @if($warehouse->id === $user->warehouse_id)
+                                                    <option value="{{ $warehouse->id }}">{{ $warehouse->name }}</option>
+                                                @endif
+                                            @else
+                                                <option value="{{ $warehouse->id }}">{{ $warehouse->name }}</option>
+                                            @endif
                                         @endforeach
                                     </select>
 
@@ -98,7 +104,7 @@
                         </div>
                     </div>
 
-                    <div class="card mt-3">
+                    <div class="card mt-3 d-none">
                         <div class="card-body">
                             <div class="form-group">
                                 <div class="row">
@@ -120,22 +126,10 @@
                                     </div>
                                 </div>
                             </div>
-{{--                            <div class="form-group mt-2">--}}
-{{--                                <div class="row">--}}
-{{--                                    <div class="col">--}}
-{{--                                        <label for="type">Typ</label>--}}
-{{--                                        <input readonly class="form-control" type="text" id="type" name="type" value="{{ Arr::last(explode('/', url()->current())) }}">--}}
-
-{{--                                        @error('type')--}}
-{{--                                            <div class="invalid-feedback d-block">{{ $message }}</div>--}}
-{{--                                        @enderror--}}
-{{--                                    </div>--}}
-{{--                                </div>--}}
-{{--                            </div>--}}
                         </div>
                     </div>
 
-                    <button type="submit" class="btn btn-primary mt-2">Uložit</button>
+                    <button type="submit" class="btn btn-primary mt-2 d-none">Uložit</button>
                 </form>
             </div>
         </div>

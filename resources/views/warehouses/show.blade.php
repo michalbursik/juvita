@@ -8,16 +8,19 @@
                     <div class="col">
                         <h1 class="h1">{{ $currentWarehouse->name }}</h1>
                     </div>
-                    <div class="col-4 d-flex align-items-center justify-content-between">
-                        <select onchange="changeWarehouse()" class="form-control" name="warehouse" id="warehouse">
-                            <option disabled selected>Přepnout sklad</option>
-                            @foreach($warehouses as $warehouse)
-                                @if($warehouse->id !== $currentWarehouse->id)
-                                <option value="{{ $warehouse->id }}">{{ $warehouse->name }}</option>
-                                @endif
-                            @endforeach
-                        </select>
-                    </div>
+
+                    @if(auth()->user()->role === \App\Models\User::ROLE_ADMIN)
+                        <div class="col-4 d-flex align-items-center justify-content-between">
+                            <select onchange="changeWarehouse()" class="form-control" name="warehouse" id="warehouse">
+                                <option disabled selected>Přepnout sklad</option>
+                                @foreach($warehouses as $warehouse)
+                                    @if($warehouse->id !== $currentWarehouse->id)
+                                    <option value="{{ $warehouse->id }}">{{ $warehouse->name }}</option>
+                                    @endif
+                                @endforeach
+                            </select>
+                        </div>
+                    @endif
                 </div>
 
                 <div class="row">
@@ -64,30 +67,32 @@
                 @endforeach
                 </div>
 
-                <div class="card mt-5">
-                    <div class="card-body">
-                        <table class="table table-responsive">
-                            <thead>
-                            <tr>
-                                <th>Produkt</th>
-                                <th>Počet</th>
-                                <th>Uživatel</th>
-                                <th>Typ</th>
-                            </tr>
-                            </thead>
-                            <tbody>
-                            @foreach($currentWarehouse->warehouseMovements as $warehouseMovement)
+                @if(auth()->user()->role === \App\Models\User::ROLE_ADMIN)
+                    <div class="card mt-5">
+                        <div class="card-body">
+                            <table class="table table-responsive">
+                                <thead>
                                 <tr>
-                                    <td>{{ $warehouseMovement->product->name }}</td>
-                                    <td>{{ "$warehouseMovement->amount {$warehouseMovement->product->unit}" }}</td>
-                                    <td>{{ $warehouseMovement->user->name }}</td>
-                                    <td>{{ $warehouseMovement->type }}</td>
+                                    <th>Produkt</th>
+                                    <th>Počet</th>
+                                    <th>Uživatel</th>
+                                    <th>Typ</th>
                                 </tr>
-                            @endforeach
-                            </tbody>
-                        </table>
+                                </thead>
+                                <tbody>
+                                @foreach($currentWarehouse->warehouseMovements as $warehouseMovement)
+                                    <tr>
+                                        <td>{{ $warehouseMovement->product->name }}</td>
+                                        <td>{{ "$warehouseMovement->amount {$warehouseMovement->product->unit}" }}</td>
+                                        <td>{{ $warehouseMovement->user->name }}</td>
+                                        <td>{{ $warehouseMovement->type }}</td>
+                                    </tr>
+                                @endforeach
+                                </tbody>
+                            </table>
+                        </div>
                     </div>
-                </div>
+                @endif
             </div>
         </div>
     </div>

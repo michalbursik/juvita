@@ -16,14 +16,14 @@ use Illuminate\Support\Facades\Route;
 | contains the "web" middleware group. Now create something great!
 |
 */
-Auth::routes();
+Auth::routes(['register' => false]);
 
 Route::get('/', function () {
     return redirect('/warehouses');
 });
 
 Route::middleware('auth')->group(function () {
-    Route::resource('warehouses', WarehouseController::class);
+    Route::resource('warehouses', WarehouseController::class, ['only' => 'show']);
     Route::get('warehouses/{warehouse}/products/{product}/receipt', [WarehouseController::class, 'receipt'])
         ->name('warehouses.products.receipt');
     Route::get('warehouses/{warehouse}/products/{product}/issue', [WarehouseController::class, 'issue'])
@@ -31,8 +31,12 @@ Route::middleware('auth')->group(function () {
     Route::get('warehouses/{warehouse}/products/{product}/transmission', [WarehouseController::class, 'transmission'])
         ->name('warehouses.products.transmission');
 
-    Route::resource('warehouse-movements', WarehouseMovementController::class);
-    Route::post('warehouse-movements/transmission', [WarehouseMovementController::class, 'transmission'])
-        ->name('warehouse-movements.transmission');
-    Route::resource('products', ProductController::class);
+    Route::middleware('admin')->group(function () {
+        Route::resource('warehouses', WarehouseController::class, ['except' => 'show']);
+
+        Route::resource('warehouse-movements', WarehouseMovementController::class);
+        Route::post('warehouse-movements/transmission', [WarehouseMovementController::class, 'transmission'])
+            ->name('warehouse-movements.transmission');
+        Route::resource('products', ProductController::class);
+    });
 });

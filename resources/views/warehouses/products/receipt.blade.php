@@ -25,6 +25,10 @@
                                     <div class="invalid-feedback d-block">{{ $message }}</div>
                                     @enderror
                                 </div>
+                                <div class="col">
+                                    <label for="product">Produkt</label>
+                                    <input class="form-control" readonly type="text" value="{{ $product->name }}">
+                                </div>
                             </div>
 
                             <div class="row numeric-pad">
@@ -61,7 +65,7 @@
                         </div>
                     </div>
 
-                    <div class="card mt-3">
+                    <div class="card mt-3 d-none">
                         <div class="card-body">
                             <div class="form-group">
                                 <div class="row">
@@ -93,14 +97,6 @@
                             </div>
                             <div class="form-group mt-2">
                                 <div class="row">
-{{--                                    <div class="col">--}}
-{{--                                        <label for="amount">Množství ({{ $product->unit }})</label>--}}
-{{--                                        <input readonly class="form-control" type="number" id="amount" name="amount" value="0">--}}
-
-{{--                                        @error('amount')--}}
-{{--                                            <div class="invalid-feedback d-block">{{ $message }}</div>--}}
-{{--                                        @enderror--}}
-{{--                                    </div>--}}
                                     <div class="col">
                                         <label for="type">Typ</label>
                                         <input readonly class="form-control" type="text" id="type" name="type" value="{{ Arr::last(explode('/', url()->current())) }}">
@@ -114,7 +110,7 @@
                         </div>
                     </div>
 
-                    <button type="submit" class="btn btn-primary mt-2">Uložit</button>
+                    <button type="submit" class="btn btn-primary mt-2 d-none">Uložit</button>
                 </form>
             </div>
         </div>

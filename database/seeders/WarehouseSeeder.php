@@ -20,6 +20,7 @@ class WarehouseSeeder extends Seeder
             ['name' => 'Vozidlo 1', 'type' => Warehouse::TYPE_TEMPORARY],
             ['name' => 'Vozidlo 2', 'type' => Warehouse::TYPE_TEMPORARY],
             ['name' => 'Vozidlo 3', 'type' => Warehouse::TYPE_TEMPORARY],
+            ['name' => 'Vozidlo 4', 'type' => Warehouse::TYPE_TEMPORARY],
         ];
 
         $products = Product::all();
