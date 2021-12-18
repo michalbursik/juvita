@@ -28,7 +28,11 @@ Route::middleware('auth')->group(function () {
         ->name('warehouses.products.receipt');
     Route::get('warehouses/{warehouse}/products/{product}/issue', [WarehouseController::class, 'issue'])
         ->name('warehouses.products.issue');
+    Route::get('warehouses/{warehouse}/products/{product}/transmission', [WarehouseController::class, 'transmission'])
+        ->name('warehouses.products.transmission');
 
     Route::resource('warehouse-movements', WarehouseMovementController::class);
+    Route::post('warehouse-movements/transmission', [WarehouseMovementController::class, 'transmission'])
+        ->name('warehouse-movements.transmission');
     Route::resource('products', ProductController::class);
 });

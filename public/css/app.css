@@ -17458,4 +17458,8 @@ textarea.form-control-lg {
   display: flex;
   align-items: center;
   justify-content: center;
+  cursor: pointer;
+}
+.numeric-pad .col .pad:hover {
+  background: #e9ecef;
 }

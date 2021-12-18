@@ -29,7 +29,10 @@ class WarehouseController extends Controller
 
     public function show(Warehouse $warehouse)
     {
-        return view('warehouses.show', compact('warehouse'));
+        $currentWarehouse = $warehouse;
+        $warehouses = Warehouse::all();
+
+        return view('warehouses.show', compact('currentWarehouse', 'warehouses'));
     }
 
     public function receipt(Warehouse $warehouse, Product $product)
@@ -44,6 +47,16 @@ class WarehouseController extends Controller
         $user = User::query()->first(); // Auth::user();
 
         return view('warehouses.products.issue', compact('warehouse', 'product', 'user'));
+    }
+
+    public function transmission(Warehouse $warehouse, Product $product)
+    {
+        $warehouseFrom = $warehouse;
+        $user = User::query()->first(); // Auth::user();
+
+        $warehouses = Warehouse::all();
+
+        return view('warehouses.products.transmission', compact('warehouseFrom', 'product', 'user', 'warehouses'));
     }
 
     public function edit(Warehouse $warehouse)

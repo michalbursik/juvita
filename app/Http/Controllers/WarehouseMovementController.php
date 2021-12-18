@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\TransmissionWarehouseMovementRequest;
 use App\Repositories\WarehouseMovementRepository;
 use App\Http\Requests\StoreWarehouseMovementRequest;
 use App\Models\Product;
@@ -19,7 +20,6 @@ class WarehouseMovementController extends Controller
      */
     public function __construct(WarehouseMovementRepository $repository)
     {
-//        $this->middleware('auth');
         $this->repository = $repository;
     }
 
@@ -67,6 +67,37 @@ class WarehouseMovementController extends Controller
 
         return redirect()->route('warehouses.show', [
             'warehouse' => $warehouseMovement->warehouse->id
+        ]);
+    }
+
+    public function transmission(TransmissionWarehouseMovementRequest $request)
+    {
+        $data = $request->validated();
+
+        $issue = [
+          'type' => WarehouseMovement::TYPE_ISSUE,
+          'amount' => $data['amount'],
+          'product_id' => $data['product_id'],
+          'warehouse_id' => $data['issue_warehouse_id'],
+          'user_id' => $data['user_id'],
+        ];
+
+        $receipt = [
+            'type' => WarehouseMovement::TYPE_RECEIPT,
+            'amount' => $data['amount'],
+            'product_id' => $data['product_id'],
+            'warehouse_id' => $data['receipt_warehouse_id'],
+            'user_id' => $data['user_id'],
+        ];
+
+        $issueWarehouseMovement = $this->repository->store($issue);
+        $this->updateWarehouse($issueWarehouseMovement);
+
+        $receiptWarehouseMovement = $this->repository->store($receipt);
+        $this->updateWarehouse($receiptWarehouseMovement);
+
+        return redirect()->route('warehouses.show', [
+            'warehouse' => $issueWarehouseMovement->warehouse->id
         ]);
     }
 
