@@ -24,11 +24,22 @@ class StoreWarehouseMovementRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'amount' => 'required|numeric|min:1',
+            'amount' => 'required|numeric|min:0.1',
             'type' => 'nullable|string',
             'user_id' => 'nullable|integer',
             'product_id' => 'required|integer',
             'warehouse_id' => 'required|integer',
+        ];
+    }
+
+    public function attributes()
+    {
+        return [
+            'amount' => 'množství',
+            'type' => 'typ',
+            'user_id' => 'uživatel',
+            'product_id' => 'produkt',
+            'warehouse_id' => 'sklad',
         ];
     }
 }

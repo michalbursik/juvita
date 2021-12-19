@@ -17445,6 +17445,16 @@ textarea.form-control-lg {
   content: "\f6ff";
 }
 
+.issue-color {
+  background: #dc3545;
+  background: rgba(220, 53, 69, 0.3);
+}
+
+.receipt-color {
+  background: #198754;
+  background: rgba(25, 135, 84, 0.3);
+}
+
 .numeric-pad .col {
   padding: 0.5rem;
 }
@@ -17462,4 +17472,15 @@ textarea.form-control-lg {
 }
 .numeric-pad .col .pad:hover {
   background: #e9ecef;
+}
+
+svg.bi {
+  width: 32px;
+  height: 32px;
+}
+@media (max-width: 575.98px) {
+  svg.bi {
+    width: 16px;
+    height: 16px;
+  }
 }

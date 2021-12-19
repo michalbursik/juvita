@@ -29,4 +29,12 @@ class StoreProductRequest extends FormRequest
             'unit' => 'required|string|in:' . Product::getListOfAvailableUnits(),
         ];
     }
+
+    public function attributes(): array
+    {
+        return [
+            'name' => 'název',
+            'unit' => 'jednotka',
+        ];
+    }
 }

@@ -30,7 +30,11 @@
                                         <label for="unit">Jednotka</label>
                                         <select class="form-control" name="unit" id="unit">
                                             @foreach(\App\Models\Product::AVAILABLE_UNITS as $unit)
-                                                <option value="{{ $unit }}">{{$unit}}</option>
+                                                @if($product->unit === $unit)
+                                                    <option selected value="{{ $unit }}">{{$unit}}</option>
+                                                @else
+                                                    <option value="{{ $unit }}">{{$unit}}</option>
+                                                @endif
                                             @endforeach
                                         </select>
 

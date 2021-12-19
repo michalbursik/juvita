@@ -28,7 +28,18 @@ class TransmissionWarehouseMovementRequest extends FormRequest
             'receipt_warehouse_id' => 'required|integer|different:issue_warehouse_id',
             'user_id' => 'nullable|integer',
             'product_id' => 'required|integer',
-            'amount' => 'required|numeric|min:1',
+            'amount' => 'required|numeric|min:0.1',
+        ];
+    }
+
+    public function attributes(): array
+    {
+        return [
+            'issue_warehouse_id' => 'sklad - výdej',
+            'receipt_warehouse_id' => 'sklad - příjem',
+            'user_id' => 'uživatel',
+            'product_id' => 'produkt',
+            'amount' => 'množství'
         ];
     }
 }

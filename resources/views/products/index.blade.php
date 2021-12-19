@@ -30,7 +30,7 @@
                                     <td>{{ $product->id }}</td>
                                     <td>{{ $product->name }}</td>
                                     <td>{{ $product->unit }}</td>
-                                    <td><img style="max-width: 100px" src="{{ $product->image }}" alt=""></td>
+                                    <td><img style="max-width: 100px" src="{{ asset($product->image) }}" alt=""></td>
                                 </tr>
                             @endforeach
                             </tbody>

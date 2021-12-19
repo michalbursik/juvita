@@ -17,10 +17,11 @@ class WarehouseSeeder extends Seeder
     {
         $warehouses = [
             ['name' => 'Uherský Brod - Králov', 'type' => Warehouse::TYPE_MAIN],
-            ['name' => 'Vozidlo 1', 'type' => Warehouse::TYPE_TEMPORARY],
-            ['name' => 'Vozidlo 2', 'type' => Warehouse::TYPE_TEMPORARY],
-            ['name' => 'Vozidlo 3', 'type' => Warehouse::TYPE_TEMPORARY],
-            ['name' => 'Vozidlo 4', 'type' => Warehouse::TYPE_TEMPORARY],
+            ['name' => 'Vozidlo Jaroslav', 'type' => Warehouse::TYPE_TEMPORARY],
+            ['name' => 'Vozidlo Honza', 'type' => Warehouse::TYPE_TEMPORARY],
+            ['name' => 'Vozidlo Tomáš', 'type' => Warehouse::TYPE_TEMPORARY],
+            ['name' => 'Vozidlo Juvita', 'type' => Warehouse::TYPE_TEMPORARY],
+            ['name' => 'Kompost/Odpad ', 'type' => Warehouse::TYPE_TEMPORARY],
         ];
 
         $products = Product::all();

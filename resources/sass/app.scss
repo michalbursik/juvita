@@ -10,6 +10,19 @@
 // Icons
 @import '~bootstrap-icons/font/bootstrap-icons';
 
+@mixin background-opacity($color, $opacity: 0.5) {
+    background: $color;
+    background: rgba(red($color), green($color), blue($color), $opacity);
+}
+
+.issue-color {
+    @include background-opacity($danger, 0.3)
+}
+
+.receipt-color {
+    @include background-opacity($success, 0.3)
+}
+
 .numeric-pad {
     .col {
         padding: .5rem;
@@ -29,5 +42,15 @@
                 background: $gray-200;
             }
         }
+    }
+}
+
+svg.bi {
+    width: 32px;
+    height: 32px;
+
+    @include media-breakpoint-down('sm') {
+        width: 16px;
+        height: 16px;
     }
 }
