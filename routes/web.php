@@ -30,13 +30,15 @@ Route::middleware('auth')->group(function () {
         ->name('warehouses.products.issue');
     Route::get('warehouses/{warehouse}/products/{product}/transmission', [WarehouseController::class, 'transmission'])
         ->name('warehouses.products.transmission');
+    Route::post('warehouse-movements/transmission', [WarehouseMovementController::class, 'transmission'])
+        ->name('warehouse-movements.transmission');
+    Route::resource('warehouse-movements', WarehouseMovementController::class, ['only' => 'store']);
 
     Route::middleware('admin')->group(function () {
         Route::resource('warehouses', WarehouseController::class, ['except' => 'show']);
 
-        Route::resource('warehouse-movements', WarehouseMovementController::class);
-        Route::post('warehouse-movements/transmission', [WarehouseMovementController::class, 'transmission'])
-            ->name('warehouse-movements.transmission');
+        Route::resource('warehouse-movements', WarehouseMovementController::class, ['except' => 'store']);
+
         Route::resource('products', ProductController::class);
     });
 });
