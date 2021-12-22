@@ -13,15 +13,36 @@
                 <form action="/warehouse-movements" method="POST" id="warehouse_movements_form">
                     @csrf
 
-
                     <div class="card">
                         <div class="card-body">
                             <div class="row">
                                 <div class="col">
                                     <label for="amount">Množství ({{ $product->unit }})</label>
-                                    <input readonly class="form-control" type="text" id="amount" name="amount" value="0">
+                                    <input
+                                        class="form-control"
+                                        type="text"
+                                        id="amount"
+                                        name="amount"
+                                        value="0"
+                                        readonly
+                                    >
 
                                     @error('amount')
+                                    <div class="invalid-feedback d-block">{{ $message }}</div>
+                                    @enderror
+                                </div>
+                                <div class="col">
+                                    <label for="price">Cena</label>
+                                    <input
+                                        class="form-control"
+                                        type="text"
+                                        id="price"
+                                        name="price"
+                                        value="0"
+                                        readonly
+                                    >
+
+                                    @error('price')
                                     <div class="invalid-feedback d-block">{{ $message }}</div>
                                     @enderror
                                 </div>
@@ -30,6 +51,43 @@
                                     <input class="form-control" readonly type="text" value="{{ $product->name }}">
                                 </div>
                             </div>
+
+                            <script type="text/javascript">
+                                function setCurrentInput(value) {
+                                    let currentInput = getCurrentInput();
+
+                                    if (currentInput) {
+                                        document.getElementById(currentInput).classList.remove('border-success');
+                                    }
+
+                                    window.localStorage.setItem('currentInput', value);
+
+                                    document.getElementById(value).classList.add('border-success');
+                                }
+
+                                function getCurrentInput() {
+                                    return window.localStorage.getItem('currentInput');
+                                }
+
+                                setCurrentInput('amount');
+
+                                let items = ['amount', 'price'];
+                                items.forEach(function (value) {
+                                    let amountInput = document.getElementById(value);
+
+                                    amountInput.addEventListener('click', function () {
+                                        let currentInput = getCurrentInput();
+
+                                        if (currentInput) {
+                                            document.getElementById(currentInput).classList.remove('border-success');
+                                        }
+
+                                        window.localStorage.setItem('currentInput', value);
+
+                                        document.getElementById(value).classList.add('border-success');
+                                    });
+                                });
+                            </script>
 
                             <x-numeric-pad></x-numeric-pad>
                         </div>

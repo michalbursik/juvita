@@ -13,10 +13,11 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @property int $id
  * @property string $type
  * @property float $amount
+ * @property string $price
  * @property int $product_id
  * @property int $user_id
  * @property int $warehouse_id
- * @property \Illuminate\Support\Carbon|null $created_at
+ * @property string $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property-read \App\Models\Product $product
  * @property-read \App\Models\User $user
@@ -27,6 +28,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @method static \Illuminate\Database\Eloquent\Builder|WarehouseMovement whereAmount($value)
  * @method static \Illuminate\Database\Eloquent\Builder|WarehouseMovement whereCreatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|WarehouseMovement whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|WarehouseMovement wherePrice($value)
  * @method static \Illuminate\Database\Eloquent\Builder|WarehouseMovement whereProductId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|WarehouseMovement whereType($value)
  * @method static \Illuminate\Database\Eloquent\Builder|WarehouseMovement whereUpdatedAt($value)
@@ -42,7 +44,7 @@ class WarehouseMovement extends Model
 
     use HasFactory;
 
-    protected $fillable = ['type', 'amount', 'product_id', 'warehouse_id', 'user_id'];
+    protected $fillable = ['type', 'amount', 'price', 'product_id', 'warehouse_id', 'user_id'];
 
     public function user(): BelongsTo
     {

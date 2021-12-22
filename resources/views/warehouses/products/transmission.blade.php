@@ -1,6 +1,9 @@
 @extends('layouts.app')
 
 @section('content')
+    <script>
+        window.localStorage.setItem('currentInput', 'amount');
+    </script>
     <div class="container">
         <div class="row justify-content-center">
             <div class="col-12 col-lg-10">
@@ -12,7 +15,6 @@
 
                 <form action="/warehouse-movements/transmission" method="POST" id="warehouse_movements_form">
                     @csrf
-
 
                     <div class="card">
                         <div class="card-body">
@@ -60,6 +62,20 @@
 
                                     @error('amount')
                                         <div class="invalid-feedback d-block">{{ $message }}</div>
+                                    @enderror
+                                </div>
+                                <div class="col">
+                                    <label for="price">Cena ({{ $product->unit }})</label>
+                                    <select class="form-control" name="price" id="price">
+                                        @foreach($priceLevels as $priceLevel)
+                                            <option value="{{ $priceLevel->id }}">{{ $priceLevel->price }}</option>
+                                        @endforeach
+                                    </select>
+
+{{--                                    <input readonly class="form-control" type="text" id="price" name="price" value="0">--}}
+
+                                    @error('price')
+                                    <div class="invalid-feedback d-block">{{ $message }}</div>
                                     @enderror
                                 </div>
                                 <div class="col">

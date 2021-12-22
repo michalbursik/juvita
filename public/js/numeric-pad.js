@@ -1,5 +1,6 @@
 function writeDown(number) {
-    let input = document.getElementById('amount');
+    let currentInput = getCurrentInput();
+    let input = document.getElementById(currentInput);
 
     if (
         !input.value.includes('.') &&
@@ -13,7 +14,8 @@ function writeDown(number) {
 }
 
 function removeLast() {
-    let input = document.getElementById('amount');
+    let currentInput = getCurrentInput();
+    let input = document.getElementById(currentInput);
 
     if (input.value.length > 1) {
         input.value = input.value.substr(0, input.value.length - 1);
@@ -23,7 +25,8 @@ function removeLast() {
 }
 
 function deleteValue() {
-    let input = document.getElementById('amount');
+    let currentInput = getCurrentInput();
+    let input = document.getElementById(currentInput);
 
     input.value = 0;
 }

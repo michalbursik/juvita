@@ -1,7 +1,7 @@
 <?php
 
 
-namespace App\Http\Controllers;
+namespace App\Managers;
 
 
 use App\Models\Product;

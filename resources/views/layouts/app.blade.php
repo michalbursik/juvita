@@ -92,5 +92,12 @@
         @yield('content')
     </main>
 </div>
+    <script src="{{ asset('js/global.js') }}"></script>
+    <script>
+        function setCurrentInput(value) {
+            window.localStorage.setItem('currentInput', value);
+        };
+        @yield('js')
+    </script>
 </body>
 </html>

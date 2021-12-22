@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\StoreWarehouseRequest;
 use App\Http\Requests\UpdateWarehouseRequest;
+use App\Models\PriceLevel;
 use App\Models\Product;
 use App\Models\User;
 use App\Models\Warehouse;
@@ -70,7 +71,13 @@ class WarehouseController extends Controller
 
         $warehouses = $query->get();
 
-        return view('warehouses.products.transmission', compact('warehouseFrom', 'product', 'user', 'warehouses'));
+        $priceLevels = PriceLevel::query()
+            ->where('validTo', '>=', now()->toDateTime())
+            ->get();
+
+        return view('warehouses.products.transmission',
+            compact('warehouseFrom', 'product', 'user', 'warehouses', 'priceLevels')
+        );
     }
 
     public function edit(Warehouse $warehouse)

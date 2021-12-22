@@ -25,6 +25,7 @@ class StoreWarehouseMovementRequest extends FormRequest
     {
         return [
             'amount' => 'required|numeric|min:0.1',
+            'price' => 'required|numeric|min:0.1',
             'type' => 'nullable|string',
             'user_id' => 'nullable|integer',
             'product_id' => 'required|integer',

@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\TransmissionWarehouseMovementRequest;
+use App\Managers\PricesManager;
+use App\Managers\WarehouseManager;
 use App\Repositories\WarehouseMovementRepository;
 use App\Http\Requests\StoreWarehouseMovementRequest;
 use App\Models\Product;
@@ -59,18 +61,19 @@ class WarehouseMovementController extends Controller
 
     public function store(StoreWarehouseMovementRequest $request): RedirectResponse
     {
+        // TODO issue prices not handled!
         $warehouseMovement = $this->repository->store($request->validated());
 
-        $this->updateWarehouse($warehouseMovement);
+        $this->updatePrices($warehouseMovement);
 
-        // When issuing, what if there is not enough ?
+        $this->updateWarehouse($warehouseMovement);
 
         return redirect()->route('warehouses.show', [
             'warehouse' => $warehouseMovement->warehouse->id
         ]);
     }
 
-    public function transmission(TransmissionWarehouseMovementRequest $request)
+    public function transmission(TransmissionWarehouseMovementRequest $request): RedirectResponse
     {
         $data = $request->validated();
 
@@ -109,6 +112,16 @@ class WarehouseMovementController extends Controller
         $warehouseManager->{$warehouseMovement->type}(
             $warehouseMovement->product,
             $warehouseMovement->amount
+        );
+    }
+
+    private function updatePrices(WarehouseMovement $warehouseMovement)
+    {
+        $pricesManager = new PricesManager();
+
+        $pricesManager->{$warehouseMovement->type}(
+          $warehouseMovement->product,
+          $warehouseMovement->price
         );
     }
 }
