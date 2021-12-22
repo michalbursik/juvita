@@ -26,7 +26,7 @@ class UserSeeder extends Seeder
             [
                 'name' => 'Martin Bahula',
                 'email' => 'bahula@seznam.cz',
-                'password' => Hash::make('loupežník'),
+                'password' => Hash::make('seba381'),
                 'role' => User::ROLE_ADMIN,
                 'warehouse_id' => 1,
             ],
@@ -38,14 +38,14 @@ class UserSeeder extends Seeder
                 'warehouse_id' => 2,
             ],
             [
-                'name' => 'Honza',
+                'name' => 'Honza Hlaváček',
                 'email' => 'honza@juvita.cz',
                 'password' => Hash::make('precedenc'),
                 'role' => User::ROLE_EMPLOYEE,
                 'warehouse_id' => 3,
             ],
             [
-                'name' => 'Tomáš',
+                'name' => 'Tomáš Strapina',
                 'email' => 'tomas@juvita.cz',
                 'password' => Hash::make('kultivator'),
                 'role' => User::ROLE_EMPLOYEE,

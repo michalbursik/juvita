@@ -38,6 +38,7 @@ class Warehouse extends Model
 
     const TYPE_MAIN = 'warehouse';
     const TYPE_TEMPORARY = 'temporary_warehouse';
+    const TYPE_INTERNAL = 'internal_warehouse';
 
     public function products(): BelongsToMany
     {

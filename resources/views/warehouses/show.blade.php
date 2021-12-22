@@ -9,7 +9,7 @@
                         <h1 class="h1">{{ $currentWarehouse->name }}</h1>
                     </div>
 
-                    @if(auth()->user()->role === \App\Models\User::ROLE_ADMIN)
+                    @admin
                         <div class="col-12 col-sm-4 d-flex align-items-center justify-content-between">
                             <select onchange="changeWarehouse()" class="form-control" name="warehouse" id="warehouse">
                                 <option disabled selected>Přepnout sklad</option>
@@ -20,7 +20,7 @@
                                 @endforeach
                             </select>
                         </div>
-                    @endif
+                    @endadmin
                 </div>
 
                 <div class="row">
@@ -41,12 +41,16 @@
                         <div class="row">
                             <div class="col text-center">
                                 <div class="btn-group w-100" role="group" aria-label="Product operations">
-                                    <a href="/warehouses/{{$currentWarehouse->id}}/products/{{$product->id}}/receipt" type="button" class="btn btn-success" style="border-top-left-radius: 0; border-top-right-radius: 0;">
-                                        <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" class="bi bi-plus text-white" viewBox="0 0 16 16">
-                                            <path d="M14 1a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H2a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1h12zM2 0a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2H2z"/>
-                                            <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4z"/>
-                                        </svg>
-                                    </a>
+                                    @admin
+                                        @if($currentWarehouse->type === \App\Models\Warehouse::TYPE_MAIN)
+                                            <a href="/warehouses/{{$currentWarehouse->id}}/products/{{$product->id}}/receipt" type="button" class="btn btn-success" style="border-top-left-radius: 0; border-top-right-radius: 0;">
+                                                <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" class="bi bi-plus text-white" viewBox="0 0 16 16">
+                                                    <path d="M14 1a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H2a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1h12zM2 0a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2H2z"/>
+                                                    <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4z"/>
+                                                </svg>
+                                            </a>
+                                        @endif
+                                    @endadmin
 
                                     <a href="/warehouses/{{$currentWarehouse->id}}/products/{{$product->id}}/transmission" type="button" class="btn btn-warning" style="border-top-left-radius: 0; border-top-right-radius: 0;">
                                         <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" class="bi bi-arrow-left-right text-white" viewBox="0 0 16 16">
@@ -67,34 +71,34 @@
                 @endforeach
                 </div>
 
-                @if(auth()->user()->role === \App\Models\User::ROLE_ADMIN)
-                    <div class="card mt-5">
-                        <div class="card-body">
-                            <div class="table-responsive">
-                            <table class="table">
-                                <thead>
-                                <tr>
-                                    <th>Produkt</th>
-                                    <th>Počet</th>
-                                    <th>Uživatel</th>
-                                    <th>Typ</th>
+                <div class="card mt-5">
+                    <div class="card-body">
+                        <div class="table-responsive">
+                        <table class="table">
+                            <thead>
+                            <tr>
+                                <th>Produkt</th>
+                                <th>Počet</th>
+                                <th>Uživatel</th>
+                                <th>Typ</th>
+                                <th>Vytvořeno</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            @foreach($currentWarehouse->warehouseMovements as $warehouseMovement)
+                                <tr class="{{ $warehouseMovement->type }}-color">
+                                    <td>{{ $warehouseMovement->product->name }}</td>
+                                    <td>{!! "$warehouseMovement->amount&nbsp;{$warehouseMovement->product->unit}" !!}</td>
+                                    <td>{{ $warehouseMovement->user->name }}</td>
+                                    <td>{{ trans('global.' .$warehouseMovement->type) }}</td>
+                                    <td>{{ $warehouseMovement->created_at }}</td>
                                 </tr>
-                                </thead>
-                                <tbody>
-                                @foreach($currentWarehouse->warehouseMovements as $warehouseMovement)
-                                    <tr class="{{ $warehouseMovement->type }}-color">
-                                        <td>{{ $warehouseMovement->product->name }}</td>
-                                        <td>{!! "$warehouseMovement->amount&nbsp;{$warehouseMovement->product->unit}" !!}</td>
-                                        <td>{{ $warehouseMovement->user->name }}</td>
-                                        <td>{{ trans('global.' .$warehouseMovement->type) }}</td>
-                                    </tr>
-                                @endforeach
-                                </tbody>
-                            </table>
-                            </div>
+                            @endforeach
+                            </tbody>
+                        </table>
                         </div>
                     </div>
-                @endif
+                </div>
             </div>
         </div>
     </div>

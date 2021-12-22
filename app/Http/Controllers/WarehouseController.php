@@ -62,7 +62,13 @@ class WarehouseController extends Controller
         $warehouseFrom = $warehouse;
         $user = Auth::user();
 
-        $warehouses = Warehouse::all();
+        $query = Warehouse::query();
+
+        if (Auth::user()->role === User::ROLE_EMPLOYEE) {
+            $query->whereIn('type', [Warehouse::TYPE_MAIN, Warehouse::TYPE_TEMPORARY]);
+        }
+
+        $warehouses = $query->get();
 
         return view('warehouses.products.transmission', compact('warehouseFrom', 'product', 'user', 'warehouses'));
     }

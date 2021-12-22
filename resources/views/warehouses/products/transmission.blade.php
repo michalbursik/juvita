@@ -36,12 +36,10 @@
                                 </div>
                                 <div class="col">
                                     <label for="receipt_warehouse_id">Sklad - příjem</label>
-                                    <select @if($user->role === \App\Models\User::ROLE_EMPLOYEE) {{ 'readonly' }} @endif class="form-control" name="receipt_warehouse_id" id="receipt_warehouse_id">
+                                    <select class="form-control" name="receipt_warehouse_id" id="receipt_warehouse_id">
                                         @foreach($warehouses as $warehouse)
-                                            @if($user->role === \App\Models\User::ROLE_EMPLOYEE)
-                                                @if($warehouse->id === $user->warehouse_id)
-                                                    <option value="{{ $warehouse->id }}">{{ $warehouse->name }}</option>
-                                                @endif
+                                            @if($warehouse->id === $user->warehouse_id)
+                                                <option selected value="{{ $warehouse->id }}">{{ $warehouse->name }}</option>
                                             @else
                                                 <option value="{{ $warehouse->id }}">{{ $warehouse->name }}</option>
                                             @endif
