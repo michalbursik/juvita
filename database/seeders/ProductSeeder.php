@@ -31,12 +31,14 @@ class ProductSeeder extends Seeder
             ['name' => 'Celer', 'image' => '/images/celery.jpg'],
             ['name' => 'Jahody', 'image' => '/images/strawberry.jpg'],
             ['name' => 'Borůvky', 'image' => '/images/blueberries.jpg'],
-            ['name' => 'Květak', 'image' => '/images/cauliflower.jpg'],
+            ['name' => 'Květak', 'image' => '/images/cauliflower.jpg', 'unit' => 'ks'],
             ['name' => 'Cibule', 'image' => '/images/onion.jpg'],
             ['name' => 'Žampiony', 'image' => '/images/mushroom.jpg'],
-            ['name' => 'Hlíva', 'image' => '/images/mushroom-2.jpg'],
             ['name' => 'Svíčky', 'image' => '/images/candle.jpg', 'unit' => 'ks'],
             ['name' => 'Medy', 'image' => '/images/honey.jpg', 'unit' => 'ks'],
+            ['name' => 'Bedínky - žampiony', 'image' => '/images/small-crate.jpg'],
+            ['name' => 'Bedínky - hlíva', 'image' => '/images/large-crate.jpg'],
+
         ];
 
         foreach ($products as $productData) {

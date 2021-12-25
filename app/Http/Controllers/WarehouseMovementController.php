@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\TransmissionWarehouseMovementRequest;
 use App\Managers\PricesManager;
 use App\Managers\WarehouseManager;
+use App\Models\Warehouse;
 use App\Repositories\WarehouseMovementRepository;
 use App\Http\Requests\StoreWarehouseMovementRequest;
 use App\Models\Product;
@@ -65,8 +66,25 @@ class WarehouseMovementController extends Controller
         $warehouseMovement = $this->repository->store($request->validated());
 
         $this->updatePrices($warehouseMovement);
-
         $this->updateWarehouse($warehouseMovement);
+
+
+        if ($request->input('type') === WarehouseMovement::TYPE_ISSUE) {
+            $data = $request->validated();
+
+            // Receipt on trash warehouse
+            $warehouse = Warehouse::query()
+                ->where('type', Warehouse::TYPE_TRASH)
+                ->first();
+
+            $data['warehouse_id'] = $warehouse->id;
+            $data['type'] = WarehouseMovement::TYPE_RECEIPT;
+
+            $warehouseMovement = $this->repository->store($data);
+
+            $this->updatePrices($warehouseMovement);
+            $this->updateWarehouse($warehouseMovement);
+        }
 
         return redirect()->route('warehouses.show', [
             'warehouse' => $warehouseMovement->warehouse->id

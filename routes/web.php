@@ -23,7 +23,9 @@ Route::get('/', function () {
 });
 
 Route::middleware('auth')->group(function () {
+    Route::get('warehouses/trash', [WarehouseController::class, 'trash']);
     Route::resource('warehouses', WarehouseController::class, ['only' => 'show']);
+
     Route::get('warehouses/{warehouse}/products/{product}/receipt', [WarehouseController::class, 'receipt'])
         ->name('warehouses.products.receipt');
     Route::get('warehouses/{warehouse}/products/{product}/issue', [WarehouseController::class, 'issue'])

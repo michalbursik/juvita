@@ -9,6 +9,7 @@
                         <h1 class="h1">{{ $warehouse->name }} - výdejka</h1>
                     </div>
                 </div>
+                 {{ implode('', $errors->all()) }}
 
                 <form action="/warehouse-movements" method="POST" id="warehouse_movements_form">
                     @csrf

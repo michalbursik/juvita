@@ -21,7 +21,7 @@ class WarehouseSeeder extends Seeder
             ['name' => 'Vozidlo Honza', 'type' => Warehouse::TYPE_TEMPORARY],
             ['name' => 'Vozidlo Tomáš', 'type' => Warehouse::TYPE_TEMPORARY],
             ['name' => 'Prodej', 'type' => Warehouse::TYPE_INTERNAL],
-            ['name' => 'Kompost/Odpad ', 'type' => Warehouse::TYPE_TEMPORARY],
+            ['name' => 'Kompost/Odpad ', 'type' => Warehouse::TYPE_TRASH],
         ];
 
         $products = Product::all();

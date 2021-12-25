@@ -94,4 +94,15 @@ class WarehouseController extends Controller
     {
         //
     }
+
+    public function trash()
+    {
+        $currentWarehouse = Warehouse::query()
+            ->where('type', Warehouse::TYPE_TRASH)
+            ->first();
+
+        $warehouses = Warehouse::all();
+
+        return view('warehouses.show', compact('currentWarehouse', 'warehouses'));
+    }
 }

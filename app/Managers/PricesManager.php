@@ -22,26 +22,28 @@ class PricesManager
         $this->priceLevelRepository = new PriceLevelRepository();
     }
 
-    public function issue(float $price)
+    public function issue(Product $product, ?float $price = null)
     {
 
     }
 
-    public function receipt(Product $product, float $price)
+    public function receipt(Product $product, ?float $price = null)
     {
-        $validFrom = now()->toImmutable();
+        if ($price) {
+            $validFrom = now()->toImmutable();
 
-        if ($validFrom->isSunday()) {
-            $validTo = $validFrom->nextWeekday()->endOfWeek();
-        } else {
-            $validTo = $validFrom->endOfWeek();
+            if ($validFrom->isSunday()) {
+                $validTo = $validFrom->nextWeekday()->endOfWeek();
+            } else {
+                $validTo = $validFrom->endOfWeek();
+            }
+
+            return $this->priceLevelRepository->getOrStore([
+                'validFrom' => $validFrom,
+                'validTo' => $validTo,
+                'price' => $price,
+                'product_id' => $product->id,
+            ]);
         }
-
-        return $this->priceLevelRepository->getOrStore([
-            'validFrom' => $validFrom,
-            'validTo' => $validTo,
-            'price' => $price,
-            'product_id' => $product->id,
-        ]);
     }
 }

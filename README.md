@@ -42,3 +42,4 @@ issue prices not handled!
 block -amounts on stores 
 (what if someone takes more than you have, 
 needs discipline to fill out warehouse before they arrive in the morning)
+ukazat v prevodce max amount (could be per price)

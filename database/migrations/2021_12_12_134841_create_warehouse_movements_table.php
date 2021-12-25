@@ -20,7 +20,7 @@ class CreateWarehouseMovementsTable extends Migration
 
             $table->string('type')->default(WarehouseMovement::TYPE_ISSUE);
             $table->float('amount');
-            $table->decimal('price');
+            $table->decimal('price')->nullable();
 
             $table->foreignId('product_id')->constrained('products');
             $table->foreignId('user_id')->constrained('users');
