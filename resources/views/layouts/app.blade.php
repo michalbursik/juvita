@@ -42,6 +42,9 @@
                             <li class="nav-item">
                                 <a class="nav-link" href="/products">Produkty</a>
                             </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="/warehouses/trash">Kompost/Odpad</a>
+                            </li>
                         @else
                             <li class="nav-item">
                                 <a class="nav-link" href="/warehouses/{{ auth()->user()->warehouse_id }}">Můj sklad</a>

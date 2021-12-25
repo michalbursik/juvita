@@ -12,17 +12,19 @@
 
                 <div class="row">
                     @foreach($warehouses as $warehouse)
-                        <div class="col-6 col-md-4 col-lg-3 mt-3">
-                            <a href="/warehouses/{{$warehouse->id}}" class="fw-bold text-decoration-none text-black">
-                                <div class="card" style="min-height: 100px;">
-                                    <div class="card-body" style="display:flex; align-items: center; justify-content: center;">
-                                        <div class="text-center font-weight-bold">
-                                            {{ $warehouse->name }}
+                        @if($warehouse->type !== \App\Models\Warehouse::TYPE_TRASH)
+                            <div class="col-6 col-md-4 col-lg-3 mt-3">
+                                <a href="/warehouses/{{$warehouse->id}}" class="fw-bold text-decoration-none text-black">
+                                    <div class="card" style="min-height: 100px;">
+                                        <div class="card-body" style="display:flex; align-items: center; justify-content: center;">
+                                            <div class="text-center font-weight-bold">
+                                                {{ $warehouse->name }}
+                                            </div>
                                         </div>
                                     </div>
-                                </div>
-                            </a>
-                        </div>
+                                </a>
+                            </div>
+                        @endif
                     @endforeach
                 </div>
             </div>
