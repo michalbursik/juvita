@@ -7,37 +7,29 @@ namespace App\Managers;
 use App\Models\Product;
 use App\Models\User;
 use App\Models\Warehouse;
+use App\Models\WarehouseMovement;
 
 class WarehouseManager
 {
-    private Warehouse $warehouse;
-
-    /**
-     * WarehouseManager constructor.
-     */
-    public function __construct(Warehouse $warehouse)
+    public function issue(WarehouseMovement $warehouseMovement)
     {
-        $this->warehouse = $warehouse;
-    }
-
-    public function issue(Product $product, float $amount)
-    {
-        $warehouseProduct = $this->warehouse->products()
-            ->where('id', $product->id)
+        $warehouseProduct = $warehouseMovement->warehouse->products()
+            ->where('id', $warehouseMovement->product->id)
             ->first();
 
-        $warehouseProduct->pivot->amount -= $amount;
+        $warehouseProduct->pivot->amount -= $warehouseMovement->amount;
 
         $warehouseProduct->pivot->save();
     }
 
-    public function receipt(Product $product, float $amount)
+    public function receipt(WarehouseMovement $warehouseMovement)
     {
-        $warehouseProduct = $this->warehouse->products()
-            ->where('id', $product->id)
+        $warehouseProduct = $warehouseMovement->warehouse->products()
+            ->where('id', $warehouseMovement->product->id)
             ->first();
 
-        $warehouseProduct->pivot->amount += $amount;
+        $warehouseProduct->pivot->amount += $warehouseMovement->amount;
+        $warehouseProduct->pivot->price = $warehouseMovement->price;
 
         $warehouseProduct->pivot->save();
     }

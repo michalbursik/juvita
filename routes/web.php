@@ -26,6 +26,9 @@ Route::middleware('auth')->group(function () {
     Route::get('warehouses/trash', [WarehouseController::class, 'trash']);
     Route::resource('warehouses', WarehouseController::class, ['only' => 'show']);
 
+    Route::get('warehouses/{warehouse}/products/{product}', [WarehouseController::class, 'showProduct'])
+        ->name('warehouses.products.show');
+
     Route::get('warehouses/{warehouse}/products/{product}/receipt', [WarehouseController::class, 'receipt'])
         ->name('warehouses.products.receipt');
     Route::get('warehouses/{warehouse}/products/{product}/issue', [WarehouseController::class, 'issue'])
@@ -34,7 +37,9 @@ Route::middleware('auth')->group(function () {
         ->name('warehouses.products.transmission');
     Route::post('warehouse-movements/transmission', [WarehouseMovementController::class, 'transmission'])
         ->name('warehouse-movements.transmission');
-    Route::resource('warehouse-movements', WarehouseMovementController::class, ['only' => 'store']);
+
+    Route::post('warehouse-movements/issue', [WarehouseMovementController::class, 'issue'])->name('warehouse-movements.issue');
+    Route::post('warehouse-movements/receipt', [WarehouseMovementController::class, 'receipt'])->name('warehouse-movements.receipt');
 
     Route::middleware('admin')->group(function () {
         Route::resource('warehouses', WarehouseController::class, ['except' => 'show']);

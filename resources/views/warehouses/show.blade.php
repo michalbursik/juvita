@@ -24,19 +24,21 @@
                 </div>
 
                 <div class="row">
-                @foreach($currentWarehouse->products as $product)
+                @foreach($currentWarehouse->activeProducts()->sortBy('order') as $product)
                     <div class="col-6 col-md-4 col-lg-3">
                         <div class="card mt-3" style="
                             background: url({{ asset($product->image) }}) white no-repeat 50% 100%; background-size: contain;
                             border-bottom-left-radius: 0; border-bottom-right-radius: 0;
                             ">
-                            <div class="card-body text-center text-white fw-bold" style="
-                            min-height: 140px; font-size: 1.2rem; padding: 0; margin-top: 15px;
-                            ">
-                                <div style="background: rgba(100, 100, 100, 0.5); margin-top: -15px;">
-                                    {!! $product->name . " ({$product->pivot->amount}&nbsp;$product->unit)" !!}
+                            <a href="/warehouses/1/products/{{ $product->id }}" style="text-decoration: none;">
+                                <div class="card-body text-center text-white fw-bold" style="
+                                min-height: 140px; font-size: 1.2rem; padding: 0; margin-top: 15px;
+                                ">
+                                    <div style="background: rgba(100, 100, 100, 0.5); margin-top: -15px;">
+                                        {!! $product->name . " ({$product->pivot->amount}&nbsp;$product->unit)" !!}
+                                    </div>
                                 </div>
-                            </div>
+                            </a>
                         </div>
                         <div class="row">
                             <div class="col text-center">
@@ -78,9 +80,10 @@
                             <thead>
                             <tr>
                                 <th>Produkt</th>
-                                <th>Počet</th>
-                                <th>Uživatel</th>
                                 <th>Typ</th>
+                                <th>Počet</th>
+                                <th>Cena</th>
+                                <th>Uživatel</th>
                                 <th>Vytvořeno</th>
                             </tr>
                             </thead>
@@ -88,9 +91,10 @@
                             @foreach($currentWarehouse->warehouseMovements as $warehouseMovement)
                                 <tr class="{{ $warehouseMovement->type }}-color">
                                     <td>{{ $warehouseMovement->product->name }}</td>
-                                    <td>{!! "$warehouseMovement->amount&nbsp;{$warehouseMovement->product->unit}" !!}</td>
-                                    <td>{{ $warehouseMovement->user->name }}</td>
                                     <td>{{ trans('global.' .$warehouseMovement->type) }}</td>
+                                    <td>{!! "$warehouseMovement->amount&nbsp;{$warehouseMovement->product->unit}" !!}</td>
+                                    <td>{{ $warehouseMovement->price }}&nbsp;Kč</td>
+                                    <td>{{ $warehouseMovement->user->name }}</td>
                                     <td>{{ $warehouseMovement->created_at }}</td>
                                 </tr>
                             @endforeach

@@ -48,6 +48,8 @@ class WarehouseController extends Controller
     {
         $user = Auth::user();
 
+        $product = $warehouse->products()->where('product_id', $product->id)->first();
+
         return view('warehouses.products.receipt', compact('warehouse', 'product', 'user'));
     }
 
@@ -55,7 +57,11 @@ class WarehouseController extends Controller
     {
         $user = Auth::user();
 
-        return view('warehouses.products.issue', compact('warehouse', 'product', 'user'));
+        $priceLevels = PriceLevel::query()
+            ->where('product_id', $product->id)
+            ->get();
+
+        return view('warehouses.products.issue', compact('warehouse', 'product', 'user', 'priceLevels'));
     }
 
     public function transmission(Warehouse $warehouse, Product $product)
@@ -72,8 +78,11 @@ class WarehouseController extends Controller
         $warehouses = $query->get();
 
         $priceLevels = PriceLevel::query()
-            ->where('validTo', '>=', now()->toDateTime())
+//            ->where('validTo', '>=', now()->toDateTime())
+            ->where('product_id', $product->id)
             ->get();
+
+        $product = $warehouse->products()->where('product_id', $product->id)->first();
 
         return view('warehouses.products.transmission',
             compact('warehouseFrom', 'product', 'user', 'warehouses', 'priceLevels')
@@ -104,5 +113,23 @@ class WarehouseController extends Controller
         $warehouses = Warehouse::all();
 
         return view('warehouses.show', compact('currentWarehouse', 'warehouses'));
+    }
+
+    public function showProduct(Warehouse $warehouse, Product $product)
+    {
+        $user = auth()->user();
+        if ($user->role === User::ROLE_EMPLOYEE && $user->warehouse_id !== $warehouse->id) {
+            return redirect()->route('warehouses.show', [
+                'warehouse' => $user->warehouse_id
+            ]);
+        }
+
+        $currentWarehouse = $warehouse;
+        $warehouseMovements = $warehouse
+            ->warehouseMovements()
+            ->where('product_id', $product->id)
+            ->get();
+
+        return view('warehouses.products.show', compact('currentWarehouse', 'warehouseMovements', 'product'));
     }
 }

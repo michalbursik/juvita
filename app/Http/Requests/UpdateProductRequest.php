@@ -26,14 +26,27 @@ class UpdateProductRequest extends FormRequest
     {
         return [
             'name' => 'required|string',
+            'origin' => 'nullable|string',
+            'order' => 'required|integer',
+            'active' => 'required|boolean',
             'unit' => 'required|string|in:' . Product::getListOfAvailableUnits(),
         ];
+    }
+
+    protected function prepareForValidation()
+    {
+        $this->merge([
+           'active' => $this->active ? true : false
+        ]);
     }
 
     public function attributes(): array
     {
         return [
             'name' => 'název',
+            'origin' => 'původ',
+            'order' => 'pořadí',
+            'active' => 'aktivní',
             'unit' => 'jednotka',
         ];
     }

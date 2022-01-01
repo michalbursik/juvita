@@ -27,7 +27,12 @@ class ProductController extends Controller
 
     public function create()
     {
-        return view('products.create');
+        $productOrder = Product::query()
+            ->orderByDesc('order')
+            ->first()
+            ->order + 10;
+
+        return view('products.create', compact('productOrder'));
     }
 
     public function store(StoreProductRequest $request)

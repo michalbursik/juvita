@@ -10,7 +10,7 @@
                     </div>
                 </div>
 
-                <form action="/warehouse-movements" method="POST" id="warehouse_movements_form">
+                <form action="/warehouse-movements/receipt" method="POST" id="warehouse_movements_form">
                     @csrf
 
                     <div class="card">
@@ -35,10 +35,10 @@
                                     <label for="price">Cena</label>
                                     <input
                                         class="form-control"
-                                        type="text"
+                                        type="number"
                                         id="price"
                                         name="price"
-                                        value="0"
+                                        value="{{ $product->pivot->price }}"
                                         readonly
                                     >
 
@@ -62,7 +62,8 @@
 
                                     window.localStorage.setItem('currentInput', value);
 
-                                    document.getElementById(value).classList.add('border-success');
+                                    let el = document.getElementById(value);
+                                    el.classList.add('border-success');
                                 }
 
                                 function getCurrentInput() {
@@ -84,7 +85,12 @@
 
                                         window.localStorage.setItem('currentInput', value);
 
-                                        document.getElementById(value).classList.add('border-success');
+                                        let el = document.getElementById(value);
+                                        el.classList.add('border-success');
+
+                                        if (el.value === '0.00') {
+                                            el.value = 0;
+                                        }
                                     });
                                 });
                             </script>

@@ -35,11 +35,10 @@ k cemu je vydejka z hlavniho skladu ? (prevodka na odpad) => zmenit na kos ?
 
 soft deletes -> what should be possible to delete ? => skryvani produktu (potom i ze skladu)
 
-bedynky - ??
-
-
 issue prices not handled!
 block -amounts on stores 
 (what if someone takes more than you have, 
 needs discipline to fill out warehouse before they arrive in the morning)
-ukazat v prevodce max amount (could be per price)
+ukazat v prevodce max amount (could be per price) - axios
+
+obrazovka s cenama a zemi puvodu pro employees

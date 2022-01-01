@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
@@ -16,10 +17,10 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
  * @property string $type
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
- * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\Product[] $products
+ * @property-read Collection|\App\Models\Product[] $products
  * @property-read int|null $products_count
  * @property-read \App\Models\User|null $user
- * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\WarehouseMovement[] $warehouseMovements
+ * @property-read Collection|\App\Models\WarehouseMovement[] $warehouseMovements
  * @property-read int|null $warehouse_movements_count
  * @method static \Database\Factories\WarehouseFactory factory(...$parameters)
  * @method static \Illuminate\Database\Eloquent\Builder|Warehouse newModelQuery()
@@ -54,5 +55,10 @@ class Warehouse extends Model
     public function warehouseMovements(): HasMany
     {
         return $this->hasMany(WarehouseMovement::class);
+    }
+
+    public function activeProducts(): Collection
+    {
+        return $this->products()->where('products.active', true)->get();
     }
 }

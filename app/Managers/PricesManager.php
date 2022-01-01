@@ -4,11 +4,14 @@
 namespace App\Managers;
 
 
+use App\Models\PriceLevel;
 use App\Models\Product;
 use App\Models\User;
 use App\Models\Warehouse;
+use App\Models\WarehouseMovement;
 use App\Repositories\PriceLevelRepository;
 use Carbon\Carbon;
+use Carbon\CarbonImmutable;
 
 class PricesManager
 {
@@ -22,28 +25,43 @@ class PricesManager
         $this->priceLevelRepository = new PriceLevelRepository();
     }
 
-    public function issue(Product $product, ?float $price = null)
+    public function issue(WarehouseMovement $warehouseMovement, PriceLevel $priceLevel): PriceLevel
     {
+        $product = $this->priceLevelRepository->update($priceLevel, $warehouseMovement->amount * -1);
 
+        if ($product->amount <= 0) {
+            $this->priceLevelRepository->delete($priceLevel);
+        }
+
+        return $priceLevel;
     }
 
-    public function receipt(Product $product, ?float $price = null)
+    public function receipt(WarehouseMovement $warehouseMovement): PriceLevel
     {
-        if ($price) {
-            $validFrom = now()->toImmutable();
+        $validFrom = now()->toImmutable();
+        $validTo = $this->getValidTo($validFrom);
 
-            if ($validFrom->isSunday()) {
-                $validTo = $validFrom->nextWeekday()->endOfWeek();
-            } else {
-                $validTo = $validFrom->endOfWeek();
-            }
+        return $this->priceLevelRepository->updateOrCreate([
+            'validFrom' => $validFrom,
+            'validTo' => $validTo,
+            'amount' => $warehouseMovement->amount,
+            'price' => $warehouseMovement->price,
+            'product_id' => $warehouseMovement->product->id,
+            'warehouse_id' => $warehouseMovement->warehouse->id,
+        ]);
+    }
 
-            return $this->priceLevelRepository->getOrStore([
-                'validFrom' => $validFrom,
-                'validTo' => $validTo,
-                'price' => $price,
-                'product_id' => $product->id,
-            ]);
+    /**
+     * @param CarbonImmutable $validFrom
+     * @return CarbonImmutable
+     */
+    public function getValidTo(CarbonImmutable $validFrom): CarbonImmutable
+    {
+        if ($validFrom->isSunday()) {
+            $validTo = $validFrom->nextWeekday()->endOfWeek();
+        } else {
+            $validTo = $validFrom->endOfWeek();
         }
+        return $validTo;
     }
 }

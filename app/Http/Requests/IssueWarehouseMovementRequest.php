@@ -4,7 +4,7 @@ namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class TransmissionWarehouseMovementRequest extends FormRequest
+class IssueWarehouseMovementRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -24,24 +24,24 @@ class TransmissionWarehouseMovementRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'issue_warehouse_id' => 'required|integer|different:receipt_warehouse_id',
-            'receipt_warehouse_id' => 'required|integer|different:issue_warehouse_id',
-            'user_id' => 'nullable|integer',
-            'product_id' => 'required|integer',
             'amount' => 'required|numeric|min:0.1',
             'price_level_id' => 'required|integer',
+            'type' => 'required|string',
+            'user_id' => 'nullable|integer',
+            'product_id' => 'required|integer',
+            'warehouse_id' => 'required|integer',
         ];
     }
 
-    public function attributes(): array
+    public function attributes()
     {
         return [
-            'issue_warehouse_id' => 'sklad - výdej',
-            'receipt_warehouse_id' => 'sklad - příjem',
+            'amount' => 'množství',
+            'price_level_id' => 'cena',
+            'type' => 'typ',
             'user_id' => 'uživatel',
             'product_id' => 'produkt',
-            'price' => 'cena',
-            'amount' => 'množství'
+            'warehouse_id' => 'sklad',
         ];
     }
 }

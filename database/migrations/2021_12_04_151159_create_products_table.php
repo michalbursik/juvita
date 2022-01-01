@@ -18,6 +18,10 @@ class CreateProductsTable extends Migration
             $table->id();
 
             $table->string('name');
+            $table->string('origin')->nullable();
+            $table->boolean('active')->default(true);
+            $table->integer('order');
+
             $table->string('image')->nullable();
             $table->string('unit')->default(Product::DEFAULT_UNIT);
 

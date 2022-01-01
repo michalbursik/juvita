@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 /**
  * App\Models\Product
@@ -28,12 +29,20 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
  * @method static \Illuminate\Database\Eloquent\Builder|Product whereUnit($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Product whereUpdatedAt($value)
  * @mixin \Eloquent
+ * @property string|null $origin
+ * @property int $active
+ * @property int $order
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\PriceLevel[] $priceLevels
+ * @property-read int|null $price_levels_count
+ * @method static \Illuminate\Database\Eloquent\Builder|Product whereActive($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Product whereOrder($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Product whereOrigin($value)
  */
 class Product extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['name', 'unit', 'image'];
+    protected $fillable = ['name', 'origin', 'active', 'order', 'unit', 'image'];
 
     const DEFAULT_UNIT = 'kg';
     const AVAILABLE_UNITS = ['kg', 'ks'];
@@ -41,6 +50,11 @@ class Product extends Model
     public function warehouses(): BelongsToMany
     {
         return $this->belongsToMany(Warehouse::class);
+    }
+
+    public function priceLevels(): HasMany
+    {
+        return $this->hasMany(PriceLevel::class);
     }
 
     public static function getListOfAvailableUnits($separator = ','): string

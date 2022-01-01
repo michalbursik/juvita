@@ -15,10 +15,12 @@ class CreatePriceLevelsTable extends Migration
     {
         Schema::create('price_levels', function (Blueprint $table) {
             $table->id();
+            $table->decimal('amount');
             $table->decimal('price');
             $table->date('validFrom');
             $table->date('validTo');
             $table->foreignId('product_id')->constrained('products');
+            $table->foreignId('warehouse_id')->constrained('warehouses');
 
             $table->timestamps();
         });

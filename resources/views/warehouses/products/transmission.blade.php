@@ -40,14 +40,16 @@
                                     <label for="receipt_warehouse_id">Sklad - příjem</label>
                                     <select class="form-control" name="receipt_warehouse_id" id="receipt_warehouse_id">
                                         @foreach($warehouses as $warehouse)
-                                            @if($warehouse->id === $user->warehouse_id)
+                                            @if(
+                                                $warehouse->id === $user->warehouse_id ||
+                                                $warehouse->type === \App\Models\Warehouse::TYPE_TEMPORARY
+                                            )
                                                 <option selected value="{{ $warehouse->id }}">{{ $warehouse->name }}</option>
                                             @else
                                                 <option value="{{ $warehouse->id }}">{{ $warehouse->name }}</option>
                                             @endif
                                         @endforeach
                                     </select>
-
 
                                     @error('receipt_warehouse_id')
                                     <div class="invalid-feedback d-block">{{ $message }}</div>
@@ -65,16 +67,14 @@
                                     @enderror
                                 </div>
                                 <div class="col">
-                                    <label for="price">Cena ({{ $product->unit }})</label>
-                                    <select class="form-control" name="price" id="price">
+                                    <label for="price_level_id">Cena</label>
+                                    <select class="form-control" name="price_level_id" id="price_level_id">
                                         @foreach($priceLevels as $priceLevel)
                                             <option value="{{ $priceLevel->id }}">{{ $priceLevel->price }}</option>
                                         @endforeach
                                     </select>
 
-{{--                                    <input readonly class="form-control" type="text" id="price" name="price" value="0">--}}
-
-                                    @error('price')
+                                    @error('price_level_id')
                                     <div class="invalid-feedback d-block">{{ $message }}</div>
                                     @enderror
                                 </div>

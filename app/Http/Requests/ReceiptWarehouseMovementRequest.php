@@ -4,7 +4,7 @@ namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class StoreWarehouseMovementRequest extends FormRequest
+class ReceiptWarehouseMovementRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -25,7 +25,7 @@ class StoreWarehouseMovementRequest extends FormRequest
     {
         return [
             'amount' => 'required|numeric|min:0.1',
-            'price' => 'nullable|numeric|min:0.1',
+            'price' => 'nullable|numeric', // receipt => price, issue => id of price level
             'type' => 'required|string',
             'user_id' => 'nullable|integer',
             'product_id' => 'required|integer',
