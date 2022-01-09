@@ -2,6 +2,8 @@
 
 namespace App\Models;
 
+use App\Transformers\ProductTransformer;
+use Flugg\Responder\Contracts\Transformable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
@@ -38,7 +40,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  * @method static \Illuminate\Database\Eloquent\Builder|Product whereOrder($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Product whereOrigin($value)
  */
-class Product extends Model
+class Product extends Model implements Transformable
 {
     use HasFactory;
 
@@ -57,8 +59,18 @@ class Product extends Model
         return $this->hasMany(PriceLevel::class);
     }
 
+    public function warehouseMovements(): HasMany
+    {
+        return $this->hasMany(WarehouseMovement::class);
+    }
+
     public static function getListOfAvailableUnits($separator = ','): string
     {
         return implode($separator, self::AVAILABLE_UNITS);
+    }
+
+    public function transformer(): string
+    {
+        return ProductTransformer::class;
     }
 }

@@ -17,6 +17,18 @@
       'Flare' => 'Facade\\Ignition\\Facades\\Flare',
     ),
   ),
+  'flugger/laravel-responder' => 
+  array (
+    'providers' => 
+    array (
+      0 => 'Flugg\\Responder\\ResponderServiceProvider',
+    ),
+    'aliases' => 
+    array (
+      'Responder' => 'Flugg\\Responder\\Facades\\Responder',
+      'Transformer' => 'Flugg\\Responder\\Facades\\Transformer',
+    ),
+  ),
   'fruitcake/laravel-cors' => 
   array (
     'providers' => 

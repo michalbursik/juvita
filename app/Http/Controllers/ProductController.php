@@ -7,6 +7,8 @@ use App\Http\Requests\UpdateProductRequest;
 use App\Models\Product;
 use App\Models\Warehouse;
 use App\Repositories\ProductRepository;
+use Flugg\Responder\Serializers\NoopSerializer;
+use Illuminate\Http\JsonResponse;
 
 class ProductController extends Controller
 {
@@ -18,24 +20,19 @@ class ProductController extends Controller
         $this->repository = $repository;
     }
 
-    public function index()
+    public function index(): JsonResponse
     {
         $products = Product::all();
 
-        return view('products.index', compact('products'));
+        return responder()->success($products)->respond();
     }
 
-    public function create()
+    public function show(Product $product): JsonResponse
     {
-        $productOrder = Product::query()
-            ->orderByDesc('order')
-            ->first()
-            ->order + 10;
-
-        return view('products.create', compact('productOrder'));
+        return responder()->success($product)->with(['warehouseMovements', 'priceLevels'])->respond();
     }
 
-    public function store(StoreProductRequest $request)
+    public function store(StoreProductRequest $request): JsonResponse
     {
         $product = $this->repository->store($request->validated());
 
@@ -48,23 +45,33 @@ class ProductController extends Controller
             ]);
         }
 
-        return redirect()->route('products.index');
+        return responder()->success($product)->respond();
     }
 
-    public function edit(Product $product)
-    {
-        return view('products.edit', compact('product'));
-    }
-
-    public function update(UpdateProductRequest $request, Product $product)
+    public function update(UpdateProductRequest $request, Product $product): JsonResponse
     {
         $this->repository->update($product, $request->validated());
 
-        return redirect()->route('products.index');
+        return responder()->success($product)->respond();
     }
 
     public function destroy(Product $product)
     {
         //
+    }
+
+    public function nextOrder(): JsonResponse
+    {
+        $product = Product::query()
+            ->orderByDesc('order')
+            ->first();
+
+        if (empty($product)) {
+            $order = 10;
+        } else {
+            $order = $product->order + 10;
+        }
+
+        return responder()->success(['order' => $order])->respond();
     }
 }

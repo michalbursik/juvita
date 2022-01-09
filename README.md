@@ -28,17 +28,22 @@ Products->Prices
 - validTo
 - price
 
-employee => only prevodka ?
-k cemu tam je prijemka/vydejka z prirucnich skladu ?
-k cemu je vydejka z hlavniho skladu ? (prevodka na odpad) => zmenit na kos ?
-
 
 soft deletes -> what should be possible to delete ? => skryvani produktu (potom i ze skladu)
 
-issue prices not handled!
+editace pohybu?
+
 block -amounts on stores 
 (what if someone takes more than you have, 
 needs discipline to fill out warehouse before they arrive in the morning)
 ukazat v prevodce max amount (could be per price) - axios
 
 obrazovka s cenama a zemi puvodu pro employees
+zeme puvodu bude pokazde jina pri prijemce (pri zadavani - unikatni kombinace produkt, cena, puvod)
+KLIK na cenu => smazat (set 0)
+handlovani zmen cen v terenu (skolka, ...) sekce slevy na produkty
+podklad textu
+seznam vsech pohybu - s filtraci i pro zamestnance 
+
+lepe predvybran skald pro zamestnance
+u docasnych skladu zobrazit mnozstvi na ten den misto celkoveho mnozstvi (u kazdeho produktu)

@@ -8,6 +8,7 @@ use App\Models\PriceLevel;
 use App\Models\Product;
 use App\Models\User;
 use App\Models\Warehouse;
+use App\Transformers\WarehouseTransformer;
 use Illuminate\Support\Facades\Auth;
 
 class WarehouseController extends Controller
@@ -16,7 +17,7 @@ class WarehouseController extends Controller
     {
         $warehouses = Warehouse::all();
 
-        return view('warehouses.index', compact('warehouses'));
+        return responder()->success($warehouses)->respond();
     }
 
     public function create()
@@ -38,56 +39,57 @@ class WarehouseController extends Controller
             ]);
         }
 
-        $currentWarehouse = $warehouse;
-        $warehouses = Warehouse::all();
-
-        return view('warehouses.show', compact('currentWarehouse', 'warehouses'));
+        return responder()->success($warehouse)
+            ->with(['warehouseMovements', 'products' => function ($query) {
+                $query->where('products.active', true);
+            }, 'products.priceLevels'])
+            ->respond();
     }
 
-    public function receipt(Warehouse $warehouse, Product $product)
-    {
-        $user = Auth::user();
+//    public function receipt(Warehouse $warehouse, Product $product)
+//    {
+//        $user = Auth::user();
+//
+//        $product = $warehouse->products()->where('product_id', $product->id)->first();
+//
+//        return view('warehouses.products.receipt', compact('warehouse', 'product', 'user'));
+//    }
 
-        $product = $warehouse->products()->where('product_id', $product->id)->first();
+//    public function issue(Warehouse $warehouse, Product $product)
+//    {
+//        $user = Auth::user();
+//
+//        $priceLevels = PriceLevel::query()
+//            ->where('product_id', $product->id)
+//            ->get();
+//
+//        return view('warehouses.products.issue', compact('warehouse', 'product', 'user', 'priceLevels'));
+//    }
 
-        return view('warehouses.products.receipt', compact('warehouse', 'product', 'user'));
-    }
-
-    public function issue(Warehouse $warehouse, Product $product)
-    {
-        $user = Auth::user();
-
-        $priceLevels = PriceLevel::query()
-            ->where('product_id', $product->id)
-            ->get();
-
-        return view('warehouses.products.issue', compact('warehouse', 'product', 'user', 'priceLevels'));
-    }
-
-    public function transmission(Warehouse $warehouse, Product $product)
-    {
-        $warehouseFrom = $warehouse;
-        $user = Auth::user();
-
-        $query = Warehouse::query();
-
-        if (Auth::user()->role === User::ROLE_EMPLOYEE) {
-            $query->whereIn('type', [Warehouse::TYPE_MAIN, Warehouse::TYPE_TEMPORARY]);
-        }
-
-        $warehouses = $query->get();
-
-        $priceLevels = PriceLevel::query()
-//            ->where('validTo', '>=', now()->toDateTime())
-            ->where('product_id', $product->id)
-            ->get();
-
-        $product = $warehouse->products()->where('product_id', $product->id)->first();
-
-        return view('warehouses.products.transmission',
-            compact('warehouseFrom', 'product', 'user', 'warehouses', 'priceLevels')
-        );
-    }
+//    public function transmission(Warehouse $warehouse, Product $product)
+//    {
+//        $warehouseFrom = $warehouse;
+//        $user = Auth::user();
+//
+//        $query = Warehouse::query();
+//
+//        if (Auth::user()->role === User::ROLE_EMPLOYEE) {
+//            $query->whereIn('type', [Warehouse::TYPE_MAIN, Warehouse::TYPE_TEMPORARY]);
+//        }
+//
+//        $warehouses = $query->get();
+//
+//        $priceLevels = PriceLevel::query()
+////            ->where('validTo', '>=', now()->toDateTime())
+//            ->where('product_id', $product->id)
+//            ->get();
+//
+//        $product = $warehouse->products()->where('product_id', $product->id)->first();
+//
+//        return view('warehouses.products.transmission',
+//            compact('warehouseFrom', 'product', 'user', 'warehouses', 'priceLevels')
+//        );
+//    }
 
     public function edit(Warehouse $warehouse)
     {
@@ -104,15 +106,17 @@ class WarehouseController extends Controller
         //
     }
 
-    public function trash()
+    public function trash(): \Illuminate\Http\JsonResponse
     {
-        $currentWarehouse = Warehouse::query()
+        $warehouse = Warehouse::query()
             ->where('type', Warehouse::TYPE_TRASH)
             ->first();
 
-        $warehouses = Warehouse::all();
-
-        return view('warehouses.show', compact('currentWarehouse', 'warehouses'));
+        return responder()->success($warehouse)
+            ->with(['warehouseMovements', 'products' => function ($query) {
+                $query->where('products.active', true);
+            }])
+            ->respond();
     }
 
     public function showProduct(Warehouse $warehouse, Product $product)

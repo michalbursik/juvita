@@ -1,5 +1,7 @@
 <?php
 
+use App\Http\Controllers\AuthController;
+use App\Http\Controllers\NuxtController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\WarehouseController;
 use App\Http\Controllers\WarehouseMovementController;
@@ -16,36 +18,10 @@ use Illuminate\Support\Facades\Route;
 | contains the "web" middleware group. Now create something great!
 |
 */
-Auth::routes(['register' => false]);
 
-Route::get('/', function () {
-    return redirect('/warehouses');
-});
+// API ROUTES
+Route::post('login', [AuthController::class, 'login'])->name('login');
+Route::post('logout', [AuthController::class, 'logout'])->name('logout');
+// --------------
 
-Route::middleware('auth')->group(function () {
-    Route::get('warehouses/trash', [WarehouseController::class, 'trash']);
-    Route::resource('warehouses', WarehouseController::class, ['only' => 'show']);
-
-    Route::get('warehouses/{warehouse}/products/{product}', [WarehouseController::class, 'showProduct'])
-        ->name('warehouses.products.show');
-
-    Route::get('warehouses/{warehouse}/products/{product}/receipt', [WarehouseController::class, 'receipt'])
-        ->name('warehouses.products.receipt');
-    Route::get('warehouses/{warehouse}/products/{product}/issue', [WarehouseController::class, 'issue'])
-        ->name('warehouses.products.issue');
-    Route::get('warehouses/{warehouse}/products/{product}/transmission', [WarehouseController::class, 'transmission'])
-        ->name('warehouses.products.transmission');
-    Route::post('warehouse-movements/transmission', [WarehouseMovementController::class, 'transmission'])
-        ->name('warehouse-movements.transmission');
-
-    Route::post('warehouse-movements/issue', [WarehouseMovementController::class, 'issue'])->name('warehouse-movements.issue');
-    Route::post('warehouse-movements/receipt', [WarehouseMovementController::class, 'receipt'])->name('warehouse-movements.receipt');
-
-    Route::middleware('admin')->group(function () {
-        Route::resource('warehouses', WarehouseController::class, ['except' => 'show']);
-
-        Route::resource('warehouse-movements', WarehouseMovementController::class, ['except' => 'store']);
-
-        Route::resource('products', ProductController::class);
-    });
-});
+Route::get('/{any?}', [NuxtController::class, 'nuxtMethod'])->where('any', '^(?!(api|nova|telescope)).*$');

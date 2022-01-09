@@ -40,6 +40,9 @@
                                 <a class="nav-link" href="/warehouses">Sklady</a>
                             </li>
                             <li class="nav-item">
+                                <a class="nav-link" href="/warehouse-movements">Pohyby</a>
+                            </li>
+                            <li class="nav-item">
                                 <a class="nav-link" href="/products">Produkty</a>
                             </li>
                             <li class="nav-item">
@@ -95,6 +98,8 @@
         @yield('content')
     </main>
 </div>
+
+
     <script src="{{ asset('js/global.js') }}"></script>
     <script>
         function setCurrentInput(value) {

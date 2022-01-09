@@ -12,7 +12,9 @@ use App\Repositories\WarehouseMovementRepository;
 use App\Http\Requests\ReceiptWarehouseMovementRequest;
 use App\Models\Product;
 use App\Models\WarehouseMovement;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Request;
 
 class WarehouseMovementController extends Controller
 {
@@ -34,16 +36,36 @@ class WarehouseMovementController extends Controller
         $this->warehouseManager = $warehouseManager;
     }
 
-    /**
-     * Show the application dashboard.
-     *
-     * @return \Illuminate\Contracts\Support\Renderable
-     */
-    public function index()
+    public function index(Request $request): JsonResponse
     {
-        $products = Product::all();
+        $query = WarehouseMovement::query();
 
-        return view('storage-status.index', compact('products'));
+        if ($request->input('product')) {
+            $query->where('product_id', $request->input('product'));
+        }
+
+        if ($request->input('user')) {
+            $query->where('user_id', $request->input('user'));
+        }
+
+        if ($request->input('search')) {
+            // ->type
+            // ->count
+            // ->price
+            // ->created_at
+
+            // ->product->name
+            // ->user->name
+
+//            $query->where();
+        }
+
+
+        $movements = $query
+            ->orderByDesc('created_at')
+            ->paginate(null, ['*'], 'currentPage');
+
+        return responder()->success($movements)->respond();
     }
 
     public function show(WarehouseMovement $warehouseMovement)
@@ -51,7 +73,7 @@ class WarehouseMovementController extends Controller
         return view('warehouse-movements.show', compact('warehouseMovement'));
     }
 
-    public function issue(IssueWarehouseMovementRequest $request): RedirectResponse
+    public function issue(IssueWarehouseMovementRequest $request): JsonResponse
     {
         $data = $request->validated();
         $priceLevel = PriceLevel::query()->find($data['price_level_id']);
@@ -78,24 +100,20 @@ class WarehouseMovementController extends Controller
         // On trash warehouse we don't want to manager priceLevels
 //        $this->pricesManager->receipt($warehouseMovementTrash);
 
-        return redirect()->route('warehouses.show', [
-            'warehouse' => $warehouseMovement->warehouse->id
-        ]);
+        return responder()->success($warehouseMovement)->respond();
     }
 
-    public function receipt(ReceiptWarehouseMovementRequest $request): RedirectResponse
+    public function receipt(ReceiptWarehouseMovementRequest $request): JsonResponse
     {
         $warehouseMovement = $this->repository->store($request->validated());
 
         $this->warehouseManager->receipt($warehouseMovement);
         $this->pricesManager->receipt($warehouseMovement);
 
-        return redirect()->route('warehouses.show', [
-            'warehouse' => $warehouseMovement->warehouse->id
-        ]);
+        return responder()->success($warehouseMovement)->respond();
     }
 
-    public function transmission(TransmissionWarehouseMovementRequest $request): RedirectResponse
+    public function transmission(TransmissionWarehouseMovementRequest $request): JsonResponse
     {
         $data = $request->validated();
         $priceLevel = PriceLevel::query()->find($data['price_level_id']);
@@ -126,9 +144,9 @@ class WarehouseMovementController extends Controller
         $this->warehouseManager->receipt($receiptWarehouseMovement);
 //        $this->pricesManager->receipt($receiptWarehouseMovement);
 
+        $warehouseMovements = collect()
+            ->push($issueWarehouseMovement, $receiptWarehouseMovement);
 
-        return redirect()->route('warehouses.show', [
-            'warehouse' => $issueWarehouseMovement->warehouse->id
-        ]);
+        return responder()->success($warehouseMovements)->respond();
     }
 }

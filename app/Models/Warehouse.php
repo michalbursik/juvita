@@ -2,6 +2,8 @@
 
 namespace App\Models;
 
+use App\Transformers\WarehouseTransformer;
+use Flugg\Responder\Contracts\Transformable;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -33,7 +35,7 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
  * @method static \Illuminate\Database\Eloquent\Builder|Warehouse whereUpdatedAt($value)
  * @mixin \Eloquent
  */
-class Warehouse extends Model
+class Warehouse extends Model implements Transformable
 {
     use HasFactory;
 
@@ -41,6 +43,8 @@ class Warehouse extends Model
     const TYPE_TEMPORARY = 'temporary_warehouse';
     const TYPE_INTERNAL = 'internal_warehouse';
     const TYPE_TRASH = 'trash_warehouse';
+
+    protected $fillable = ['name', 'type'];
 
     public function products(): BelongsToMany
     {
@@ -60,5 +64,10 @@ class Warehouse extends Model
     public function activeProducts(): Collection
     {
         return $this->products()->where('products.active', true)->get();
+    }
+
+    public function transformer(): string
+    {
+        return WarehouseTransformer::class;
     }
 }

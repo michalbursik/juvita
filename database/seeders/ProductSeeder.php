@@ -38,6 +38,18 @@ class ProductSeeder extends Seeder
             ['name' => 'Medy', 'image' => '/images/honey.jpg', 'unit' => 'ks', 'order' => 210],
             ['name' => 'Bedýnky - žampiony', 'image' => '/images/small-crate.jpg', 'order' => 220],
             ['name' => 'Bedýnky - hlíva', 'image' => '/images/large-crate.jpg', 'order' => 230],
+            ['name' => 'Čalamáda', 'image' => '/images/calamada.png', 'order' => 240],
+            ['name' => 'Paprika 100g sypaná', 'image' => '/images/pepper-bag.jpg', 'order' => 250],
+            ['name' => 'Banány', 'image' => '/images/banana.jpg', 'order' => 260],
+            ['name' => 'Cukety', 'image' => '/images/zucchini.jpg', 'order' => 270],
+            ['name' => 'Kedblubny', 'image' => '/images/kohlrabi.jpg', 'order' => 280],
+            ['name' => 'Pórek', 'image' => '/images/leek.jpg', 'order' => 290],
+            ['name' => 'Paprika kapie', 'image' => '/images/pepper-kapie.jpg', 'order' => 300],
+            ['name' => 'Ředkvičky', 'image' => '/images/radishes.jpg', 'order' => 310],
+            ['name' => 'Brambory sadba', 'image' => '/images/potatoes-sadba.jfif', 'order' => 320],
+            ['name' => 'Zelí', 'image' => '/images/cabbage.jpg', 'order' => 330],
+            ['name' => 'Bylinky', 'image' => '/images/herbs.jpg', 'order' => 340],
+            ['name' => 'Sazenice jahody', 'image' => '/images/strawberry-plants.jpg', 'order' => 350],
 
         ];
 

@@ -2,7 +2,9 @@
 
 namespace App\Models;
 
+use App\Transformers\WarehouseMovementTransformer;
 use Carbon\Carbon;
+use Flugg\Responder\Contracts\Transformable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -36,7 +38,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @method static \Illuminate\Database\Eloquent\Builder|WarehouseMovement whereWarehouseId($value)
  * @mixin \Eloquent
  */
-class WarehouseMovement extends Model
+class WarehouseMovement extends Model implements Transformable
 {
     const TYPE_ISSUE = 'issue';
     const TYPE_RECEIPT = 'receipt';
@@ -64,5 +66,10 @@ class WarehouseMovement extends Model
     public function getCreatedAtAttribute($created_at): string
     {
         return (new Carbon($created_at))->timezone('Europe/Prague')->format('d. m. Y H:i:s');
+    }
+
+    public function transformer(): string
+    {
+        return WarehouseMovementTransformer::class;
     }
 }

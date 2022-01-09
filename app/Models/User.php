@@ -2,6 +2,8 @@
 
 namespace App\Models;
 
+use App\Transformers\UserTransformer;
+use Flugg\Responder\Contracts\Transformable;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -46,7 +48,7 @@ use Laravel\Sanctum\HasApiTokens;
  * @method static \Illuminate\Database\Eloquent\Builder|User whereWarehouseId($value)
  * @mixin \Eloquent
  */
-class User extends Authenticatable
+class User extends Authenticatable implements Transformable
 {
     use HasApiTokens, HasFactory, Notifiable;
 
@@ -89,5 +91,10 @@ class User extends Authenticatable
     public function warehouseMovements(): HasMany
     {
         return $this->hasMany(WarehouseMovement::class);
+    }
+
+    public function transformer(): string
+    {
+        return UserTransformer::class;
     }
 }
