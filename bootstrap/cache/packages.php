@@ -71,6 +71,13 @@
       0 => 'Laravel\\Vapor\\VaporServiceProvider',
     ),
   ),
+  'laravel/vapor-ui' => 
+  array (
+    'providers' => 
+    array (
+      0 => 'Laravel\\VaporUi\\VaporUiServiceProvider',
+    ),
+  ),
   'nesbot/carbon' => 
   array (
     'providers' => 

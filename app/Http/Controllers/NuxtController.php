@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Log;
@@ -13,12 +14,13 @@ class NuxtController extends Controller
      */
     public function nuxtMethod(Request $request): string
     {
-        if($request->path() === 'sw.js') {
-            return response()->file(resource_path('sw.js'), [
-                'Content-Type' => 'application/javascript',
-                'Cache-Control' => 'public, max-age=3600',
-            ]);
-        }
+//        if($request->path() === 'sw.js') {
+//            return response()->file(resource_path('sw.js'), [
+//                'Content-Type' => 'application/javascript',
+//                'Cache-Control' => 'public, max-age=3600',
+//            ]);
+//        }
+
         if(strpos($request->path(), 'manifest') !== false) {
             $manifestName = array_reverse(explode('/', $request->path()))[0];
             return file_get_contents(asset('/dist/_nuxt/' . $manifestName));
@@ -29,11 +31,29 @@ class NuxtController extends Controller
         }
         if(strpos($request->path(), 'icons') !== false) {
             $iconName = array_reverse(explode('/', $request->path()))[0];
-//            return file_get_contents(asset('/dist/_nuxt/icons/' . $iconName));
-            return response()->redirectTo(asset('/dist/_nuxt/icons/' . $iconName),   302, [
-                'Content-Type' => 'image/png',
-                'Cache-Control' => 'public, max-age=3600',
+            $iconPath = asset('/dist/_nuxt/icons/' . $iconName);
+
+            Log::debug('FILE:', [
+                'path' => $iconPath,
             ]);
+
+//            if (config('vapor.redirect_robots_txt') && $request->path() === 'robots.txt') {
+                return new RedirectResponse($iconPath, 302, [
+                    'Cache-Control' => 'public, max-age=3600',
+                ]);
+//            }
+
+
+//            return response()->file(asset('/dist/_nuxt/icons/' . $iconName), [
+//                'X-Vapor-Base64-Encode' => 'True',
+//                'Content-Type' => 'image/png',
+//                'Cache-Control' => 'public, max-age=3600',
+//            ]);
+
+//            return response()->redirectTo(asset('/dist/_nuxt/icons/' . $iconName),   302, [
+//                'Content-Type' => 'image/png',
+//                'Cache-Control' => 'public, max-age=3600',
+//            ]);
         }
 
         return $this->renderNuxtPage();
