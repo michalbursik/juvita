@@ -4,56 +4,40 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\File;
-use Illuminate\Support\Facades\Log;
 
 class NuxtController extends Controller
 {
+
     /**
      * Handle the SPA request.
      */
     public function nuxtMethod(Request $request): string
     {
-//        if($request->path() === 'sw.js') {
-//            return response()->file(resource_path('sw.js'), [
-//                'Content-Type' => 'application/javascript',
-//                'Cache-Control' => 'public, max-age=3600',
-//            ]);
-//        }
+        // 'dist/' folder is copied by vapor (vapor.yml) to 'public/dist/', that way nuxt
+        // is available on CDN
 
+        // sw.js is copied to 'public/' folder and in config/vapor.php (serve_assets)
+        // needs to be specified, cause it requires same domain.
+
+        // Path corresponds to nuxt.config.js publicPath: process.env.ASSET_URL + "/dist/",
+        // publicPath is path where nuxt is generated (plain copy to 'public/' folder later on)
+
+        // Manifest
+        // When manifest.hash.js differs (APP vs CDN), remove .nuxt and redeploy.
         if(strpos($request->path(), 'manifest') !== false) {
             $manifestName = array_reverse(explode('/', $request->path()))[0];
-            return file_get_contents(asset('/dist/_nuxt/' . $manifestName));
-//            return response()->redirectTo(config('app.asset_url') . '/_nuxt/' . $manifestName,   302, [
-//                'Content-Type' => 'application/json',
-//                'Cache-Control' => 'public, max-age=3600',
-//            ]);
+            return file_get_contents(asset('/dist/' . $manifestName));
         }
+
+        // Icons
+        // /pwa-icons/ folder is specified on nuxt.config.js
         if(strpos($request->path(), 'icons') !== false) {
             $iconName = array_reverse(explode('/', $request->path()))[0];
-            $iconPath = asset('/dist/_nuxt/icons/' . $iconName);
+            $iconPath = asset('/dist/pwa-icons/' . $iconName);
 
-            Log::debug('FILE:', [
-                'path' => $iconPath,
+            return new RedirectResponse($iconPath, 302, [
+                'Cache-Control' => 'public, max-age=3600',
             ]);
-
-//            if (config('vapor.redirect_robots_txt') && $request->path() === 'robots.txt') {
-                return new RedirectResponse($iconPath, 302, [
-                    'Cache-Control' => 'public, max-age=3600',
-                ]);
-//            }
-
-
-//            return response()->file(asset('/dist/_nuxt/icons/' . $iconName), [
-//                'X-Vapor-Base64-Encode' => 'True',
-//                'Content-Type' => 'image/png',
-//                'Cache-Control' => 'public, max-age=3600',
-//            ]);
-
-//            return response()->redirectTo(asset('/dist/_nuxt/icons/' . $iconName),   302, [
-//                'Content-Type' => 'image/png',
-//                'Cache-Control' => 'public, max-age=3600',
-//            ]);
         }
 
         return $this->renderNuxtPage();
@@ -67,6 +51,5 @@ class NuxtController extends Controller
         // In production, this will display the precompiled nuxt page.
         // In development, this will fetch and display the page from the nuxt's dev server.
         return file_get_contents(asset('dist/index.html'));
-//        return (config('app.env') === 'localhost') ? file_get_contents(config('nuxt.page')) : file_get_contents(asset('_nuxt/index.html'));
     }
 }

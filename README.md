@@ -31,7 +31,7 @@ Products->Prices
 
 soft deletes -> what should be possible to delete ? => skryvani produktu (potom i ze skladu)
 
-editace pohybu?
+editace pohybu? - storno
 
 block -amounts on stores 
 (what if someone takes more than you have, 

@@ -12,7 +12,8 @@ environments:
       - "cd resources/nuxt/admin && npm ci && npm run build && rm -rf node_modules"
       - "cp -R resources/nuxt/admin/dist/ public/dist/"
       - "cp resources/nuxt/admin/dist/manifest.*.json resources/"
-      - "cp resources/nuxt/admin/dist/sw.js public/"
+      - "cp public/dist/sw.js public/"
+      - "rm -R resources/nuxt/admin/"
 
   staging:
     domain: staging.zeleninajuvita.cz
@@ -25,4 +26,5 @@ environments:
       - "cd resources/nuxt/admin && npm ci && npm run build && rm -rf node_modules"
       - "cp -R resources/nuxt/admin/dist/ public/dist/"
       - "cp resources/nuxt/admin/dist/manifest.*.json resources/"
-      - "cp resources/nuxt/admin/dist/sw.js public/"
+      - "cp public/dist/sw.js public/"
+      - "rm -R resources/nuxt/admin/"

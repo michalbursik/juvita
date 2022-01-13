@@ -19,9 +19,19 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
+//Route::get('/sw.js', function () {
+//    \Illuminate\Support\Facades\Log::debug('WEB');
+//
+//    return response(file_get_contents(asset('/sw.js')), 200, [
+//        'Content-Type' => 'text/javascript',
+//        'Cache-Control' => 'public, max-age=3600',
+//    ]);
+//});
+
 // API ROUTES
 Route::post('login', [AuthController::class, 'login'])->name('login');
 Route::post('logout', [AuthController::class, 'logout'])->name('logout');
 // --------------
 
-Route::get('/{any?}', [NuxtController::class, 'nuxtMethod'])->where('any', '^(?!(api|nova|telescope)).*$');
+Route::get('/{any?}', [NuxtController::class, 'nuxtMethod'])
+    ->where('any', '^(?!(api|nova|telescope|sw.js)).*$');
