@@ -14,6 +14,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @property string $price
  * @property string $validFrom
  * @property string $validTo
+ * @property string $status
  * @property int $product_id
  * @property int $warehouse_id
  * @property \Illuminate\Support\Carbon|null $created_at
@@ -28,6 +29,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @method static \Illuminate\Database\Eloquent\Builder|PriceLevel whereId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|PriceLevel wherePrice($value)
  * @method static \Illuminate\Database\Eloquent\Builder|PriceLevel whereProductId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|PriceLevel whereStatus($value)
  * @method static \Illuminate\Database\Eloquent\Builder|PriceLevel whereUpdatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|PriceLevel whereValidFrom($value)
  * @method static \Illuminate\Database\Eloquent\Builder|PriceLevel whereValidTo($value)
@@ -38,7 +40,14 @@ class PriceLevel extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['amount', 'price', 'validFrom', 'validTo', 'product_id', 'warehouse_id'];
+    // Warehouse receipt product with price.
+    const STATUS_ACTIVE = 'active';
+    // All amount of product was issued away from warehouse.
+    const STATUS_DISABLED = 'disabled';
+    // When check issues all amount of product from any warehouse.
+    const STATUS_REMOVED = 'removed';
+
+    protected $fillable = ['amount', 'price', 'validFrom', 'validTo', 'status', 'product_id', 'warehouse_id'];
 
     public function product(): BelongsTo
     {

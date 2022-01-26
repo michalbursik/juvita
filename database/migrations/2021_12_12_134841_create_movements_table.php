@@ -1,12 +1,12 @@
 <?php
 
 use App\Models\Warehouse;
-use App\Models\WarehouseMovement;
+use App\Models\Movement;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateWarehouseMovementsTable extends Migration
+class CreateMovementsTable extends Migration
 {
     /**
      * Run the migrations.
@@ -15,16 +15,17 @@ class CreateWarehouseMovementsTable extends Migration
      */
     public function up()
     {
-        Schema::create('warehouse_movements', function (Blueprint $table) {
+        Schema::create('movements', function (Blueprint $table) {
             $table->id();
 
-            $table->string('type')->default(WarehouseMovement::TYPE_ISSUE);
+            $table->string('type')->default(Movement::TYPE_ISSUE);
             $table->float('amount');
             $table->decimal('price')->nullable();
 
             $table->foreignId('product_id')->constrained('products');
             $table->foreignId('user_id')->constrained('users');
-            $table->foreignId('warehouse_id')->constrained('warehouses');
+            $table->foreignId('issue_warehouse_id')->nullable()->constrained('warehouses');
+            $table->foreignId('receipt_warehouse_id')->constrained('warehouses');
 
             $table->timestamps();
         });
@@ -37,6 +38,6 @@ class CreateWarehouseMovementsTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('warehouse_movements');
+        Schema::dropIfExists('movements');
     }
 }

@@ -2,9 +2,10 @@
 
 namespace App\Http\Requests;
 
+use App\Models\Movement;
 use Illuminate\Foundation\Http\FormRequest;
 
-class IssueWarehouseMovementRequest extends FormRequest
+class ReceiptMovementRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -25,23 +26,29 @@ class IssueWarehouseMovementRequest extends FormRequest
     {
         return [
             'amount' => 'required|numeric|min:0.1',
-            'price_level_id' => 'required|integer',
+            'price' => 'nullable|numeric', // receipt => price, issue => id of price level
             'type' => 'required|string',
             'user_id' => 'nullable|integer',
             'product_id' => 'required|integer',
-            'warehouse_id' => 'required|integer',
+            'receipt_warehouse_id' => 'required|integer',
         ];
+    }
+
+    protected function prepareForValidation()
+    {
+        $this->merge([
+           'type' => Movement::TYPE_RECEIPT
+        ]);
     }
 
     public function attributes()
     {
         return [
             'amount' => 'množství',
-            'price_level_id' => 'cena',
             'type' => 'typ',
             'user_id' => 'uživatel',
             'product_id' => 'produkt',
-            'warehouse_id' => 'sklad',
+            'receipt_warehouse_id' => 'sklad',
         ];
     }
 }

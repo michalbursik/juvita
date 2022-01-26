@@ -30,7 +30,7 @@ use Laravel\Sanctum\HasApiTokens;
  * @property-read \Illuminate\Database\Eloquent\Collection|\Laravel\Sanctum\PersonalAccessToken[] $tokens
  * @property-read int|null $tokens_count
  * @property-read \App\Models\Warehouse $warehouse
- * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\WarehouseMovement[] $warehouseMovements
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\Movement[] $movements
  * @property-read int|null $warehouse_movements_count
  * @method static \Database\Factories\UserFactory factory(...$parameters)
  * @method static \Illuminate\Database\Eloquent\Builder|User newModelQuery()
@@ -88,9 +88,9 @@ class User extends Authenticatable implements Transformable
         return $this->belongsTo(Warehouse::class);
     }
 
-    public function warehouseMovements(): HasMany
+    public function movements(): HasMany
     {
-        return $this->hasMany(WarehouseMovement::class);
+        return $this->hasMany(Movement::class);
     }
 
     public function transformer(): string

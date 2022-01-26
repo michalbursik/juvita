@@ -37,7 +37,7 @@ function deleteValue() {
 }
 
 function submitForm() {
-    let form = document.getElementById('warehouse_movements_form');
+    let form = document.getElementById('movements_form');
 
     form.submit();
 }

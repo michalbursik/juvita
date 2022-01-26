@@ -1,10 +1,11 @@
 <?php
 
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\CheckController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\WarehouseController;
-use App\Http\Controllers\WarehouseMovementController;
+use App\Http\Controllers\MovementController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
@@ -29,7 +30,9 @@ Route::middleware('auth')->group(function () {
     });
 
     Route::get('warehouses/trash', [WarehouseController::class, 'trash']);
-    Route::resource('warehouses', WarehouseController::class, ['only' => 'show']);
+    Route::resource('warehouses/checks', CheckController::class);
+    Route::get('warehouses/movements', [MovementController::class, 'index'])->name('movements.index');
+
 
     Route::get('warehouses/{warehouse}/products/{product}', [WarehouseController::class, 'showProduct'])
         ->name('warehouses.products.show');
@@ -40,22 +43,22 @@ Route::middleware('auth')->group(function () {
         ->name('warehouses.products.issue');
     Route::get('warehouses/{warehouse}/products/{product}/transmission', [WarehouseController::class, 'transmission'])
         ->name('warehouses.products.transmission');
-    Route::post('warehouse_movements/transmission', [WarehouseMovementController::class, 'transmission'])
-        ->name('warehouse_movements.transmission');
 
 
-    Route::get('warehouse_movements', [WarehouseMovementController::class, 'index'])->name('warehouse_movements.index');
+    Route::post('warehouses/movements/transmission', [MovementController::class, 'transmission'])
+        ->name('movements.transmission');
 
-    Route::post('warehouse_movements/issue', [WarehouseMovementController::class, 'issue'])->name('warehouse_movements.issue');
-    Route::post('warehouse_movements/receipt', [WarehouseMovementController::class, 'receipt'])->name('warehouse_movements.receipt');
+    Route::post('warehouses/movements/trash', [MovementController::class, 'trash'])->name('movements.trash');
+    Route::post('warehouses/movements/receipt', [MovementController::class, 'receipt'])->name('movements.receipt');
 
+    Route::resource('warehouses', WarehouseController::class, ['only' => 'show']);
 
     Route::resource('users', UserController::class);
 
     Route::middleware('admin')->group(function () {
         Route::resource('warehouses', WarehouseController::class, ['except' => 'show']);
 
-        Route::resource('warehouse_movements', WarehouseMovementController::class, ['except' => 'store']);
+        Route::resource('movements', MovementController::class, ['except' => 'store']);
 
         Route::get('products/nextOrder', [ProductController::class, 'nextOrder'])->name('products.nextOrder');
         Route::resource('products', ProductController::class);

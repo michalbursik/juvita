@@ -4,6 +4,7 @@ namespace App\Transformers;
 
 use App\Models\Product;
 use Flugg\Responder\Transformers\Transformer;
+use Illuminate\Support\Facades\Log;
 
 class ProductTransformer extends Transformer
 {
@@ -14,7 +15,7 @@ class ProductTransformer extends Transformer
      */
     protected $relations = [
         'priceLevels' => PriceLevelTransformer::class,
-        'warehouseMovements' => WarehouseMovementTransformer::class,
+        'movements' => MovementTransformer::class,
     ];
 
     /**
@@ -40,11 +41,13 @@ class ProductTransformer extends Transformer
             'order' => $product->order,
             'unit' => $product->unit,
             'image' => $product->image,
+            'amount' => null,
+            'price' => null,
         ];
 
-        if ($product->pivot) {
-            $data['amount'] = $product->pivot->amount;
-            $data['price'] = $product->pivot->price;
+        if ($product->product_warehouse) {
+            $data['amount'] = $product->product_warehouse->amount;
+            $data['price'] = $product->product_warehouse->price;
         }
 
         return $data;

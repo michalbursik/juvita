@@ -9,6 +9,7 @@ use App\Models\Product;
 use App\Models\User;
 use App\Models\Warehouse;
 use App\Transformers\WarehouseTransformer;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Auth;
 
 class WarehouseController extends Controller
@@ -40,9 +41,13 @@ class WarehouseController extends Controller
         }
 
         return responder()->success($warehouse)
-            ->with(['warehouseMovements', 'products' => function ($query) {
-                $query->where('products.active', true);
-            }, 'products.priceLevels'])
+            ->with([
+                'movements',
+                'products' => function ($query) {
+                    $query->where('products.active', true);
+                },
+                'products.priceLevels'
+            ])
             ->respond();
     }
 
@@ -106,34 +111,37 @@ class WarehouseController extends Controller
         //
     }
 
-    public function trash(): \Illuminate\Http\JsonResponse
+    /**
+     * @return JsonResponse
+     */
+    public function trash(): JsonResponse
     {
         $warehouse = Warehouse::query()
             ->where('type', Warehouse::TYPE_TRASH)
             ->first();
 
         return responder()->success($warehouse)
-            ->with(['warehouseMovements', 'products' => function ($query) {
+            ->with(['movements', 'products' => function ($query) {
                 $query->where('products.active', true);
             }])
             ->respond();
     }
 
-    public function showProduct(Warehouse $warehouse, Product $product)
-    {
-        $user = auth()->user();
-        if ($user->role === User::ROLE_EMPLOYEE && $user->warehouse_id !== $warehouse->id) {
-            return redirect()->route('warehouses.show', [
-                'warehouse' => $user->warehouse_id
-            ]);
-        }
-
-        $currentWarehouse = $warehouse;
-        $warehouseMovements = $warehouse
-            ->warehouseMovements()
-            ->where('product_id', $product->id)
-            ->get();
-
-        return view('warehouses.products.show', compact('currentWarehouse', 'warehouseMovements', 'product'));
-    }
+//    public function showProduct(Warehouse $warehouse, Product $product)
+//    {
+//        $user = auth()->user();
+//        if ($user->role === User::ROLE_EMPLOYEE && $user->warehouse_id !== $warehouse->id) {
+//            return redirect()->route('warehouses.show', [
+//                'warehouse' => $user->warehouse_id
+//            ]);
+//        }
+//
+//        $currentWarehouse = $warehouse;
+//        $movements = $warehouse
+//            ->movements()
+//            ->where('product_id', $product->id)
+//            ->get();
+//
+//        return view('warehouses.products.show', compact('currentWarehouse', 'movements', 'product'));
+//    }
 }

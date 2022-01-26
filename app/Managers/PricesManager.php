@@ -8,7 +8,7 @@ use App\Models\PriceLevel;
 use App\Models\Product;
 use App\Models\User;
 use App\Models\Warehouse;
-use App\Models\WarehouseMovement;
+use App\Models\Movement;
 use App\Repositories\PriceLevelRepository;
 use Carbon\Carbon;
 use Carbon\CarbonImmutable;
@@ -25,9 +25,9 @@ class PricesManager
         $this->priceLevelRepository = new PriceLevelRepository();
     }
 
-    public function issue(WarehouseMovement $warehouseMovement, PriceLevel $priceLevel): PriceLevel
+    public function issue(Movement $movement, PriceLevel $priceLevel): PriceLevel
     {
-        $product = $this->priceLevelRepository->update($priceLevel, $warehouseMovement->amount * -1);
+        $product = $this->priceLevelRepository->update($priceLevel, $movement->amount * -1);
 
         if ($product->amount <= 0) {
             $this->priceLevelRepository->delete($priceLevel);
@@ -36,7 +36,7 @@ class PricesManager
         return $priceLevel;
     }
 
-    public function receipt(WarehouseMovement $warehouseMovement): PriceLevel
+    public function receipt(Movement $movement): PriceLevel
     {
         $validFrom = now()->toImmutable();
         $validTo = $this->getValidTo($validFrom);
@@ -44,10 +44,10 @@ class PricesManager
         return $this->priceLevelRepository->updateOrCreate([
             'validFrom' => $validFrom,
             'validTo' => $validTo,
-            'amount' => $warehouseMovement->amount,
-            'price' => $warehouseMovement->price,
-            'product_id' => $warehouseMovement->product->id,
-            'warehouse_id' => $warehouseMovement->warehouse->id,
+            'amount' => $movement->amount,
+            'price' => $movement->price,
+            'product_id' => $movement->product->id,
+            'warehouse_id' => $movement->receiptWarehouse->id,
         ]);
     }
 
@@ -63,5 +63,14 @@ class PricesManager
             $validTo = $validFrom->endOfWeek();
         }
         return $validTo;
+    }
+
+    public function transmission(Movement $movement, PriceLevel $priceLevel)
+    {
+        // Issue from issue warehouse
+        $this->issue($movement, $priceLevel);
+
+        // Receipt on receipt warehouse
+        $this->receipt($movement);
     }
 }

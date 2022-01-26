@@ -14,7 +14,7 @@ class WarehouseTransformer extends Transformer
      */
     protected $relations = [
         'products' => ProductTransformer::class,
-        'warehouseMovements' => WarehouseMovementTransformer::class,
+        'movements' => MovementTransformer::class,
     ];
 
     /**

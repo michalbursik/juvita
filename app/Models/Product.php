@@ -14,31 +14,33 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  *
  * @property int $id
  * @property string $name
+ * @property string|null $origin
+ * @property int $active
+ * @property int $order
  * @property string|null $image
  * @property string $unit
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\PriceLevel[] $priceLevels
+ * @property-read int|null $price_levels_count
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\Movement[] $movements
+ * @property-read int|null $warehouse_movements_count
  * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\Warehouse[] $warehouses
  * @property-read int|null $warehouses_count
  * @method static \Database\Factories\ProductFactory factory(...$parameters)
  * @method static \Illuminate\Database\Eloquent\Builder|Product newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|Product newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|Product query()
+ * @method static \Illuminate\Database\Eloquent\Builder|Product whereActive($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Product whereCreatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Product whereId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Product whereImage($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Product whereName($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Product whereOrder($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Product whereOrigin($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Product whereUnit($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Product whereUpdatedAt($value)
  * @mixin \Eloquent
- * @property string|null $origin
- * @property int $active
- * @property int $order
- * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\PriceLevel[] $priceLevels
- * @property-read int|null $price_levels_count
- * @method static \Illuminate\Database\Eloquent\Builder|Product whereActive($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Product whereOrder($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Product whereOrigin($value)
  */
 class Product extends Model implements Transformable
 {
@@ -59,9 +61,9 @@ class Product extends Model implements Transformable
         return $this->hasMany(PriceLevel::class);
     }
 
-    public function warehouseMovements(): HasMany
+    public function movements(): HasMany
     {
-        return $this->hasMany(WarehouseMovement::class);
+        return $this->hasMany(Movement::class);
     }
 
     public static function getListOfAvailableUnits($separator = ','): string

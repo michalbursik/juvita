@@ -29,7 +29,12 @@ class ProductController extends Controller
 
     public function show(Product $product): JsonResponse
     {
-        return responder()->success($product)->with(['warehouseMovements', 'priceLevels'])->respond();
+        return responder()->success($product)
+            ->with([
+                'movements',
+                'priceLevels'
+            ])
+            ->respond();
     }
 
     public function store(StoreProductRequest $request): JsonResponse
