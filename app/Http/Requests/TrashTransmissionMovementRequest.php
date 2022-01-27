@@ -5,7 +5,7 @@ namespace App\Http\Requests;
 use App\Models\Movement;
 use Illuminate\Foundation\Http\FormRequest;
 
-class IssueMovementRequest extends FormRequest
+class TrashTransmissionMovementRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -37,7 +37,7 @@ class IssueMovementRequest extends FormRequest
     protected function prepareForValidation()
     {
         $this->merge([
-            'type' => Movement::TYPE_ISSUE
+            'type' => Movement::TYPE_TRANSMISSION
         ]);
     }
 

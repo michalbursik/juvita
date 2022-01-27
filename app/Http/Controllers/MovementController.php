@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\IssueMovementRequest;
+use App\Http\Requests\TrashTransmissionMovementRequest;
 use App\Http\Requests\TransmissionMovementRequest;
 use App\Managers\PricesManager;
 use App\Managers\WarehouseManager;
@@ -89,7 +89,7 @@ class MovementController extends Controller
         return responder()->success($movements)->respond();
     }
 
-    public function trash(IssueMovementRequest $request): JsonResponse
+    public function trash(TrashTransmissionMovementRequest $request): JsonResponse
     {
         $data = $request->validated();
         $priceLevel = PriceLevel::query()->find($data['price_level_id']);
@@ -103,13 +103,10 @@ class MovementController extends Controller
         $data['receipt_warehouse_id'] = $warehouse->id;
 
         $movement = $this->repository->store($data);
-        $this->warehouseManager->issue($movement);
+        $this->warehouseManager->transmission($movement);
 
         // Manage price levels
-        $this->pricesManager->issue($movement, $priceLevel);
-
-//        On trash warehouse we don't want to manager priceLevels
-//        $this->pricesManager->receipt($movementTrash);
+        $this->pricesManager->transmission($movement, $priceLevel);
 
         return responder()->success($movement)->respond();
     }
