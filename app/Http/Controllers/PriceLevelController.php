@@ -5,82 +5,26 @@ namespace App\Http\Controllers;
 use App\Http\Requests\StorePriceLevelRequest;
 use App\Http\Requests\UpdatePriceLevelRequest;
 use App\Models\PriceLevel;
+use Illuminate\Http\Request;
 
 class PriceLevelController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function index()
+    public function index(Request $request)
     {
-        //
-    }
+        $query = PriceLevel::query();
 
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-        //
-    }
+        $query->when($request->input('warehouse_id'), function ($query) use ($request) {
+                $query->where('warehouse_id', $request->input('warehouse_id'));
+        });
 
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \App\Http\Requests\StorePriceLevelRequest  $request
-     * @return \Illuminate\Http\Response
-     */
-    public function store(StorePriceLevelRequest $request)
-    {
-        //
-    }
+        $query->when($request->input('product_id'), function ($query) use ($request) {
+            $query->where('product_id', $request->input('product_id'));
+        });
 
-    /**
-     * Display the specified resource.
-     *
-     * @param  \App\Models\PriceLevel  $priceLevel
-     * @return \Illuminate\Http\Response
-     */
-    public function show(PriceLevel $priceLevel)
-    {
-        //
-    }
+        $priceLevels = $query
+            ->orderByDesc('created_at')
+            ->paginate(null, ['*'], 'currentPage');
 
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  \App\Models\PriceLevel  $priceLevel
-     * @return \Illuminate\Http\Response
-     */
-    public function edit(PriceLevel $priceLevel)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \App\Http\Requests\UpdatePriceLevelRequest  $request
-     * @param  \App\Models\PriceLevel  $priceLevel
-     * @return \Illuminate\Http\Response
-     */
-    public function update(UpdatePriceLevelRequest $request, PriceLevel $priceLevel)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  \App\Models\PriceLevel  $priceLevel
-     * @return \Illuminate\Http\Response
-     */
-    public function destroy(PriceLevel $priceLevel)
-    {
-        //
+        return responder()->success($priceLevels)->respond();
     }
 }

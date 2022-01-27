@@ -7,6 +7,7 @@ use App\Http\Requests\TransmissionMovementRequest;
 use App\Managers\PricesManager;
 use App\Managers\WarehouseManager;
 use App\Models\PriceLevel;
+use App\Models\User;
 use App\Models\Warehouse;
 use App\Repositories\MovementRepository;
 use App\Http\Requests\ReceiptMovementRequest;
@@ -15,6 +16,7 @@ use App\Models\Movement;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 
 class MovementController extends Controller
@@ -41,12 +43,25 @@ class MovementController extends Controller
     {
         $query = Movement::query();
 
-        $query->when($request->input('product'), function ($query) use ($request) {
-            $query->where('product_id', $request->input('product'));
+        $query->when($request->input('warehouse_id'), function ($query) use ($request) {
+            $query->where(function ($query) use ($request) {
+                $query->where('issue_warehouse_id', $request->input('warehouse_id'))
+                    ->orWhere('receipt_warehouse_id', $request->input('warehouse_id'));
+            });
         });
 
-        $query->when($request->input('user'), function ($query) use ($request) {
-            $query->where('user_id', $request->input('user'));
+        $query->when($request->input('product_id'), function ($query) use ($request) {
+            $query->where('product_id', $request->input('product_id'));
+        });
+
+        $user = $request->input('user');
+
+        if (Auth::user()->role === User::ROLE_EMPLOYEE) {
+            $user = Auth::id();
+        }
+
+        $query->when($user, function ($query) use ($user) {
+            $query->where('user_id', $user);
         });
 
         $query->when($request->input('type'), function ($query) use ($request) {

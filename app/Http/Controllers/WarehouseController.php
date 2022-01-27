@@ -40,6 +40,8 @@ class WarehouseController extends Controller
             ]);
         }
 
+        $product_id = request()->get('product_id');
+
         return responder()->success($warehouse)
             ->with([
                 'movements',

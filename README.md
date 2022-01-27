@@ -30,18 +30,10 @@ Products->Prices
 - price
 
 
-seznam vsech pohybu - s filtraci i pro zamestnance
-  (zamestnanec bude mit pevny filtr pro sebe)
-  vyhledavani? - v cem ?
-
-
-ukazat v prevodce max amount (could be per price)
 block - amounts
 editace pohybu? - storno
 
 podklad textu
-
-lepe predvybran sklad pro zamestnance
 
 u docasnych skladu zobrazit mnozstvi na ten den misto celkoveho mnozstvi (u kazdeho produktu)
 loadings + disabled buttons

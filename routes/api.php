@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CheckController;
+use App\Http\Controllers\PriceLevelController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\WarehouseController;
@@ -51,17 +52,20 @@ Route::middleware('auth')->group(function () {
     Route::post('warehouses/movements/trash', [MovementController::class, 'trash'])->name('movements.trash');
     Route::post('warehouses/movements/receipt', [MovementController::class, 'receipt'])->name('movements.receipt');
 
-    Route::resource('warehouses', WarehouseController::class, ['only' => 'show']);
+    Route::resource('warehouses', WarehouseController::class, ['only' => ['show', 'index']]);
 
     Route::resource('users', UserController::class);
 
-    Route::middleware('admin')->group(function () {
-        Route::resource('warehouses', WarehouseController::class, ['except' => 'show']);
+    Route::resource('priceLevels', PriceLevelController::class, ['only' => 'index']);
+    Route::resource('products', ProductController::class, ['only' => ['index', 'show']]);
+    Route::resource('movements', MovementController::class, ['only' => 'index']);
 
-        Route::resource('movements', MovementController::class, ['except' => 'store']);
+    Route::middleware('admin')->group(function () {
+        Route::resource('warehouses', WarehouseController::class, ['except' => ['show', 'index']]);
+
+        Route::resource('movements', MovementController::class, ['except' => ['store', 'index']]);
 
         Route::get('products/nextOrder', [ProductController::class, 'nextOrder'])->name('products.nextOrder');
-        Route::resource('products', ProductController::class);
+        Route::resource('products', ProductController::class, ['except' => ['index', 'show']]);
     });
 });
-
