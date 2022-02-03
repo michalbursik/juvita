@@ -22,8 +22,7 @@ class CreateCheckProductTable extends Migration
 
             $table->foreignId('check_id')->constrained('checks');
             $table->foreignId('product_id')->constrained('products');
-            $table->foreignId('price_level_id')
-                ->constrained('price_levels');
+            $table->foreignId('price_level_id')->constrained('price_levels');
 
             $table->timestamps();
         });
