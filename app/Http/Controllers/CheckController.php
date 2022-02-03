@@ -74,8 +74,6 @@ class CheckController extends Controller
         $check = $this->repository->store($data);
 
         foreach ($data['products'] as $productData) {
-            Log::debug('PD', [$productData]);
-
             $product = Product::query()->find($productData['product_id']);
 
             $priceLevel = PriceLevel::query()->find($productData['price_level_id']);

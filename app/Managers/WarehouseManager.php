@@ -28,11 +28,6 @@ class WarehouseManager
             ->where('price', $movement->price)
             ->first();
 
-        Log::debug('issue', [
-            'wp' => $warehouseProduct,
-            'pl' => $priceLevel,
-        ]);
-
         if ($priceLevel->amount < $movement->amount) {
             throw new InsufficientAmountException();
         }

@@ -116,7 +116,7 @@ class MovementController extends Controller
 
         $movements = $query->get();
 
-        $movementAmounts = $this->calculateMovements($movements);
+        $movementAmounts = $this->calculateMovements($movements, $warehouse_id);
 
         return responder()->success($movementAmounts)->respond();
     }
@@ -182,7 +182,7 @@ class MovementController extends Controller
         return responder()->success($movement)->respond();
     }
 
-    private function calculateMovements(Collection $movements): array
+    private function calculateMovements(Collection $movements, $warehouse_id): array
     {
         $result = [];
 
@@ -196,12 +196,12 @@ class MovementController extends Controller
             ];
         }
 
-        $movements->each(function (Movement $movement) use (&$result) {
-            if ($movement->receipt_warehouse_id) {
+        $movements->each(function (Movement $movement) use (&$result, $warehouse_id) {
+            if ($movement->receipt_warehouse_id === (int) $warehouse_id) {
                 $result[$movement->product_id]['amount'] += $movement->amount;
             }
 
-            if ($movement->type === Movement::TYPE_CHECK && $movement->issue_warehouse_id) {
+            if ($movement->issue_warehouse_id === (int) $warehouse_id) {
                 $result[$movement->product_id]['amount'] -= $movement->amount;
             }
         });
