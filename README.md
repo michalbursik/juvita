@@ -29,18 +29,19 @@ Products->Prices
 - validTo
 - price
 
+filter - potreba videt odpad (napr. za minuly tyden)
+pohyby omezit na 14 dnu vsude, datepicker pro adminy 
+(no need as there is pagination)
+(in detail reduced to 7 days)
 
-block - amounts
+
 editace pohybu? - storno
-
 podklad textu
 
-u docasnych skladu zobrazit mnozstvi na ten den misto celkoveho mnozstvi (u kazdeho produktu)
 loadings + disabled buttons
 
 
 AZ SE VYJASNI CENA:
 obrazovka s cenama a zemi puvodu pro employees
 zeme puvodu bude pokazde jina pri prijemce (pri zadavani - unikatni kombinace produkt, cena, puvod)
-KLIK na cenu => smazat (set 0)
 handlovani zmen cen v terenu (skolka, ...) sekce slevy na produkty

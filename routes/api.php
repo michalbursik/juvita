@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CheckController;
+use App\Http\Controllers\OverviewController;
 use App\Http\Controllers\PriceLevelController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\UserController;
@@ -31,7 +32,6 @@ Route::middleware('auth')->group(function () {
     });
 
     Route::get('warehouses/trash', [WarehouseController::class, 'trash']);
-    Route::resource('warehouses/checks', CheckController::class);
     Route::get('warehouses/movements', [MovementController::class, 'index'])->name('movements.index');
 
 
@@ -52,15 +52,18 @@ Route::middleware('auth')->group(function () {
     Route::post('warehouses/movements/trash', [MovementController::class, 'trash'])->name('movements.trash');
     Route::post('warehouses/movements/receipt', [MovementController::class, 'receipt'])->name('movements.receipt');
 
-    Route::resource('warehouses', WarehouseController::class, ['only' => ['show', 'index']]);
-
     Route::resource('users', UserController::class);
 
     Route::resource('priceLevels', PriceLevelController::class, ['only' => 'index']);
-    Route::resource('products', ProductController::class, ['only' => ['index', 'show']]);
+    Route::get('movements/fetchAllAmounts', [MovementController::class, 'fetchAllAmounts'])->name('movements.fetchAllAmounts');
     Route::resource('movements', MovementController::class, ['only' => 'index']);
 
     Route::middleware('admin')->group(function () {
+        Route::get('/overviews', [OverviewController::class, 'index'])->name('overview.index');
+
+        Route::get('warehouses/checks/products', [CheckController::class, 'fetchAllProducts'])->name('checks.fetchAllProducts');
+
+        Route::resource('warehouses/checks', CheckController::class);
         Route::resource('warehouses', WarehouseController::class, ['except' => ['show', 'index']]);
 
         Route::resource('movements', MovementController::class, ['except' => ['store', 'index']]);
@@ -68,4 +71,7 @@ Route::middleware('auth')->group(function () {
         Route::get('products/nextOrder', [ProductController::class, 'nextOrder'])->name('products.nextOrder');
         Route::resource('products', ProductController::class, ['except' => ['index', 'show']]);
     });
+
+    Route::resource('warehouses', WarehouseController::class, ['only' => ['show', 'index']]);
+    Route::resource('products', ProductController::class, ['only' => ['index', 'show']]);
 });

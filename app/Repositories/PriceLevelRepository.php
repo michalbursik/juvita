@@ -14,6 +14,7 @@ class PriceLevelRepository
     public function updateOrCreate(array $data): PriceLevel
     {
         $priceLevel = PriceLevel::query()
+        ->where('warehouse_id', $data['warehouse_id'])
         ->where('product_id', $data['product_id'])
         ->where('price', $data['price'])
         ->first();

@@ -64,6 +64,11 @@ class Warehouse extends Model implements Transformable
         return $this->hasOne(User::class);
     }
 
+    public function priceLevels(): HasMany
+    {
+        return $this->hasMany(PriceLevel::class);
+    }
+
     public function issueMovements(): HasMany
     {
         return $this->hasMany(Movement::class, 'issue_warehouse_id');

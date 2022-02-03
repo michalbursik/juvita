@@ -42,7 +42,7 @@ class ProductSeeder extends Seeder
             ['name' => 'Paprika 100g sypaná', 'image' => '/images/pepper-bag.jpg', 'order' => 250],
             ['name' => 'Banány', 'image' => '/images/banana.jpg', 'order' => 260],
             ['name' => 'Cukety', 'image' => '/images/zucchini.jpg', 'order' => 270],
-            ['name' => 'Kedblubny', 'image' => '/images/kohlrabi.jpg', 'order' => 280],
+            ['name' => 'Kedlubny', 'image' => '/images/kohlrabi.jpg', 'order' => 280],
             ['name' => 'Pórek', 'image' => '/images/leek.jpg', 'order' => 290],
             ['name' => 'Paprika kapie', 'image' => '/images/pepper-kapie.jpg', 'order' => 300],
             ['name' => 'Ředkvičky', 'image' => '/images/radishes.jpg', 'order' => 310],

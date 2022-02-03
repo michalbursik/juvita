@@ -9,6 +9,7 @@ use App\Models\Warehouse;
 use App\Repositories\ProductRepository;
 use Flugg\Responder\Serializers\NoopSerializer;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
 
 class ProductController extends Controller
 {
@@ -20,9 +21,19 @@ class ProductController extends Controller
         $this->repository = $repository;
     }
 
-    public function index(): JsonResponse
+    public function index(Request $request): JsonResponse
     {
-        $products = Product::all();
+        $query = Product::query();
+
+        $warehouse_id = $request->input('priceLevels.warehouse_id');
+
+        $query->when($warehouse_id, function ($query) use ($warehouse_id) {
+            $query->where('priceLevels.warehouse_id', $warehouse_id);
+        });
+
+        $products = $query
+            ->orderBy($request->input('orderBy', 'created_at'))
+            ->paginate($request->input('perPage'), ['*'], 'currentPage');
 
         return responder()->success($products)->respond();
     }
@@ -58,11 +69,6 @@ class ProductController extends Controller
         $this->repository->update($product, $request->validated());
 
         return responder()->success($product)->respond();
-    }
-
-    public function destroy(Product $product)
-    {
-        //
     }
 
     public function nextOrder(): JsonResponse

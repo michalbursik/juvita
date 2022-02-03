@@ -16,4 +16,9 @@ class MovementRepository
 
         return $movement;
     }
+
+    public function destroy(Movement $movement)
+    {
+        $movement->delete();
+    }
 }

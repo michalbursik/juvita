@@ -18,11 +18,11 @@ class CreateCheckProductTable extends Migration
 
             $table->float('amount_before');
             $table->float('amount_after');
+            $table->decimal('price')->nullable();
 
             $table->foreignId('check_id')->constrained('checks');
             $table->foreignId('product_id')->constrained('products');
             $table->foreignId('price_level_id')
-                ->nullable()
                 ->constrained('price_levels');
 
             $table->timestamps();

@@ -2,6 +2,8 @@
 
 namespace App\Models;
 
+use App\Transformers\CheckTransformer;
+use Flugg\Responder\Contracts\Transformable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -32,7 +34,7 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
  * @method static \Illuminate\Database\Eloquent\Builder|Check whereWarehouseId($value)
  * @mixin \Eloquent
  */
-class Check extends Model
+class Check extends Model implements Transformable
 {
     use HasFactory;
 
@@ -43,7 +45,7 @@ class Check extends Model
         return $this->belongsToMany(Product::class)
             ->as('product_check')
             ->using(CheckProduct::class)
-            ->withPivot(['amount_before', 'amount_after', 'price_level_id']);
+            ->withPivot(['amount_before', 'amount_after', 'price_level_id', 'price']);
     }
 
     public function user(): BelongsTo
@@ -54,5 +56,10 @@ class Check extends Model
     public function warehouse(): BelongsTo
     {
         return $this->belongsTo(Warehouse::class);
+    }
+
+    public function transformer(): string
+    {
+        return CheckTransformer::class;
     }
 }

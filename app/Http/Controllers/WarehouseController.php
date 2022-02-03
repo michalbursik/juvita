@@ -21,16 +21,6 @@ class WarehouseController extends Controller
         return responder()->success($warehouses)->respond();
     }
 
-    public function create()
-    {
-        //
-    }
-
-    public function store(StoreWarehouseRequest $request)
-    {
-        //
-    }
-
     public function show(Warehouse $warehouse)
     {
         $user = auth()->user();
@@ -40,77 +30,19 @@ class WarehouseController extends Controller
             ]);
         }
 
-        $product_id = request()->get('product_id');
-
         return responder()->success($warehouse)
             ->with([
-                'movements',
-                'products' => function ($query) {
-                    $query->where('products.active', true);
+                'movements' => function ($query) {
+                    $query->where('movements.created_at', '>=', now()->subDays(7))
+                    ->orderByDesc('created_at');
                 },
-                'products.priceLevels'
+                'products.priceLevels',
+                'products' => function ($query) {
+                    $query->where('products.active', true)
+                            ->orderBy('order');
+                },
             ])
             ->respond();
-    }
-
-//    public function receipt(Warehouse $warehouse, Product $product)
-//    {
-//        $user = Auth::user();
-//
-//        $product = $warehouse->products()->where('product_id', $product->id)->first();
-//
-//        return view('warehouses.products.receipt', compact('warehouse', 'product', 'user'));
-//    }
-
-//    public function issue(Warehouse $warehouse, Product $product)
-//    {
-//        $user = Auth::user();
-//
-//        $priceLevels = PriceLevel::query()
-//            ->where('product_id', $product->id)
-//            ->get();
-//
-//        return view('warehouses.products.issue', compact('warehouse', 'product', 'user', 'priceLevels'));
-//    }
-
-//    public function transmission(Warehouse $warehouse, Product $product)
-//    {
-//        $warehouseFrom = $warehouse;
-//        $user = Auth::user();
-//
-//        $query = Warehouse::query();
-//
-//        if (Auth::user()->role === User::ROLE_EMPLOYEE) {
-//            $query->whereIn('type', [Warehouse::TYPE_MAIN, Warehouse::TYPE_TEMPORARY]);
-//        }
-//
-//        $warehouses = $query->get();
-//
-//        $priceLevels = PriceLevel::query()
-////            ->where('validTo', '>=', now()->toDateTime())
-//            ->where('product_id', $product->id)
-//            ->get();
-//
-//        $product = $warehouse->products()->where('product_id', $product->id)->first();
-//
-//        return view('warehouses.products.transmission',
-//            compact('warehouseFrom', 'product', 'user', 'warehouses', 'priceLevels')
-//        );
-//    }
-
-    public function edit(Warehouse $warehouse)
-    {
-        //
-    }
-
-    public function update(UpdateWarehouseRequest $request, Warehouse $warehouse)
-    {
-        //
-    }
-
-    public function destroy(Warehouse $warehouse)
-    {
-        //
     }
 
     /**
@@ -128,22 +60,4 @@ class WarehouseController extends Controller
             }])
             ->respond();
     }
-
-//    public function showProduct(Warehouse $warehouse, Product $product)
-//    {
-//        $user = auth()->user();
-//        if ($user->role === User::ROLE_EMPLOYEE && $user->warehouse_id !== $warehouse->id) {
-//            return redirect()->route('warehouses.show', [
-//                'warehouse' => $user->warehouse_id
-//            ]);
-//        }
-//
-//        $currentWarehouse = $warehouse;
-//        $movements = $warehouse
-//            ->movements()
-//            ->where('product_id', $product->id)
-//            ->get();
-//
-//        return view('warehouses.products.show', compact('currentWarehouse', 'movements', 'product'));
-//    }
 }

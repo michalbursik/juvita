@@ -25,7 +25,7 @@ class CreateMovementsTable extends Migration
             $table->foreignId('product_id')->constrained('products');
             $table->foreignId('user_id')->constrained('users');
             $table->foreignId('issue_warehouse_id')->nullable()->constrained('warehouses');
-            $table->foreignId('receipt_warehouse_id')->constrained('warehouses');
+            $table->foreignId('receipt_warehouse_id')->nullable()->constrained('warehouses');
 
             $table->timestamps();
         });

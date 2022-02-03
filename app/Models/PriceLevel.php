@@ -2,6 +2,8 @@
 
 namespace App\Models;
 
+use App\Transformers\PriceLevelTransformer;
+use Flugg\Responder\Contracts\Transformable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -36,7 +38,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @method static \Illuminate\Database\Eloquent\Builder|PriceLevel whereWarehouseId($value)
  * @mixin \Eloquent
  */
-class PriceLevel extends Model
+class PriceLevel extends Model implements Transformable
 {
     use HasFactory;
 
@@ -52,5 +54,10 @@ class PriceLevel extends Model
     public function product(): BelongsTo
     {
         return $this->belongsTo(Product::class);
+    }
+
+    public function transformer(): string
+    {
+        return PriceLevelTransformer::class;
     }
 }

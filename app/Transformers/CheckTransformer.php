@@ -13,8 +13,7 @@ class CheckTransformer extends Transformer
      * @var string[]
      */
     protected $relations = [
-        'user' => UserTransformer::class,
-        'warehouse' => WarehouseTransformer::class
+
     ];
 
     /**
@@ -23,7 +22,9 @@ class CheckTransformer extends Transformer
      * @var array
      */
     protected $load = [
-        'products' => ProductTransformer::class
+        'products' => ProductTransformer::class,
+        'warehouse' => WarehouseTransformer::class,
+        'user' => UserTransformer::class,
     ];
 
     /**
@@ -36,6 +37,7 @@ class CheckTransformer extends Transformer
     {
         return [
             'id' => (int) $check->id,
+            'created_at' => $check->created_at->format('d. m. Y H:i:s'),
         ];
     }
 }

@@ -3,11 +3,15 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\StoreCheckRequest;
+use App\Managers\PricesManager;
+use App\Managers\WarehouseManager;
 use App\Models\Check;
 use App\Models\Movement;
+use App\Models\PriceLevel;
 use App\Models\Product;
 use App\Models\Warehouse;
 use App\Repositories\CheckRepository;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
@@ -15,10 +19,16 @@ use Illuminate\Support\Facades\Log;
 class CheckController extends Controller
 {
     private CheckRepository $repository;
+    private WarehouseManager $warehouseManager;
+    private PricesManager $pricesManager;
 
-    public function __construct(CheckRepository $repository)
+    public function __construct(CheckRepository $repository,
+                                WarehouseManager $warehouseManager,
+                                PricesManager $pricesManager)
     {
         $this->repository = $repository;
+        $this->warehouseManager = $warehouseManager;
+        $this->pricesManager = $pricesManager;
     }
 
     public function index(Request $request): JsonResponse
@@ -32,6 +42,30 @@ class CheckController extends Controller
         return responder()->success($checks)->respond();
     }
 
+    public function fetchAllProducts(Request $request): JsonResponse
+    {
+        $warehouse_id = $request->input('warehouse_id');
+
+        $warehouse = Warehouse::find($warehouse_id);
+
+        $query = $warehouse
+            ->products()
+            ->where('product_warehouse.amount', '>', 0);
+
+        $products = $query
+            ->orderByDesc('order')
+            ->get();
+
+        return responder()
+            ->success($products)
+            ->with([
+                'priceLevels' => function ($query) use ($warehouse_id) {
+                    $query->where('warehouse_id', $warehouse_id);
+                }
+            ])
+            ->respond();
+    }
+
     public function store(StoreCheckRequest $request): JsonResponse
     {
         $data = $request->validated();
@@ -39,20 +73,20 @@ class CheckController extends Controller
 
         $check = $this->repository->store($data);
 
-        $warehouse = Warehouse::query()->find($data['warehouse_id']);
-
         foreach ($data['products'] as $productData) {
-            $product = Product::query()->find($productData['id']);
+            Log::debug('PD', [$productData]);
 
-            $oldProduct = $warehouse
-                ->products()
-                ->where('id', $product->id)
-                ->first();
+            $product = Product::query()->find($productData['product_id']);
+
+            $priceLevel = PriceLevel::query()->find($productData['price_level_id']);
+
+            $check->fresh();
 
             $check->products()->save($product, [
-                'amount_before' => $oldProduct->product_warehouse->amount,
+                'amount_before' => $priceLevel->amount,
                 'amount_after' => $productData['amount'],
-                'price_level_id' => null
+                'price_level_id' => $priceLevel->id,
+                'price' => $priceLevel->price,
             ]);
         }
 
@@ -61,25 +95,35 @@ class CheckController extends Controller
         return responder()->success($check)->respond();
     }
 
+    public function show(Check $check): JsonResponse
+    {
+        return responder()->success($check)->respond();
+    }
+
+    /**
+     * @throws \App\Exceptions\InsufficientAmountException
+     */
     private function applyCheck(Check $check)
     {
-        // Dont update warehouse
-        // Rather create issue or check movement
-
-        $movement = new Movement();
-
-        /** @var Warehouse $warehouse */
-        $warehouse = $check->warehouse;
-
-        /** @var  $checkProduct */
+        /** @var Product $checkProduct */
         foreach ($check->products as $checkProduct) {
-            /** @var Product $warehouseProduct */
-            $warehouseProduct = $warehouse->products()
-                ->where('id', $checkProduct->id)
-                ->first();
+            $data = [
+                'type' => Movement::TYPE_CHECK,
+                'amount' => $checkProduct->product_check->amount_before - $checkProduct->product_check->amount_after,
+                'price' => $checkProduct->product_check->price,
+                'product_id' => $checkProduct->id,
+                'issue_warehouse_id' => $check->warehouse_id,
+                'receipt_warehouse_id' => null,
+                'user_id' => $check->user_id,
+            ];
 
-            $warehouseProduct->product_warehouse->amount = $checkProduct->product_check->amount_after;
-            $warehouseProduct->product_warehouse->save();
+            $movement = new Movement($data);
+            $movement->save();
+
+            $priceLevel = PriceLevel::query()->find($checkProduct->product_check->price_level_id);
+
+            $this->warehouseManager->issue($movement);
+            $this->pricesManager->issue($movement, $priceLevel);
         }
     }
 }

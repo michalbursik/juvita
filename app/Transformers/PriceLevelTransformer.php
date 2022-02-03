@@ -12,7 +12,9 @@ class PriceLevelTransformer extends Transformer
      *
      * @var string[]
      */
-    protected $relations = [];
+    protected $relations = [
+        'product' => ProductTransformer::class
+    ];
 
     /**
      * List of autoloaded default relations.

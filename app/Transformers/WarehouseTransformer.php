@@ -2,6 +2,7 @@
 
 namespace App\Transformers;
 
+use App\Models\PriceLevel;
 use App\Models\Warehouse;
 use Flugg\Responder\Transformers\Transformer;
 
@@ -15,6 +16,7 @@ class WarehouseTransformer extends Transformer
     protected $relations = [
         'products' => ProductTransformer::class,
         'movements' => MovementTransformer::class,
+        'priceLevels' => PriceLevelTransformer::class,
     ];
 
     /**

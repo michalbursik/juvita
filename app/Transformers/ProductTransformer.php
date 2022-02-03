@@ -50,6 +50,13 @@ class ProductTransformer extends Transformer
             $data['price'] = $product->product_warehouse->price;
         }
 
+        if ($product->product_check) {
+            $data['amount_before'] = $product->product_check->amount_before;
+            $data['amount_after'] = $product->product_check->amount_after;
+            $data['price_level_id'] = $product->product_check->price_level_id;
+            $data['price'] = $product->product_check->price;
+        }
+
         return $data;
     }
 }

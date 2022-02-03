@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Exceptions\InsufficientAmountException;
 use App\Http\Requests\TrashTransmissionMovementRequest;
 use App\Http\Requests\TransmissionMovementRequest;
 use App\Managers\PricesManager;
@@ -13,6 +14,8 @@ use App\Repositories\MovementRepository;
 use App\Http\Requests\ReceiptMovementRequest;
 use App\Models\Product;
 use App\Models\Movement;
+use Carbon\Carbon;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -43,6 +46,19 @@ class MovementController extends Controller
     {
         $query = Movement::query();
 
+        $issue_warehouse_id = $request->input('issue_warehouse_id');
+        $query->when($issue_warehouse_id, function ($query) use ($issue_warehouse_id) {
+            $query->where('issue_warehouse_id', $issue_warehouse_id);
+        });
+
+        $receipt_warehouse_id = $request->input('receipt_warehouse_id');
+        if (Auth::user()->role === User::ROLE_EMPLOYEE) {
+            $receipt_warehouse_id = Auth::user()->warehouse_id;
+        }
+        $query->when($receipt_warehouse_id, function ($query) use ($receipt_warehouse_id) {
+            $query->where('receipt_warehouse_id', $receipt_warehouse_id);
+        });
+
         $query->when($request->input('warehouse_id'), function ($query) use ($request) {
             $query->where(function ($query) use ($request) {
                 $query->where('issue_warehouse_id', $request->input('warehouse_id'))
@@ -54,14 +70,9 @@ class MovementController extends Controller
             $query->where('product_id', $request->input('product_id'));
         });
 
-        $user = $request->input('user');
-
-        if (Auth::user()->role === User::ROLE_EMPLOYEE) {
-            $user = Auth::id();
-        }
-
-        $query->when($user, function ($query) use ($user) {
-            $query->where('user_id', $user);
+        $user_id = $request->input('user_id');
+        $query->when($user_id, function ($query) use ($user_id) {
+            $query->where('user_id', $user_id);
         });
 
         $query->when($request->input('type'), function ($query) use ($request) {
@@ -84,9 +95,30 @@ class MovementController extends Controller
 
         $movements = $query
             ->orderByDesc('created_at')
-            ->paginate(null, ['*'], 'currentPage');
+            ->paginate($request->input('perPage'), ['*'], 'currentPage');
 
         return responder()->success($movements)->respond();
+    }
+
+    public function fetchAllAmounts(Request $request): JsonResponse
+    {
+        $warehouse_id = $request->input('warehouse_id');
+        $day = Carbon::parse($request->input('day'));
+
+        $query = Movement::query();
+
+        $query->where(function ($query) use ($warehouse_id) {
+            $query->where('issue_warehouse_id', $warehouse_id)
+                ->orWhere('receipt_warehouse_id', $warehouse_id);
+        });
+
+        $query->whereDate('created_at', $day->toDateString());
+
+        $movements = $query->get();
+
+        $movementAmounts = $this->calculateMovements($movements);
+
+        return responder()->success($movementAmounts)->respond();
     }
 
     public function trash(TrashTransmissionMovementRequest $request): JsonResponse
@@ -103,7 +135,14 @@ class MovementController extends Controller
         $data['receipt_warehouse_id'] = $warehouse->id;
 
         $movement = $this->repository->store($data);
-        $this->warehouseManager->transmission($movement);
+
+        try {
+            $this->warehouseManager->transmission($movement);
+        } catch (InsufficientAmountException $e) {
+            $this->repository->destroy($movement);
+
+            return responder()->error($e->getCode(), $e->getMessage())->respond();
+        }
 
         // Manage price levels
         $this->pricesManager->transmission($movement, $priceLevel);
@@ -125,13 +164,48 @@ class MovementController extends Controller
     {
         $data = $request->validated();
         $priceLevel = PriceLevel::query()->find($data['price_level_id']);
+
         $data['price'] = $priceLevel->price;
 
         $movement = $this->repository->store($data);
 
-        $this->warehouseManager->transmission($movement);
+        try {
+            $this->warehouseManager->transmission($movement);
+        } catch (InsufficientAmountException $e) {
+            $this->repository->destroy($movement);
+
+            return responder()->error($e->getCode(), $e->getMessage())->respond();
+        }
+
         $this->pricesManager->transmission($movement, $priceLevel);
 
         return responder()->success($movement)->respond();
+    }
+
+    private function calculateMovements(Collection $movements): array
+    {
+        $result = [];
+
+        $products = Product::all();
+
+        foreach ($products as $product) {
+            $result[$product->id] = [
+                'product_id' => $product->id,
+                'product_name' => $product->name,
+                'amount' => 0
+            ];
+        }
+
+        $movements->each(function (Movement $movement) use (&$result) {
+            if ($movement->receipt_warehouse_id) {
+                $result[$movement->product_id]['amount'] += $movement->amount;
+            }
+
+            if ($movement->type === Movement::TYPE_CHECK && $movement->issue_warehouse_id) {
+                $result[$movement->product_id]['amount'] -= $movement->amount;
+            }
+        });
+
+        return $result;
     }
 }

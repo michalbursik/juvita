@@ -26,7 +26,10 @@ class StoreCheckRequest extends FormRequest
         return [
             'warehouse_id' => 'required|numeric',
             'products' => 'required|array',
-            'products.*.id' => 'required|numeric',
+            // It will be the same as root warehouse_id
+            'products.*.warehouse_id' => 'required|numeric',
+            'products.*.product_id' => 'required|numeric',
+            'products.*.price_level_id' => 'required|numeric',
             'products.*.amount' => 'required|numeric',
         ];
     }
