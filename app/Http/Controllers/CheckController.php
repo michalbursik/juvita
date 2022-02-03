@@ -14,6 +14,7 @@ use App\Repositories\CheckRepository;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 
 class CheckController extends Controller
@@ -68,27 +69,37 @@ class CheckController extends Controller
 
     public function store(StoreCheckRequest $request): JsonResponse
     {
-        $data = $request->validated();
-        $data['user_id'] = auth()->id();
+        DB::beginTransaction();
 
-        $check = $this->repository->store($data);
+        try {
+            $data = $request->validated();
+            $data['user_id'] = auth()->id();
 
-        foreach ($data['products'] as $productData) {
-            $product = Product::query()->find($productData['product_id']);
+            $check = $this->repository->store($data);
 
-            $priceLevel = PriceLevel::query()->find($productData['price_level_id']);
+            foreach ($data['products'] as $productData) {
+                $product = Product::query()->find($productData['product_id']);
 
-            $check->fresh();
+                $priceLevel = PriceLevel::query()->find($productData['price_level_id']);
 
-            $check->products()->save($product, [
-                'amount_before' => $priceLevel->amount,
-                'amount_after' => $productData['amount'],
-                'price_level_id' => $priceLevel->id,
-                'price' => $priceLevel->price,
-            ]);
+                $check->fresh();
+
+                $check->products()->save($product, [
+                    'amount_before' => $priceLevel->amount,
+                    'amount_after' => $productData['amount'],
+                    'price_level_id' => $priceLevel->id,
+                    'price' => $priceLevel->price,
+                ]);
+            }
+
+            $this->applyCheck($check);
+
+            DB::commit();
+        } catch (\Exception $exception) {
+            DB::rollBack();
+
+            return responder()->error($exception->getCode(), $exception->getMessage())->respond();
         }
-
-        $this->applyCheck($check);
 
         return responder()->success($check)->respond();
     }
