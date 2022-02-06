@@ -35,6 +35,7 @@ class DiscountTransformer extends Transformer
         return [
             'id' => (int) $discount->id,
             'amount' => $discount->amount,
+            'note' => $discount->note,
         ];
     }
 }

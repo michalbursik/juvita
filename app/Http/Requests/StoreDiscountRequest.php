@@ -25,6 +25,7 @@ class StoreDiscountRequest extends FormRequest
     {
         return [
             'amount' => 'required|numeric',
+            'note' => 'nullable|string',
             'warehouse_id' => 'required|integer',
             'user_id' => 'required|integer',
         ];

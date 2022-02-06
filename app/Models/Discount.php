@@ -35,7 +35,7 @@ class Discount extends Model implements Transformable
 {
     use HasFactory;
 
-    protected $fillable = ['amount', 'warehouse_id', 'user_id'];
+    protected $fillable = ['amount', 'note', 'warehouse_id', 'user_id'];
 
     public function warehouse(): BelongsTo
     {
