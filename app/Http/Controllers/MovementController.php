@@ -87,23 +87,34 @@ class MovementController extends Controller
     public function fetchAllAmounts(Request $request): JsonResponse
     {
         $warehouse_id = $request->input('warehouse_id');
-        $day = Carbon::parse($request->input('day'), 'Europe/Prague');
 
-        $from = $day->clone()->startOfDay()->utc();
-        $to = $day->clone()->endOfDay()->utc();
+        if ($warehouse_id === 'trash') {
+            $warehouse = Warehouse::query()->where('type', Warehouse::TYPE_TRASH)->first();
+        } else {
+            $warehouse = Warehouse::query()->find($warehouse_id);
+
+        }
 
         $query = Movement::query();
 
-        $query->where(function ($query) use ($warehouse_id) {
-            $query->where('issue_warehouse_id', $warehouse_id)
-                ->orWhere('receipt_warehouse_id', $warehouse_id);
+        $query->where(function ($query) use ($warehouse) {
+            $query->where('issue_warehouse_id', $warehouse->id)
+                ->orWhere('receipt_warehouse_id', $warehouse->id);
         });
 
-        $query->whereBetween('created_at', [$from, $to]);
+        // For temporary warehouses show
+        if ($warehouse->type === Warehouse::TYPE_TEMPORARY) {
+            $day = Carbon::parse($request->input('day'), 'Europe/Prague');
+
+            $from = $day->clone()->startOfDay()->utc();
+            $to = $day->clone()->endOfDay()->utc();
+
+            $query->whereBetween('created_at', [$from, $to]);
+        }
 
         $movements = $query->get();
 
-        $movementAmounts = $this->calculateMovements($movements, $warehouse_id);
+        $movementAmounts = $this->calculateMovements($movements, $warehouse->id);
 
         return responder()->success($movementAmounts)->respond();
     }
