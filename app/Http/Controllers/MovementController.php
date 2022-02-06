@@ -19,6 +19,7 @@ use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 
 class MovementController extends Controller
 {
@@ -121,29 +122,33 @@ class MovementController extends Controller
 
     public function trash(TrashTransmissionMovementRequest $request): JsonResponse
     {
-        $data = $request->validated();
-        $priceLevel = PriceLevel::query()->find($data['price_level_id']);
-        $data['price'] = $priceLevel->price;
-
-        // Manage warehouses
-        $warehouse = Warehouse::query()
-            ->where('type', Warehouse::TYPE_TRASH)
-            ->first();
-
-        $data['receipt_warehouse_id'] = $warehouse->id;
-
-        $movement = $this->repository->store($data);
+        DB::beginTransaction();
 
         try {
+            $data = $request->validated();
+            $priceLevel = PriceLevel::query()->find($data['price_level_id']);
+            $data['price'] = $priceLevel->price;
+
+            // Manage warehouses
+            $warehouse = Warehouse::query()
+                ->where('type', Warehouse::TYPE_TRASH)
+                ->first();
+
+            $data['receipt_warehouse_id'] = $warehouse->id;
+
+            $movement = $this->repository->store($data);
+
             $this->warehouseManager->transmission($movement, $priceLevel);
-        } catch (InsufficientAmountException $e) {
-            $this->repository->destroy($movement);
+
+            // Manage price levels
+            $this->pricesManager->transmission($movement, $priceLevel);
+
+            DB::commit();
+        } catch (\Exception $e) {
+            DB::rollBack();
 
             return responder()->error($e->getCode(), $e->getMessage())->respond();
         }
-
-        // Manage price levels
-        $this->pricesManager->transmission($movement, $priceLevel);
 
         return responder()->success($movement)->respond();
     }

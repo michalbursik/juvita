@@ -29,6 +29,9 @@ Products->Prices
 - validTo
 - price
 
+storno
+
+
 filter - potreba videt odpad (napr. za minuly tyden)
 pohyby omezit na 14 dnu vsude, datepicker pro adminy 
 (no need as there is pagination)
