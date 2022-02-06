@@ -33,12 +33,14 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
  * @method static \Illuminate\Database\Eloquent\Builder|Check whereUserId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Check whereWarehouseId($value)
  * @mixin \Eloquent
+ * @property string $discount
+ * @method static \Illuminate\Database\Eloquent\Builder|Check whereDiscount($value)
  */
 class Check extends Model implements Transformable
 {
     use HasFactory;
 
-    protected $fillable = ['warehouse_id', 'user_id'];
+    protected $fillable = ['discount', 'warehouse_id', 'user_id'];
 
     public function products(): BelongsToMany
     {

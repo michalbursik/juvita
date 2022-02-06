@@ -50,6 +50,8 @@ class ProductSeeder extends Seeder
             ['name' => 'Zelí', 'image' => '/images/cabbage.jpg', 'order' => 330],
             ['name' => 'Bylinky', 'image' => '/images/herbs.jpg', 'order' => 340],
             ['name' => 'Sazenice jahody', 'image' => '/images/strawberry-plants.jpg', 'order' => 350],
+            ['name' => 'Hlíva', 'image' => '/images/mushroom-2.jpg', 'order' => 360],
+            ['name' => 'Sáčky', 'unit' => 'ks', 'image' => '/images/bags.jpg', 'order' => 370],
 
         ];
 

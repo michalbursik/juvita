@@ -47,6 +47,9 @@ use Laravel\Sanctum\HasApiTokens;
  * @method static \Illuminate\Database\Eloquent\Builder|User whereUpdatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|User whereWarehouseId($value)
  * @mixin \Eloquent
+ * @property-read int|null $movements_count
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\Discount[] $discounts
+ * @property-read int|null $discounts_count
  */
 class User extends Authenticatable implements Transformable
 {
@@ -91,6 +94,11 @@ class User extends Authenticatable implements Transformable
     public function movements(): HasMany
     {
         return $this->hasMany(Movement::class);
+    }
+
+    public function discounts(): HasMany
+    {
+        return $this->hasMany(Discount::class);
     }
 
     public function transformer(): string

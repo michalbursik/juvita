@@ -17,10 +17,8 @@ use App\Models\Movement;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Log;
 
 class MovementController extends Controller
 {
@@ -79,20 +77,6 @@ class MovementController extends Controller
             $query->where('type', $request->input('type'));
         });
 
-
-        if ($request->input('search')) {
-            // ->type
-            // ->count
-            // ->price
-            // ->created_at
-
-            // ->product->name
-            // ->user->name
-
-//            $query->where();
-        }
-
-
         $movements = $query
             ->orderByDesc('created_at')
             ->paginate($request->input('perPage'), ['*'], 'currentPage');
@@ -103,7 +87,10 @@ class MovementController extends Controller
     public function fetchAllAmounts(Request $request): JsonResponse
     {
         $warehouse_id = $request->input('warehouse_id');
-        $day = Carbon::parse($request->input('day'));
+        $day = Carbon::parse($request->input('day'), 'Europe/Prague');
+
+        $from = $day->clone()->startOfDay()->utc();
+        $to = $day->clone()->endOfDay()->utc();
 
         $query = Movement::query();
 
@@ -112,7 +99,7 @@ class MovementController extends Controller
                 ->orWhere('receipt_warehouse_id', $warehouse_id);
         });
 
-        $query->whereDate('created_at', $day->toDateString());
+        $query->whereBetween('created_at', [$from, $to]);
 
         $movements = $query->get();
 
@@ -137,7 +124,7 @@ class MovementController extends Controller
         $movement = $this->repository->store($data);
 
         try {
-            $this->warehouseManager->transmission($movement);
+            $this->warehouseManager->transmission($movement, $priceLevel);
         } catch (InsufficientAmountException $e) {
             $this->repository->destroy($movement);
 
@@ -170,7 +157,7 @@ class MovementController extends Controller
         $movement = $this->repository->store($data);
 
         try {
-            $this->warehouseManager->transmission($movement);
+            $this->warehouseManager->transmission($movement, $priceLevel);
         } catch (InsufficientAmountException $e) {
             $this->repository->destroy($movement);
 

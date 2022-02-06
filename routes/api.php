@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CheckController;
+use App\Http\Controllers\DiscountController;
 use App\Http\Controllers\OverviewController;
 use App\Http\Controllers\PriceLevelController;
 use App\Http\Controllers\ProductController;
@@ -31,6 +32,7 @@ Route::middleware('auth')->group(function () {
         return $request->user();
     });
 
+    Route::resource('discounts', DiscountController::class);
     Route::get('warehouses/trash', [WarehouseController::class, 'trash']);
     Route::get('warehouses/movements', [MovementController::class, 'index'])->name('movements.index');
 

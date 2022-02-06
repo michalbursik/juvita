@@ -38,6 +38,11 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @method static \Illuminate\Database\Eloquent\Builder|PriceLevel whereValidTo($value)
  * @method static \Illuminate\Database\Eloquent\Builder|PriceLevel whereWarehouseId($value)
  * @mixin \Eloquent
+ * @property \Illuminate\Support\Carbon|null $deleted_at
+ * @method static \Illuminate\Database\Query\Builder|PriceLevel onlyTrashed()
+ * @method static \Illuminate\Database\Eloquent\Builder|PriceLevel whereDeletedAt($value)
+ * @method static \Illuminate\Database\Query\Builder|PriceLevel withTrashed()
+ * @method static \Illuminate\Database\Query\Builder|PriceLevel withoutTrashed()
  */
 class PriceLevel extends Model implements Transformable
 {

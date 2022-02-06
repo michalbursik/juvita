@@ -40,6 +40,10 @@ use Korridor\LaravelHasManyMerged\HasManyMergedRelation;
  * @method static \Illuminate\Database\Eloquent\Builder|Warehouse whereType($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Warehouse whereUpdatedAt($value)
  * @mixin \Eloquent
+ * @property-read Collection|\App\Models\PriceLevel[] $priceLevels
+ * @property-read int|null $price_levels_count
+ * @property-read Collection|\App\Models\Discount[] $discounts
+ * @property-read int|null $discounts_count
  */
 class Warehouse extends Model implements Transformable
 {
@@ -92,6 +96,11 @@ class Warehouse extends Model implements Transformable
     public function checks(): HasMany
     {
         return $this->hasMany(Check::class);
+    }
+
+    public function discounts(): HasMany
+    {
+        return $this->hasMany(Discount::class);
     }
 
     public function transformer(): string

@@ -29,7 +29,8 @@ Products->Prices
 - validTo
 - price
 
-soucet prodanych
+hl. sklad celkem
+sleva - 
 
 filter - potreba videt odpad (napr. za minuly tyden)
 pohyby omezit na 14 dnu vsude, datepicker pro adminy 

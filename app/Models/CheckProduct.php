@@ -29,6 +29,8 @@ use Illuminate\Database\Eloquent\Relations\Pivot;
  * @method static \Illuminate\Database\Eloquent\Builder|CheckProduct whereProductId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|CheckProduct whereUpdatedAt($value)
  * @mixin \Eloquent
+ * @property string|null $price
+ * @method static \Illuminate\Database\Eloquent\Builder|CheckProduct wherePrice($value)
  */
 class CheckProduct extends Pivot
 {

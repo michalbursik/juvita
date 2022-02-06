@@ -6,6 +6,7 @@ use App\Http\Requests\StoreCheckRequest;
 use App\Managers\PricesManager;
 use App\Managers\WarehouseManager;
 use App\Models\Check;
+use App\Models\Discount;
 use App\Models\Movement;
 use App\Models\PriceLevel;
 use App\Models\Product;
@@ -75,6 +76,17 @@ class CheckController extends Controller
             $data = $request->validated();
             $data['user_id'] = auth()->id();
 
+            // Process all discounts
+            $discounts = Discount::all();
+
+            $data['discount'] = $discounts->reduce(function ($carry, Discount $discount) {
+                return $carry - (float) $discount->amount;
+            }, 0);
+
+            foreach ($discounts as $discount) {
+                $discount->delete();
+            }
+
             $check = $this->repository->store($data);
 
             foreach ($data['products'] as $productData) {
@@ -82,13 +94,18 @@ class CheckController extends Controller
 
                 $priceLevel = PriceLevel::query()->find($productData['price_level_id']);
 
-                $check->fresh();
-
                 $check->products()->save($product, [
-                    'amount_before' => $priceLevel->amount,
-                    'amount_after' => $productData['amount'],
+                    'amount_before' => (double) $priceLevel->amount,
+                    'amount_after' => (double) $productData['amount'],
                     'price_level_id' => $priceLevel->id,
-                    'price' => $priceLevel->price,
+                    'price' => (double) $priceLevel->price,
+                ]);
+
+                Log::debug('', [
+                    'check' => $check,
+                    'product' => $product,
+                    'priceLevel' => $priceLevel,
+                    'productData' => $productData,
                 ]);
             }
 
@@ -118,8 +135,8 @@ class CheckController extends Controller
         foreach ($check->products as $checkProduct) {
             $data = [
                 'type' => Movement::TYPE_CHECK,
-                'amount' => $checkProduct->product_check->amount_before - $checkProduct->product_check->amount_after,
-                'price' => $checkProduct->product_check->price,
+                'amount' => (double) $checkProduct->product_check->amount_before - (double) $checkProduct->product_check->amount_after,
+                'price' => (double) $checkProduct->product_check->price,
                 'product_id' => $checkProduct->id,
                 'issue_warehouse_id' => $check->warehouse_id,
                 'receipt_warehouse_id' => null,
@@ -131,7 +148,7 @@ class CheckController extends Controller
 
             $priceLevel = PriceLevel::query()->find($checkProduct->product_check->price_level_id);
 
-            $this->warehouseManager->issue($movement);
+            $this->warehouseManager->issue($movement, $priceLevel);
             $this->pricesManager->issue($movement, $priceLevel);
         }
     }
