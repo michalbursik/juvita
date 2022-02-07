@@ -166,17 +166,21 @@ class MovementController extends Controller
 
     public function transmission(TransmissionMovementRequest $request): JsonResponse
     {
-        $data = $request->validated();
-        $priceLevel = PriceLevel::query()->find($data['price_level_id']);
-
-        $data['price'] = $priceLevel->price;
-
-        $movement = $this->repository->store($data);
+        DB::beginTransaction();
 
         try {
+            $data = $request->validated();
+            $priceLevel = PriceLevel::query()->find($data['price_level_id']);
+
+            $data['price'] = $priceLevel->price;
+
+            $movement = $this->repository->store($data);
+
             $this->warehouseManager->transmission($movement, $priceLevel);
-        } catch (InsufficientAmountException $e) {
-            $this->repository->destroy($movement);
+
+            DB::commit();
+        } catch (\Exception $e) {
+            DB::rollBack();
 
             return responder()->error($e->getCode(), $e->getMessage())->respond();
         }
