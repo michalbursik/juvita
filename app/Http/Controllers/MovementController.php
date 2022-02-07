@@ -105,7 +105,8 @@ class MovementController extends Controller
 
         // For temporary warehouses show
         if ($warehouse->type === Warehouse::TYPE_TEMPORARY) {
-            $day = Carbon::parse($request->input('day'), 'Europe/Prague');
+            $day = str_replace(' ', '', $request->input('day'));
+            $day = Carbon::parse($day, 'Europe/Prague');
 
             $from = $day->clone()->startOfDay()->utc();
             $to = $day->clone()->endOfDay()->utc();
