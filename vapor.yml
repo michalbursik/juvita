@@ -14,6 +14,9 @@ environments:
       - "cp resources/nuxt/admin/dist/manifest.*.json resources/"
       - "cp public/dist/sw.js public/"
       - "rm -R resources/nuxt/admin/"
+    deploy:
+      - 'php artisan config:cache'
+      - 'php artisan migrate --force'
 
   staging:
     domain: staging.zeleninajuvita.cz
@@ -28,3 +31,6 @@ environments:
       - "cp resources/nuxt/admin/dist/manifest.*.json resources/"
       - "cp public/dist/sw.js public/"
       - "rm -R resources/nuxt/admin/"
+    deploy:
+      - 'php artisan config:cache'
+      - 'php artisan migrate'

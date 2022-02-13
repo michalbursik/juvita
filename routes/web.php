@@ -25,4 +25,4 @@ Route::post('logout', [AuthController::class, 'logout'])->name('logout');
 // --------------
 
 Route::get('/{any?}', [NuxtController::class, 'nuxtMethod'])
-    ->where('any', '^(?!(api|nova|telescope|sw.js)).*$');
+    ->where('any', '^(?!(api|nova|telescope|vapor|vapor-ui|sw.js)).*$');

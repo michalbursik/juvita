@@ -20,6 +20,7 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 
 class MovementController extends Controller
 {
@@ -36,6 +37,8 @@ class MovementController extends Controller
                                 PricesManager $pricesManager,
                                 WarehouseManager $warehouseManager)
     {
+        Log::debug(__FILE__ . ' construct');
+
         $this->repository = $repository;
         $this->pricesManager = $pricesManager;
         $this->warehouseManager = $warehouseManager;
@@ -148,7 +151,16 @@ class MovementController extends Controller
         } catch (\Exception $e) {
             DB::rollBack();
 
-            return responder()->error($e->getCode(), $e->getMessage())->respond();
+            Log::error('Exception', [
+                'code' => $e->getCode(),
+                'message' => $e->getMessage(),
+                'file' => $e->getFile(),
+                'line' => $e->getLine(),
+                'previous' => $e->getPrevious(),
+                'trace' => $e->getTraceAsString(),
+            ]);
+
+            return responder()->error(500, $e->getMessage())->respond();
         }
 
         return responder()->success($movement)->respond();
@@ -166,26 +178,58 @@ class MovementController extends Controller
 
     public function transmission(TransmissionMovementRequest $request): JsonResponse
     {
+        Log::debug(__FILE__ . '=>' . __METHOD__ . '(' . __LINE__ . ')');
+
         DB::beginTransaction();
 
         try {
+            Log::debug(__FILE__ . '=>' . __METHOD__ . '(' . __LINE__ . '): try');
+
             $data = $request->validated();
+            Log::debug(__FILE__ . '=>' . __METHOD__ . '(' . __LINE__ . '): validated');
+
             $priceLevel = PriceLevel::query()->find($data['price_level_id']);
+            Log::debug(__FILE__ . '=>' . __METHOD__ . '(' . __LINE__ . '): priceLevel found');
 
             $data['price'] = $priceLevel->price;
 
+            Log::debug(__FILE__ . '=>' . __METHOD__ . '(' . __LINE__ . '): price set');
+
             $movement = $this->repository->store($data);
+
+            Log::debug(__FILE__ . '=>' . __METHOD__ . '(' . __LINE__ . '): movements stored');
 
             $this->warehouseManager->transmission($movement, $priceLevel);
 
+            Log::debug(__FILE__ . '=>' . __METHOD__ . '(' . __LINE__ . '): warehouses changed');
+
+            $this->pricesManager->transmission($movement, $priceLevel);
+            Log::debug(__FILE__ . '=>' . __METHOD__ . '(' . __LINE__ . '): price level changed');
+
             DB::commit();
+
+            Log::debug(__FILE__ . '=>' . __METHOD__ . '(' . __LINE__ . '): transmission created');
         } catch (\Exception $e) {
+            Log::debug(__FILE__ . '=>' . __METHOD__ . '(' . __LINE__ . '): exception');
             DB::rollBack();
 
-            return responder()->error($e->getCode(), $e->getMessage())->respond();
+            Log::debug(__FILE__ . '=>' . __METHOD__ . '(' . __LINE__ . '): exception rollbacked');
+
+            Log::error('Exception', [
+                'code' => $e->getCode(),
+                'message' => $e->getMessage(),
+                'file' => $e->getFile(),
+                'line' => $e->getLine(),
+                'previous' => $e->getPrevious(),
+                'trace' => $e->getTraceAsString(),
+            ]);
+
+            Log::debug(__FILE__ . '=>' . __METHOD__ . '(' . __LINE__ . '): exception logged');
+
+            return responder()->error(500, $e->getMessage())->respond();
         }
 
-        $this->pricesManager->transmission($movement, $priceLevel);
+        Log::debug(__FILE__ . '=>' . __METHOD__ . '(' . __LINE__ . '): transmission success');
 
         return responder()->success($movement)->respond();
     }

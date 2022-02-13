@@ -77,7 +77,7 @@ class CheckController extends Controller
             $data['user_id'] = auth()->id();
 
             // Process all discounts
-            $discounts = Discount::all();
+            $discounts = Discount::query()->where('warehouse_id', $data['warehouse_id'])->get();
 
             $data['discount'] = $discounts->reduce(function ($carry, Discount $discount) {
                 return $carry - (float) $discount->amount;
@@ -100,13 +100,6 @@ class CheckController extends Controller
                     'price_level_id' => $priceLevel->id,
                     'price' => (double) $priceLevel->price,
                 ]);
-
-                Log::debug('', [
-                    'check' => $check,
-                    'product' => $product,
-                    'priceLevel' => $priceLevel,
-                    'productData' => $productData,
-                ]);
             }
 
             $this->applyCheck($check);
@@ -115,7 +108,16 @@ class CheckController extends Controller
         } catch (\Exception $exception) {
             DB::rollBack();
 
-            return responder()->error($exception->getCode(), $exception->getMessage())->respond();
+            Log::error('Exception', [
+                'code' => $exception->getCode(),
+                'message' => $exception->getMessage(),
+                'file' => $exception->getFile(),
+                'line' => $exception->getLine(),
+                'previous' => $exception->getPrevious(),
+                'trace' => $exception->getTraceAsString(),
+            ]);
+
+            return responder()->error(500, $exception->getMessage())->respond();
         }
 
         return responder()->success($check)->respond();

@@ -24,10 +24,12 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
+\Illuminate\Support\Facades\Log::debug(__FILE__);
+
 Route::post('/login', [AuthController::class, 'login']);
 
 
-Route::middleware('auth')->group(function () {
+Route::middleware('auth:sanctum')->group(function () {
     Route::get('/user', function (Request $request) {
         return $request->user();
     });
@@ -47,9 +49,10 @@ Route::middleware('auth')->group(function () {
     Route::get('warehouses/{warehouse}/products/{product}/transmission', [WarehouseController::class, 'transmission'])
         ->name('warehouses.products.transmission');
 
-
+    \Illuminate\Support\Facades\Log::debug(__FILE__ . ' before _---------_');
     Route::post('warehouses/movements/transmission', [MovementController::class, 'transmission'])
         ->name('movements.transmission');
+    \Illuminate\Support\Facades\Log::debug(__FILE__ . ' after _-----------_');
 
     Route::post('warehouses/movements/trash', [MovementController::class, 'trash'])->name('movements.trash');
     Route::post('warehouses/movements/receipt', [MovementController::class, 'receipt'])->name('movements.receipt');

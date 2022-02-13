@@ -27,12 +27,12 @@ class VaporUiServiceProvider extends ServiceProvider
     protected function gate()
     {
         Gate::define('viewVaporUI', function ($user = null) {
-            if (config('app.env') !== 'production') {
+//            if (config('app.env') !== 'production') {
                 return true;
-            }
+//            }
 
             return in_array(optional($user)->email, [
-                //
+                'josef.bursik@seznam.cz',
             ]);
         });
     }
