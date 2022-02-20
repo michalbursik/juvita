@@ -29,6 +29,10 @@ Products->Prices
 - validTo
 - price
 
+zaokrouhlit, na 2 desetinne
+v seznamu pri tlacitku zpet scrolovat, tam kde skoncil
+sklad prijem zapamatovat
+strankovani movenemts
 
 storno
 filter - potreba videt odpad (napr. za minuly tyden)

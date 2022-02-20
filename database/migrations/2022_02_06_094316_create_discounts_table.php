@@ -15,7 +15,7 @@ class CreateDiscountsTable extends Migration
     {
         Schema::create('discounts', function (Blueprint $table) {
             $table->id();
-            $table->decimal('amount');
+            $table->float('amount', 8, 1);
             $table->text('note')->nullable();
             $table->foreignId('warehouse_id')->constrained('warehouses');
             $table->foreignId('user_id')->constrained('users');

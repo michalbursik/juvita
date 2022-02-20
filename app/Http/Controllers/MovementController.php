@@ -250,11 +250,11 @@ class MovementController extends Controller
 
         $movements->each(function (Movement $movement) use (&$result, $warehouse_id) {
             if ($movement->receipt_warehouse_id === (int) $warehouse_id) {
-                $result[$movement->product_id]['amount'] += $movement->amount;
+                $result[$movement->product_id]['amount'] += (float) $movement->amount;
             }
 
             if ($movement->issue_warehouse_id === (int) $warehouse_id) {
-                $result[$movement->product_id]['amount'] -= $movement->amount;
+                $result[$movement->product_id]['amount'] -= (float) $movement->amount;
             }
         });
 

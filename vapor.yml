@@ -10,6 +10,7 @@ environments:
       - 'COMPOSER_MIRROR_PATH_REPOS=1 composer install --no-dev'
       - 'php artisan event:cache'
       - "cd resources/nuxt/admin && npm ci && npm run build && rm -rf node_modules"
+      - "cp -R resources/nuxt/admin/static/images/ public/images/"
       - "cp -R resources/nuxt/admin/dist/ public/dist/"
       - "cp resources/nuxt/admin/dist/manifest.*.json resources/"
       - "cp public/dist/sw.js public/"
@@ -27,6 +28,7 @@ environments:
       - 'COMPOSER_MIRROR_PATH_REPOS=1 composer install'
       - 'php artisan event:cache'
       - "cd resources/nuxt/admin && npm ci && npm run build && rm -rf node_modules"
+      - "cp -R resources/nuxt/admin/static/images/ public/images/"
       - "cp -R resources/nuxt/admin/dist/ public/dist/"
       - "cp resources/nuxt/admin/dist/manifest.*.json resources/"
       - "cp public/dist/sw.js public/"

@@ -16,8 +16,8 @@ class CreateProductWarehouseTable extends Migration
         Schema::create('product_warehouse', function (Blueprint $table) {
             $table->primary(['product_id', 'warehouse_id']);
 
-            $table->float('amount');
-            $table->decimal('price');
+            $table->float('amount', 8, 1);
+            $table->float('price', 8, 1);
 
             $table->foreignId('product_id')->constrained('products');
             $table->foreignId('warehouse_id')->constrained('warehouses');

@@ -19,8 +19,8 @@ class CreateMovementsTable extends Migration
             $table->id();
 
             $table->string('type')->default(Movement::TYPE_ISSUE);
-            $table->float('amount');
-            $table->decimal('price')->nullable();
+            $table->float('amount', 8, 1);
+            $table->float('price', 8, 1)->nullable();
 
             $table->foreignId('product_id')->constrained('products');
             $table->foreignId('user_id')->constrained('users');

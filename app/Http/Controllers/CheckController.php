@@ -81,7 +81,7 @@ class CheckController extends Controller
 
             $data['discount'] = $discounts->reduce(function ($carry, Discount $discount) {
                 return $carry - (float) $discount->amount;
-            }, 0);
+            }, 0.00);
 
             foreach ($discounts as $discount) {
                 $discount->delete();
@@ -95,10 +95,10 @@ class CheckController extends Controller
                 $priceLevel = PriceLevel::query()->find($productData['price_level_id']);
 
                 $check->products()->save($product, [
-                    'amount_before' => (double) $priceLevel->amount,
-                    'amount_after' => (double) $productData['amount'],
+                    'amount_before' => $priceLevel->amount,
+                    'amount_after' => $productData['amount'],
                     'price_level_id' => $priceLevel->id,
-                    'price' => (double) $priceLevel->price,
+                    'price' => $priceLevel->price,
                 ]);
             }
 
@@ -137,8 +137,8 @@ class CheckController extends Controller
         foreach ($check->products as $checkProduct) {
             $data = [
                 'type' => Movement::TYPE_CHECK,
-                'amount' => (double) $checkProduct->product_check->amount_before - (double) $checkProduct->product_check->amount_after,
-                'price' => (double) $checkProduct->product_check->price,
+                'amount' => $checkProduct->product_check->amount_before - $checkProduct->product_check->amount_after,
+                'price' => $checkProduct->product_check->price,
                 'product_id' => $checkProduct->id,
                 'issue_warehouse_id' => $check->warehouse_id,
                 'receipt_warehouse_id' => null,

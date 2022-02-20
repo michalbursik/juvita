@@ -40,7 +40,7 @@ class PriceLevelRepository
 
     public function update(PriceLevel $priceLevel, float $amount): PriceLevel
     {
-        $priceLevel->amount += $amount;
+        $priceLevel->amount = round((float) $priceLevel->amount + (float) $amount, 1);
         $priceLevel->save();
 
         return $priceLevel;

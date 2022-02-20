@@ -16,9 +16,9 @@ class CreateCheckProductTable extends Migration
         Schema::create('check_product', function (Blueprint $table) {
             $table->id();
 
-            $table->float('amount_before');
-            $table->float('amount_after');
-            $table->decimal('price')->nullable();
+            $table->float('amount_before', 8, 1);
+            $table->float('amount_after', 8, 1);
+            $table->float('price', 8 , 1)->nullable();
 
             $table->foreignId('check_id')->constrained('checks');
             $table->foreignId('product_id')->constrained('products');

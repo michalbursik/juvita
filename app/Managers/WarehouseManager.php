@@ -28,15 +28,15 @@ class WarehouseManager
             ->find($priceLevel->id);
 
         Log::debug('', [
-            $priceLevel->id => (double) $priceLevel->amount,
-            $movement->id => (double) $movement->amount,
+            $priceLevel->id => (float) $priceLevel->amount,
+            $movement->id => (float) $movement->amount,
         ]);
 
-        if ((double) $priceLevel->amount < (double) $movement->amount) {
+        if ((float) $priceLevel->amount < (float) $movement->amount) {
             throw new InsufficientAmountException();
         }
 
-        $warehouseProduct->product_warehouse->amount -= (double) $movement->amount;
+        $warehouseProduct->product_warehouse->amount = round((float) $warehouseProduct->product_warehouse->amount - (float) $movement->amount, 1);
         $warehouseProduct->product_warehouse->save();
     }
 
@@ -46,7 +46,7 @@ class WarehouseManager
             ->where('id', $movement->product->id)
             ->first();
 
-        $warehouseProduct->product_warehouse->amount += $movement->amount;
+        $warehouseProduct->product_warehouse->amount = round((float) $warehouseProduct->product_warehouse->amount + (float) $movement->amount, 1);
         $warehouseProduct->product_warehouse->price = $movement->price;
 
         $warehouseProduct->product_warehouse->save();

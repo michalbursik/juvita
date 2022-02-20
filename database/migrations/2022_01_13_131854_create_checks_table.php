@@ -16,7 +16,7 @@ class CreateChecksTable extends Migration
         Schema::create('checks', function (Blueprint $table) {
             $table->id();
 
-            $table->decimal('discount')->default(0);
+            $table->float('discount', 8, 1)->default(0);
 
             $table->foreignId('warehouse_id')->constrained('warehouses');
             $table->foreignId('user_id')->constrained('users');
