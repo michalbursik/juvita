@@ -15,6 +15,7 @@ use App\Http\Requests\ReceiptMovementRequest;
 use App\Models\Product;
 use App\Models\Movement;
 use Carbon\Carbon;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -79,6 +80,16 @@ class MovementController extends Controller
 
         $query->when($request->input('type'), function ($query) use ($request) {
             $query->where('type', $request->input('type'));
+        });
+
+        $query->when($request->input('day'), function ($query) use ($request) {
+            $day = str_replace(' ', '', $request->input('day'));
+            $day = Carbon::parse($day, 'Europe/Prague');
+
+            $from = $day->clone()->startOfDay()->utc();
+            $to = $day->clone()->endOfDay()->utc();
+
+            $query->whereBetween('created_at', [$from, $to]);
         });
 
         $movements = $query
