@@ -76,7 +76,9 @@ class Movement extends Model implements Transformable
 
     public function getCreatedAtAttribute($created_at): string
     {
-        return (new Carbon($created_at))->timezone('Europe/Prague')->format('d. m. Y H:i:s');
+        return (new Carbon($created_at))
+            ->timezone('Europe/Prague')
+            ->format('d. m. Y H:i:s');
     }
 
     public function transformer(): string

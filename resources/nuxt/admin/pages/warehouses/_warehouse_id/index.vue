@@ -163,12 +163,24 @@ export default {
   methods: {
     highlight(product) {
       let highlight = 'background: rgba(100, 100, 100, 0.5);'
+      let exists = false;
 
-      let exists = this.movements.find(movement => {
-        let created_at = new Date(movement.created_at);
+      exists = this.movements.find(movement => {
+        let created_at_utc = new Date(movement.created_at_utc);
         let now = new Date();
 
-        let hours_difference = now.getHours() - created_at.getHours()
+        let now_utc = new Date(Date.UTC(
+          now.getUTCFullYear(),
+          now.getUTCMonth(),
+          now.getUTCDate(),
+          now.getUTCHours(),
+          now.getUTCMinutes(),
+          now.getUTCSeconds(),
+        ));
+
+        let hours_difference = now_utc.getHours() - created_at_utc.getHours()
+
+        console.log(hours_difference);
 
         return movement.product.id === product.id && hours_difference < 4;
       })

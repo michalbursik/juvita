@@ -48,6 +48,7 @@ class MovementTransformer extends Transformer
 //            'receipt_warehouse_id' => $movement->receipt_warehouse_id,
 //            'user_id' => $movement->user_id,
             'created_at' => $movement->created_at,
+            'created_at_utc' => $movement->getAttributes()['created_at'],
         ];
     }
 }
