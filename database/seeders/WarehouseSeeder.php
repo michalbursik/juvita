@@ -4,10 +4,18 @@ namespace Database\Seeders;
 
 use App\Models\Product;
 use App\Models\Warehouse;
+use App\Repositories\WarehouseRepository;
 use Illuminate\Database\Seeder;
 
 class WarehouseSeeder extends Seeder
 {
+    private WarehouseRepository $warehouseRepository;
+
+    public function __construct(WarehouseRepository $warehouseRepository)
+    {
+        $this->warehouseRepository = $warehouseRepository;
+    }
+
     /**
      * Run the database seeds.
      *
@@ -35,11 +43,7 @@ class WarehouseSeeder extends Seeder
         }
 
         foreach ($warehouses as $warehouseData) {
-            $warehouse = new Warehouse($warehouseData);
-
-            $warehouse->save();
-
-            $warehouse->products()->saveMany($products, $pivotAttributes);
+            $warehouse = $this->warehouseRepository->store($warehouseData, $products, $pivotAttributes);
         }
     }
 }

@@ -7,6 +7,10 @@
 // Bootstrap
 @import '~bootstrap/scss/bootstrap';
 
+// Context menu
+@import '~vue-context/src/sass/vue-context';
+
+
 // Icons
 $bootstrap-icons-font: "bootstrap-icons" !default;
 $bootstrap-icons-font-src: url("~bootstrap-icons/font/fonts/bootstrap-icons.woff2?30af91bf14e37666a085fb8a161ff36d") format("woff2"),

@@ -4,21 +4,60 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\StoreWarehouseRequest;
 use App\Http\Requests\UpdateWarehouseRequest;
+use App\Models\Discount;
 use App\Models\PriceLevel;
 use App\Models\Product;
 use App\Models\User;
 use App\Models\Warehouse;
+use App\Repositories\WarehouseRepository;
 use App\Transformers\WarehouseTransformer;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
 class WarehouseController extends Controller
 {
+    private WarehouseRepository $warehouseRepository;
+
+    public function __construct(WarehouseRepository $warehouseRepository)
+    {
+        $this->warehouseRepository = $warehouseRepository;
+    }
+
     public function index()
     {
         $warehouses = Warehouse::all();
 
         return responder()->success($warehouses)->respond();
+    }
+
+    public function store(Request $request): JsonResponse
+    {
+        $data = $request->validate([
+            'name' => 'required|string'
+        ]);
+
+        $warehouse = $this->warehouseRepository->store($data);
+
+        return responder()->success($warehouse)->respond();
+    }
+
+    public function update(Warehouse $warehouse, Request $request): JsonResponse
+    {
+        $data = $request->validate([
+            'name' => 'required|string'
+        ]);
+
+        $warehouse = $this->warehouseRepository->update($warehouse, $data);
+
+        return responder()->success($warehouse)->respond();
+    }
+
+    public function destroy(Warehouse $warehouse): JsonResponse
+    {
+        $this->warehouseRepository->destroy($warehouse);
+
+        return responder()->success()->respond();
     }
 
     public function show(Warehouse $warehouse)
