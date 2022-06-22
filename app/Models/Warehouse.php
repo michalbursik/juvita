@@ -11,6 +11,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Korridor\LaravelHasManyMerged\HasManyMergedRelation;
 
 /**
@@ -47,7 +48,7 @@ use Korridor\LaravelHasManyMerged\HasManyMergedRelation;
  */
 class Warehouse extends Model implements Transformable
 {
-    use HasFactory, HasManyMergedRelation;
+    use HasFactory, HasManyMergedRelation, SoftDeletes;
 
     const TYPE_MAIN = 'warehouse';
     const TYPE_TEMPORARY = 'temporary_warehouse';
