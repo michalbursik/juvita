@@ -36,6 +36,8 @@ class DiscountTransformer extends Transformer
             'id' => (int) $discount->id,
             'amount' => $discount->amount,
             'note' => $discount->note,
+            'created_at' => $discount->created_at,
+            'updated_at' => $discount->updated_at,
         ];
     }
 }

@@ -17,6 +17,8 @@
                 <th scope="col">Sklad</th>
                 <th scope="col">Uživatel</th>
                 <th scope="col">Množství</th>
+                <th scope="col">Vytvořeno</th>
+                <th scope="col">Upraveno</th>
               </tr>
               </thead>
               <tbody>
@@ -27,6 +29,8 @@
                 <td>{{ discount.warehouse.name }}</td>
                 <td>{{ discount.user.name }}</td>
                 <td>{{ discount.amount }} Kč</td>
+                <td>{{ discount.created_at }}</td>
+                <td>{{ discount.updated_at }}</td>
               </tr>
               </tbody>
             </table>
