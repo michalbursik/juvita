@@ -19,8 +19,6 @@ class AdminMiddleware
      */
     public function handle(Request $request, Closure $next)
     {
-        Log::debug(__FILE__ . '=>' . __METHOD__ . '(' . __LINE__ . '): before');
-
         /** @var User $user */
         $user = $request->user();
 
@@ -29,8 +27,6 @@ class AdminMiddleware
                 'warehouse' => $user->warehouse_id
             ]);
         }
-
-        Log::debug(__FILE__ . '=>' . __METHOD__ . '(' . __LINE__ . '): after');
 
         return $next($request);
     }

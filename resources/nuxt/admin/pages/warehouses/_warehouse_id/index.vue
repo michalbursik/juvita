@@ -3,23 +3,23 @@
     <div class="row justify-content-center">
       <div class="col-12 col-lg-10">
 
-          <top-panel :title="currentWarehouse.name" :no-back-button="($auth.user.role === 'employee')" back-url="/warehouses"
-                     buttonClass="col-12 col-sm-4 d-flex align-items-center justify-content-end">
-            <template slot="buttons">
-              <div v-if="isAdmin()">
-                <select @change="changeWarehouse()" class="form-control" name="warehouse" id="warehouse">
-                  <option disabled selected>Přepnout sklad</option>
-                  <option v-for="warehouse of getAllWarehouses"
-                          v-if="warehouse.id !== currentWarehouse.id"
-                          :key="warehouse.id"
-                          :value="warehouse.id"
-                  >
-                    {{ warehouse.name }}
-                  </option>
-                </select>
-              </div>
-            </template>
-          </top-panel>
+        <top-panel :title="currentWarehouse.name" :no-back-button="($auth.user.role === 'employee')" back-url="/warehouses"
+                   buttonClass="col-12 col-sm-4 d-flex align-items-center justify-content-end">
+          <template slot="buttons">
+            <div v-if="isAdmin()">
+              <select @change="changeWarehouse()" class="form-control" name="warehouse" id="warehouse">
+                <option disabled selected>Přepnout sklad</option>
+                <option v-for="warehouse of getAllWarehouses"
+                        v-if="warehouse.id !== currentWarehouse.id"
+                        :key="warehouse.id"
+                        :value="warehouse.id"
+                >
+                  {{ warehouse.name }}
+                </option>
+              </select>
+            </div>
+          </template>
+        </top-panel>
 
 
         <div class="row">
@@ -36,7 +36,7 @@
                                 min-height: 140px; font-size: 1.2rem; padding: 0; margin-top: 15px;
                                 ">
                   <div style="margin-top: -15px;"
-                    :style="highlight(product)">
+                       :style="highlight(product)">
                     {{ `${product.name}` }} {{ `(${movementAmounts[product.id].amount}&nbsp;${product.unit})` }}
                   </div>
                 </div>
@@ -45,7 +45,7 @@
             <div class="row">
               <div class="col text-center">
                 <div class="btn-group w-100" role="group" aria-label="Product operations">
-                  <nuxt-link v-if="isAdmin() && currentWarehouse.type === 'warehouse'" event="" @click.native="changePage(`/warehouses/${currentWarehouse.id}/products/${product.id}/receipt`, product.id)"  to="" type="button" class="btn btn-success" style="border-top-left-radius: 0; border-top-right-radius: 0;">
+                  <nuxt-link v-if="isAdmin() && currentWarehouse.type === 'warehouse'" event="" @click.native="changePage(`/warehouses/${currentWarehouse.id}/products/${product.id}/receipt`, product.id)" to="" type="button" class="btn btn-success" style="border-top-left-radius: 0; border-top-right-radius: 0;">
                     <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" class="bi bi-plus text-white" viewBox="0 0 16 16">
                       <path d="M14 1a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H2a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1h12zM2 0a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2H2z"/>
                       <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4z"/>
@@ -91,7 +91,7 @@
                 </thead>
                 <tbody>
                 <tr v-for="movement of currentWarehouse.movements" :key="movement.id"
-                  :class="`${movement.type}-color`">
+                    :class="`${movement.type}-color`">
                   <td>{{ movement.issueWarehouse ? movement.issueWarehouse.name : '-' }}</td>
                   <td>{{ movement.receiptWarehouse ? movement.receiptWarehouse.name : '-' }}</td>
                   <td>{{ movement.product.name }}</td>
@@ -115,29 +115,28 @@
 <script>
 import {mapGetters} from "vuex";
 import TopPanel from "~/components/TopPanel";
-import movements from "~/pages/warehouses/movements";
 
 export default {
   name: "WarehousesShow",
   components: {TopPanel},
   scrollToTop: false,
   async asyncData({params, store}) {
-      let currentWarehouse = await store.dispatch('warehouses/fetch', params.warehouse_id);
-      let movementAmounts = await store.dispatch('movements/fetchAllAmounts', {
-        warehouse_id: params.warehouse_id,
-        day: new Date().toLocaleDateString(),
-      });
+    let currentWarehouse = await store.dispatch('warehouses/fetch', params.warehouse_id);
+    let movementAmounts = await store.dispatch('movements/fetchAllAmounts', {
+      warehouse_id: params.warehouse_id,
+      day: new Date().toUTCString(),
+    });
 
-      let movements = await store.dispatch('movements/fetchAll', {
-        receipt_warehouse_id: params.warehouse_id,
-        day: new Date().toLocaleDateString(),
-      })
+    let movements = await store.dispatch('movements/fetchAll', {
+      receipt_warehouse_id: params.warehouse_id,
+      day: new Date().toUTCString(),
+    })
 
-      return {
-          currentWarehouse,
-          movementAmounts: movementAmounts.data,
-          movements: movements.data,
-      }
+    return {
+      currentWarehouse,
+      movementAmounts: movementAmounts.data,
+      movements: movements.data,
+    }
   },
   fetch() {
     this.$store.dispatch('warehouses/fetchAll');

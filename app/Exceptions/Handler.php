@@ -47,8 +47,6 @@ class Handler extends ExceptionHandler
 
     public function render($request, Throwable $e)
     {
-        Log::debug(__FILE__ . '=>' . __METHOD__ . '(' . __LINE__ . '): handling exception');
-
         $code = $status = 404;
         $message = class_basename($e).': '.$e->getMessage();
 
@@ -67,18 +65,11 @@ class Handler extends ExceptionHandler
         if ($e instanceof AuthenticationException) {
             $code = $status = 403;
         }
-        Log::debug(__FILE__ . '=>' . __METHOD__ . '(' . __LINE__ . '): exception data', [
-            'code' => $code,
-            'message' => $message,
-            'status' => $status,
-        ]);
 
 
         if ($request->wantsJson() || $request->expectsJson()) {
-            Log::debug(__FILE__ . '=>' . __METHOD__ . '(' . __LINE__ . '): json');
             return responder()->error($code, $message)->respond($status)->setStatusCode($status);
         } else {
-            Log::debug(__FILE__ . '=>' . __METHOD__ . '(' . __LINE__ . '): not json');
             return parent::render($request, $e);
         }
     }

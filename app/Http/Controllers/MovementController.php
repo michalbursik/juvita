@@ -38,7 +38,6 @@ class MovementController extends Controller
                                 PricesManager $pricesManager,
                                 WarehouseManager $warehouseManager)
     {
-        Log::debug(__FILE__ . ' construct');
 
         $this->repository = $repository;
         $this->pricesManager = $pricesManager;
@@ -84,10 +83,10 @@ class MovementController extends Controller
 
         $query->when($request->input('day'), function ($query) use ($request) {
             $day = str_replace(' ', '', $request->input('day'));
-            $day = Carbon::parse($day, 'Europe/Prague');
+            $day = Carbon::parse($day);
 
-            $from = $day->clone()->startOfDay()->utc();
-            $to = $day->clone()->endOfDay()->utc();
+            $from = $day->clone()->startOfDay();
+            $to = $day->clone()->endOfDay();
 
             $query->whereBetween('created_at', [$from, $to]);
         });
@@ -120,10 +119,10 @@ class MovementController extends Controller
         // For temporary warehouses show
         if ($warehouse->type === Warehouse::TYPE_TEMPORARY) {
             $day = str_replace(' ', '', $request->input('day'));
-            $day = Carbon::parse($day, 'Europe/Prague');
+            $day = Carbon::parse($day);
 
-            $from = $day->clone()->startOfDay()->utc();
-            $to = $day->clone()->endOfDay()->utc();
+            $from = $day->clone()->startOfDay();
+            $to = $day->clone()->endOfDay();
 
             $query->whereBetween('created_at', [$from, $to]);
         }
@@ -189,42 +188,31 @@ class MovementController extends Controller
 
     public function transmission(TransmissionMovementRequest $request): JsonResponse
     {
-        Log::debug(__FILE__ . '=>' . __METHOD__ . '(' . __LINE__ . ')');
-
         DB::beginTransaction();
 
         try {
-            Log::debug(__FILE__ . '=>' . __METHOD__ . '(' . __LINE__ . '): try');
 
             $data = $request->validated();
-            Log::debug(__FILE__ . '=>' . __METHOD__ . '(' . __LINE__ . '): validated');
 
             $priceLevel = PriceLevel::query()->find($data['price_level_id']);
-            Log::debug(__FILE__ . '=>' . __METHOD__ . '(' . __LINE__ . '): priceLevel found');
 
             $data['price'] = $priceLevel->price;
 
-            Log::debug(__FILE__ . '=>' . __METHOD__ . '(' . __LINE__ . '): price set');
 
             $movement = $this->repository->store($data);
 
-            Log::debug(__FILE__ . '=>' . __METHOD__ . '(' . __LINE__ . '): movements stored');
 
             $this->warehouseManager->transmission($movement, $priceLevel);
 
-            Log::debug(__FILE__ . '=>' . __METHOD__ . '(' . __LINE__ . '): warehouses changed');
 
             $this->pricesManager->transmission($movement, $priceLevel);
-            Log::debug(__FILE__ . '=>' . __METHOD__ . '(' . __LINE__ . '): price level changed');
 
             DB::commit();
 
-            Log::debug(__FILE__ . '=>' . __METHOD__ . '(' . __LINE__ . '): transmission created');
+
         } catch (\Exception $e) {
-            Log::debug(__FILE__ . '=>' . __METHOD__ . '(' . __LINE__ . '): exception');
             DB::rollBack();
 
-            Log::debug(__FILE__ . '=>' . __METHOD__ . '(' . __LINE__ . '): exception rollbacked');
 
             Log::error('Exception', [
                 'code' => $e->getCode(),
@@ -235,12 +223,10 @@ class MovementController extends Controller
                 'trace' => $e->getTraceAsString(),
             ]);
 
-            Log::debug(__FILE__ . '=>' . __METHOD__ . '(' . __LINE__ . '): exception logged');
 
             return responder()->error(500, $e->getMessage())->respond();
         }
 
-        Log::debug(__FILE__ . '=>' . __METHOD__ . '(' . __LINE__ . '): transmission success');
 
         return responder()->success($movement)->respond();
     }

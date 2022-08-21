@@ -99,4 +99,11 @@
       0 => 'NunoMaduro\\Collision\\Adapters\\Laravel\\CollisionServiceProvider',
     ),
   ),
+  'spatie/laravel-ray' => 
+  array (
+    'providers' => 
+    array (
+      0 => 'Spatie\\LaravelRay\\RayServiceProvider',
+    ),
+  ),
 );
