@@ -5,7 +5,7 @@ namespace App\Managers;
 
 
 use App\Exceptions\InsufficientAmountException;
-use App\Models\PriceLevel;
+use App\Models\ProductWarehouse;
 use App\Models\Product;
 use App\Models\User;
 use App\Models\Warehouse;
@@ -17,20 +17,15 @@ class WarehouseManager
     /**
      * @throws InsufficientAmountException
      */
-    public function issue(Movement $movement, PriceLevel $priceLevel)
+    public function issue(Movement $movement, ProductWarehouse $priceLevel)
     {
         /** @var Product $warehouseProduct */
         $warehouseProduct = $movement->issueWarehouse->products()
             ->find($movement->product->id);
 
-        /** @var PriceLevel $priceLevel */
+        /** @var ProductWarehouse $priceLevel */
         $priceLevel = $warehouseProduct->priceLevels()
             ->find($priceLevel->id);
-
-        Log::debug('', [
-            $priceLevel->id => (float) $priceLevel->amount,
-            $movement->id => (float) $movement->amount,
-        ]);
 
         if ((float) $priceLevel->amount < (float) $movement->amount) {
             throw new InsufficientAmountException();
@@ -38,6 +33,8 @@ class WarehouseManager
 
         $warehouseProduct->product_warehouse->amount = round((float) $warehouseProduct->product_warehouse->amount - (float) $movement->amount, 1);
         $warehouseProduct->product_warehouse->save();
+
+        return $warehouseProduct;
     }
 
     public function receipt(Movement $movement)
@@ -50,12 +47,14 @@ class WarehouseManager
         $warehouseProduct->product_warehouse->price = $movement->price;
 
         $warehouseProduct->product_warehouse->save();
+
+        return $warehouseProduct;
     }
 
     /**
      * @throws InsufficientAmountException
      */
-    public function transmission(Movement $movement, PriceLevel $priceLevel)
+    public function transmission(Movement $movement, ProductWarehouse $priceLevel)
     {
         // Reduce on issue warehouse
         $this->issue($movement, $priceLevel);

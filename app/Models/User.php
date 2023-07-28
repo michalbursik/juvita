@@ -46,10 +46,10 @@ use Laravel\Sanctum\HasApiTokens;
  * @method static \Illuminate\Database\Eloquent\Builder|User whereRole($value)
  * @method static \Illuminate\Database\Eloquent\Builder|User whereUpdatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|User whereWarehouseId($value)
- * @mixin \Eloquent
  * @property-read int|null $movements_count
  * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\Discount[] $discounts
  * @property-read int|null $discounts_count
+ * @mixin \Eloquent
  */
 class User extends Authenticatable implements Transformable
 {

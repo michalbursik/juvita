@@ -14,7 +14,7 @@ class CreateProductWarehouseTable extends Migration
     public function up()
     {
         Schema::create('product_warehouse', function (Blueprint $table) {
-            $table->primary(['product_id', 'warehouse_id']);
+            $table->primary(['product_id', 'warehouse_id', 'price']);
 
             $table->float('amount', 8, 1);
             $table->float('price', 8, 1);

@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\StoreWarehouseRequest;
 use App\Http\Requests\UpdateWarehouseRequest;
 use App\Models\Discount;
-use App\Models\PriceLevel;
+use App\Models\ProductWarehouse;
 use App\Models\Product;
 use App\Models\User;
 use App\Models\Warehouse;

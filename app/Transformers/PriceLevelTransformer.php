@@ -2,7 +2,7 @@
 
 namespace App\Transformers;
 
-use App\Models\PriceLevel;
+use App\Models\ProductWarehouse;
 use Flugg\Responder\Transformers\Transformer;
 
 class PriceLevelTransformer extends Transformer
@@ -26,10 +26,10 @@ class PriceLevelTransformer extends Transformer
     /**
      * Transform the model.
      *
-     * @param  PriceLevel $priceLevel
+     * @param  ProductWarehouse $priceLevel
      * @return array
      */
-    public function transform(PriceLevel $priceLevel): array
+    public function transform(ProductWarehouse $priceLevel): array
     {
         return [
             'id' => (int) $priceLevel->id,

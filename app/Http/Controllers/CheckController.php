@@ -8,7 +8,7 @@ use App\Managers\WarehouseManager;
 use App\Models\Check;
 use App\Models\Discount;
 use App\Models\Movement;
-use App\Models\PriceLevel;
+use App\Models\ProductWarehouse;
 use App\Models\Product;
 use App\Models\Warehouse;
 use App\Repositories\CheckRepository;
@@ -92,7 +92,7 @@ class CheckController extends Controller
             foreach ($data['products'] as $productData) {
                 $product = Product::query()->find($productData['product_id']);
 
-                $priceLevel = PriceLevel::query()->find($productData['price_level_id']);
+                $priceLevel = ProductWarehouse::query()->find($productData['price_level_id']);
 
                 $check->products()->save($product, [
                     'amount_before' => $priceLevel->amount,
@@ -148,7 +148,7 @@ class CheckController extends Controller
             $movement = new Movement($data);
             $movement->save();
 
-            $priceLevel = PriceLevel::query()->find($checkProduct->product_check->price_level_id);
+            $priceLevel = ProductWarehouse::query()->find($checkProduct->product_check->price_level_id);
 
             $this->warehouseManager->issue($movement, $priceLevel);
             $this->pricesManager->issue($movement, $priceLevel);
