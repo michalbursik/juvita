@@ -12,3 +12,11 @@ handlovani zmen cen v terenu (skolka, ...) sekce slevy na produkty
 
 
 zvyraznit produkty kdyz se naskladni. (na 4 hodiny)
+
+
+product_warehouse
+- extend primary key with "price"
+
+price_levels
+- convert to product_warehouse
+- delete validity + status

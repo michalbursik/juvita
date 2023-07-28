@@ -2,7 +2,7 @@
 
 namespace App\Transformers;
 
-use App\Models\PriceLevel;
+use App\Models\ProductWarehouse;
 use App\Models\Warehouse;
 use Flugg\Responder\Transformers\Transformer;
 

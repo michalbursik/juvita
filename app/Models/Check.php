@@ -29,9 +29,9 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
  * @method static \Illuminate\Database\Eloquent\Builder|Check whereUpdatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Check whereUserId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Check whereWarehouseId($value)
- * @mixin \Eloquent
  * @property string $discount
  * @method static \Illuminate\Database\Eloquent\Builder|Check whereDiscount($value)
+ * @mixin \Eloquent
  */
 class Check extends Model implements Transformable
 {

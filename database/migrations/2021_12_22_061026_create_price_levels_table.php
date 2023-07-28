@@ -1,6 +1,6 @@
 <?php
 
-use App\Models\PriceLevel;
+use App\Models\ProductWarehouse;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -23,7 +23,7 @@ class CreatePriceLevelsTable extends Migration
             $table->date('validFrom');
             $table->date('validTo');
 
-            $table->string('status')->default(PriceLevel::STATUS_ACTIVE);
+            $table->string('status')->default(ProductWarehouse::STATUS_ACTIVE);
 
             $table->foreignId('product_id')->constrained('products');
             $table->foreignId('warehouse_id')->constrained('warehouses');

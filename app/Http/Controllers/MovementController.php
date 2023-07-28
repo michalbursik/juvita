@@ -7,7 +7,7 @@ use App\Http\Requests\TrashTransmissionMovementRequest;
 use App\Http\Requests\TransmissionMovementRequest;
 use App\Managers\PricesManager;
 use App\Managers\WarehouseManager;
-use App\Models\PriceLevel;
+use App\Models\ProductWarehouse;
 use App\Models\User;
 use App\Models\Warehouse;
 use App\Repositories\MovementRepository;
@@ -140,7 +140,7 @@ class MovementController extends Controller
 
         try {
             $data = $request->validated();
-            $priceLevel = PriceLevel::query()->find($data['price_level_id']);
+            $priceLevel = ProductWarehouse::query()->find($data['price_level_id']);
             $data['price'] = $priceLevel->price;
 
             // Manage warehouses
@@ -191,28 +191,18 @@ class MovementController extends Controller
         DB::beginTransaction();
 
         try {
-
             $data = $request->validated();
-
-            $priceLevel = PriceLevel::query()->find($data['price_level_id']);
-
+            $priceLevel = ProductWarehouse::query()->find($data['price_level_id']);
             $data['price'] = $priceLevel->price;
-
 
             $movement = $this->repository->store($data);
 
-
             $this->warehouseManager->transmission($movement, $priceLevel);
-
-
             $this->pricesManager->transmission($movement, $priceLevel);
 
             DB::commit();
-
-
         } catch (\Exception $e) {
             DB::rollBack();
-
 
             Log::error('Exception', [
                 'code' => $e->getCode(),
@@ -223,10 +213,8 @@ class MovementController extends Controller
                 'trace' => $e->getTraceAsString(),
             ]);
 
-
             return responder()->error(500, $e->getMessage())->respond();
         }
-
 
         return responder()->success($movement)->respond();
     }

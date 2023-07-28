@@ -21,7 +21,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  * @property string $unit
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
- * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\PriceLevel[] $priceLevels
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\ProductWarehouse[] $priceLevels
  * @property-read int|null $price_levels_count
  * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\Movement[] $movements
  * @property-read int|null $warehouse_movements_count
@@ -40,8 +40,8 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  * @method static \Illuminate\Database\Eloquent\Builder|Product whereOrigin($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Product whereUnit($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Product whereUpdatedAt($value)
- * @mixin \Eloquent
  * @property-read int|null $movements_count
+ * @mixin \Eloquent
  */
 class Product extends Model implements Transformable
 {
@@ -59,7 +59,7 @@ class Product extends Model implements Transformable
 
     public function priceLevels(): HasMany
     {
-        return $this->hasMany(PriceLevel::class);
+        return $this->hasMany(ProductWarehouse::class);
     }
 
     public function movements(): HasMany

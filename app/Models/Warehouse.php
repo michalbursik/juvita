@@ -3,7 +3,6 @@
 namespace App\Models;
 
 use App\Transformers\WarehouseTransformer;
-use Awobaz\Compoships\Compoships;
 use Flugg\Responder\Contracts\Transformable;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -12,6 +11,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Korridor\LaravelHasManyMerged\HasManyMerged;
 use Korridor\LaravelHasManyMerged\HasManyMergedRelation;
 
 /**
@@ -40,11 +40,16 @@ use Korridor\LaravelHasManyMerged\HasManyMergedRelation;
  * @method static \Illuminate\Database\Eloquent\Builder|Warehouse whereName($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Warehouse whereType($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Warehouse whereUpdatedAt($value)
- * @mixin \Eloquent
- * @property-read Collection|\App\Models\PriceLevel[] $priceLevels
+ * @property-read Collection|\App\Models\ProductWarehouse[] $priceLevels
  * @property-read int|null $price_levels_count
  * @property-read Collection|\App\Models\Discount[] $discounts
  * @property-read int|null $discounts_count
+ * @property \Illuminate\Support\Carbon|null $deleted_at
+ * @method static \Illuminate\Database\Query\Builder|Warehouse onlyTrashed()
+ * @method static \Illuminate\Database\Eloquent\Builder|Warehouse whereDeletedAt($value)
+ * @method static \Illuminate\Database\Query\Builder|Warehouse withTrashed()
+ * @method static \Illuminate\Database\Query\Builder|Warehouse withoutTrashed()
+ * @mixin \Eloquent
  */
 class Warehouse extends Model implements Transformable
 {
@@ -71,7 +76,7 @@ class Warehouse extends Model implements Transformable
 
     public function priceLevels(): HasMany
     {
-        return $this->hasMany(PriceLevel::class);
+        return $this->hasMany(ProductWarehouse::class);
     }
 
     public function issueMovements(): HasMany
@@ -84,7 +89,7 @@ class Warehouse extends Model implements Transformable
         return $this->hasMany(Movement::class, 'receipt_warehouse_id');
     }
 
-    public function movements(): \Korridor\LaravelHasManyMerged\HasManyMerged
+    public function movements(): HasManyMerged
     {
         return $this->hasManyMerged(Movement::class, ['issue_warehouse_id', 'receipt_warehouse_id']);
     }
