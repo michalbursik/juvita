@@ -15,19 +15,19 @@ return new class extends Migration {
         Schema::table('product_warehouse', function (Blueprint $table) {
             // TODO remove after production is cleared
 
-            $table->dropForeignIdFor(Product::class);
-            $table->dropForeignIdFor(Warehouse::class);
-            $table->dropPrimary();
-
-            $table->primary(['product_id', 'warehouse_id', 'price']);
-
-            $table->foreign('product_id')
-                ->references('id')
-                ->on('products');
-
-            $table->foreign('warehouse_id')
-                ->references('id')
-                ->on('warehouses');
+//            $table->dropForeignIdFor(Product::class);
+//            $table->dropForeignIdFor(Warehouse::class);
+//            $table->dropPrimary();
+//
+//            $table->primary(['product_id', 'warehouse_id', 'price']);
+//
+//            $table->foreign('product_id')
+//                ->references('id')
+//                ->on('products');
+//
+//            $table->foreign('warehouse_id')
+//                ->references('id')
+//                ->on('warehouses');
 
         });
     }

@@ -15,6 +15,7 @@ class CreateChecksTable extends Migration
     {
         Schema::create('checks', function (Blueprint $table) {
             $table->id();
+            $table->uuid()->unique();
 
             $table->float('discount', 8, 1)->default(0);
 

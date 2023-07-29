@@ -16,9 +16,12 @@ class CreateWarehousesTable extends Migration
     {
         Schema::create('warehouses', function (Blueprint $table) {
             $table->id();
+            $table->uuid()->unique();
+
             $table->string('name');
             $table->string('type')->default(Warehouse::TYPE_MAIN);
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 

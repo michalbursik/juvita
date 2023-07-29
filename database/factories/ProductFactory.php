@@ -3,10 +3,13 @@
 namespace Database\Factories;
 
 use App\Models\Product;
+use App\Traits\SupportsProjections;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 class ProductFactory extends Factory
 {
+    use SupportsProjections;
+
     /**
      * Define the model's default state.
      *

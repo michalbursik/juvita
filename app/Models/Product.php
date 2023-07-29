@@ -2,12 +2,16 @@
 
 namespace App\Models;
 
+use App\Events\ProductCreated;
+use App\Interfaces\Eventable;
+use App\Traits\UuidHelpers;
 use App\Transformers\ProductTransformer;
 use Flugg\Responder\Contracts\Transformable;
+use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Spatie\EventSourcing\Projections\Projection;
 
 /**
  * App\Models\Product
@@ -41,16 +45,34 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  * @method static \Illuminate\Database\Eloquent\Builder|Product whereUnit($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Product whereUpdatedAt($value)
  * @property-read int|null $movements_count
+ * @property string $uuid
+ * @method static \Illuminate\Database\Eloquent\Builder|Product whereUuid($value)
  * @mixin \Eloquent
  */
-class Product extends Model implements Transformable
+class Product extends Projection implements Transformable, Eventable
 {
-    use HasFactory;
-
-    protected $fillable = ['name', 'origin', 'active', 'order', 'unit', 'image'];
+    use HasFactory, UuidHelpers;
 
     const DEFAULT_UNIT = 'kg';
     const AVAILABLE_UNITS = ['kg', 'ks'];
+    protected $fillable = ['name', 'origin', 'active', 'order', 'unit', 'image'];
+
+    public static function setModelEvents(): void
+    {
+        static::setCreateEvent(ProductCreated::class);
+    }
+
+    public static function getListOfAvailableUnits($separator = ','): string
+    {
+        return implode($separator, self::AVAILABLE_UNITS);
+    }
+
+    public static function getNextOrderNumber()
+    {
+        $product = Product::query()->orderByDesc('order')->first('order');
+
+        return !empty($product) ? $product->order + 10 : 10;
+    }
 
     public function warehouses(): BelongsToMany
     {
@@ -65,11 +87,6 @@ class Product extends Model implements Transformable
     public function movements(): HasMany
     {
         return $this->hasMany(Movement::class);
-    }
-
-    public static function getListOfAvailableUnits($separator = ','): string
-    {
-        return implode($separator, self::AVAILABLE_UNITS);
     }
 
     public function transformer(): string

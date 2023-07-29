@@ -15,6 +15,7 @@ class CreateCheckProductTable extends Migration
     {
         Schema::create('check_product', function (Blueprint $table) {
             $table->id();
+            $table->uuid()->unique();
 
             $table->float('amount_before', 8, 1);
             $table->float('amount_after', 8, 1);

@@ -81,6 +81,17 @@
       0 => 'Termwind\\Laravel\\TermwindServiceProvider',
     ),
   ),
+  'spatie/laravel-event-sourcing' => 
+  array (
+    'providers' => 
+    array (
+      0 => 'Spatie\\EventSourcing\\EventSourcingServiceProvider',
+    ),
+    'aliases' => 
+    array (
+      'Projectionist' => 'Spatie\\EventSourcing\\Facades\\EventSourcing',
+    ),
+  ),
   'spatie/laravel-ignition' => 
   array (
     'providers' => 
@@ -97,6 +108,13 @@
     'providers' => 
     array (
       0 => 'Spatie\\LaravelRay\\RayServiceProvider',
+    ),
+  ),
+  'spatie/laravel-schemaless-attributes' => 
+  array (
+    'providers' => 
+    array (
+      0 => 'Spatie\\SchemalessAttributes\\SchemalessAttributesServiceProvider',
     ),
   ),
 );

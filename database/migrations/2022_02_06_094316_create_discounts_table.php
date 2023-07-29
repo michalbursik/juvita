@@ -15,6 +15,8 @@ class CreateDiscountsTable extends Migration
     {
         Schema::create('discounts', function (Blueprint $table) {
             $table->id();
+            $table->uuid()->unique();
+
             $table->float('amount', 8, 1);
             $table->text('note')->nullable();
             $table->foreignId('warehouse_id')->constrained('warehouses');

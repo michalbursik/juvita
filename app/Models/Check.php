@@ -31,6 +31,8 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
  * @method static \Illuminate\Database\Eloquent\Builder|Check whereWarehouseId($value)
  * @property string $discount
  * @method static \Illuminate\Database\Eloquent\Builder|Check whereDiscount($value)
+ * @property string $uuid
+ * @method static \Illuminate\Database\Eloquent\Builder|Check whereUuid($value)
  * @mixin \Eloquent
  */
 class Check extends Model implements Transformable

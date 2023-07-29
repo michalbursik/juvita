@@ -40,6 +40,8 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @method static \Illuminate\Database\Eloquent\Builder|Movement whereUpdatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Movement whereUserId($value)
  * @method static \Database\Factories\MovementFactory factory(...$parameters)
+ * @property string $uuid
+ * @method static \Illuminate\Database\Eloquent\Builder|Movement whereUuid($value)
  * @mixin \Eloquent
  */
 class Movement extends Model implements Transformable

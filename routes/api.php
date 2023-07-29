@@ -32,6 +32,14 @@ Route::middleware('auth:sanctum')->group(function () {
         return $request->user();
     });
 
+    // Event sourcing
+    Route::post('warehouses/receive', [WarehouseController::class, 'receive'])->name('warehouses.products.receive');
+    Route::post('warehouses/move', [WarehouseController::class, 'move'])->name('warehouses.products.move');
+
+    // ----
+
+
+
     Route::resource('discounts', DiscountController::class);
     Route::get('warehouses/trash', [WarehouseController::class, 'trash']);
     Route::get('warehouses/movements', [MovementController::class, 'index'])->name('movements.index');

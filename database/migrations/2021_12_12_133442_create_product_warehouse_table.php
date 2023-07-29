@@ -14,15 +14,18 @@ class CreateProductWarehouseTable extends Migration
     public function up()
     {
         Schema::create('product_warehouse', function (Blueprint $table) {
-            $table->primary(['product_id', 'warehouse_id', 'price']);
+            $table->id();
+            $table->uuid()->unique();
+            $table->unique(['warehouse_uuid', 'product_uuid', 'price']);
 
             $table->float('amount', 8, 1);
             $table->float('price', 8, 1);
 
-            $table->foreignId('product_id')->constrained('products');
-            $table->foreignId('warehouse_id')->constrained('warehouses');
+            $table->foreignUuid('product_uuid')->constrained('products', 'uuid');
+            $table->foreignUuid('warehouse_uuid')->constrained('warehouses', 'uuid');
 
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 

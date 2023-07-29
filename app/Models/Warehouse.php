@@ -2,17 +2,23 @@
 
 namespace App\Models;
 
+use App\Enums\WarehouseTypeEnum;
+use App\Events\ProductMoved;
+use App\Events\ProductReceived;
+use App\Events\WarehouseCreated;
+use App\Interfaces\Eventable;
+use App\Traits\UuidHelpers;
 use App\Transformers\WarehouseTransformer;
 use Flugg\Responder\Contracts\Transformable;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Korridor\LaravelHasManyMerged\HasManyMerged;
 use Korridor\LaravelHasManyMerged\HasManyMergedRelation;
+use Spatie\EventSourcing\Projections\Projection;
 
 /**
  * App\Models\Warehouse
@@ -49,24 +55,37 @@ use Korridor\LaravelHasManyMerged\HasManyMergedRelation;
  * @method static \Illuminate\Database\Eloquent\Builder|Warehouse whereDeletedAt($value)
  * @method static \Illuminate\Database\Query\Builder|Warehouse withTrashed()
  * @method static \Illuminate\Database\Query\Builder|Warehouse withoutTrashed()
+ * @property string $uuid
+ * @method static \Illuminate\Database\Eloquent\Builder|Warehouse whereUuid($value)
  * @mixin \Eloquent
  */
-class Warehouse extends Model implements Transformable
+class Warehouse extends Projection implements Transformable, Eventable
 {
-    use HasFactory, HasManyMergedRelation, SoftDeletes;
+    use HasFactory, HasManyMergedRelation, SoftDeletes, UuidHelpers;
 
     const TYPE_MAIN = 'warehouse';
     const TYPE_TEMPORARY = 'temporary_warehouse';
     const TYPE_INTERNAL = 'internal_warehouse';
     const TYPE_TRASH = 'trash_warehouse';
-
     protected $fillable = ['name', 'type'];
 
-    public function products(): BelongsToMany
+    protected $casts = [
+        'type' => WarehouseTypeEnum::class
+    ];
+
+    public static function setModelEvents(): void
     {
-        return $this->belongsToMany(Product::class)
-            ->as('product_warehouse')
-            ->withPivot(['amount', 'price']);
+        static::setCreateEvent(WarehouseCreated::class);
+    }
+
+    public function receiveProduct(string $productUuid, float $price, float $amount): void
+    {
+        event(new ProductReceived($this->uuid, $productUuid, $price, $amount));
+    }
+
+    public function moveProduct(string $targetWarehouseUuid, string $productId, float $price, float $amount): void
+    {
+        event(new ProductMoved($this->uuid, $targetWarehouseUuid, $productId, $price, $amount));
     }
 
     public function user(): HasOne
@@ -97,6 +116,13 @@ class Warehouse extends Model implements Transformable
     public function activeProducts(): Collection
     {
         return $this->products()->where('products.active', true)->get();
+    }
+
+    public function products(): BelongsToMany
+    {
+        return $this->belongsToMany(Product::class)
+            ->as('product_warehouse')
+            ->withPivot(['amount', 'price']);
     }
 
     public function checks(): HasMany

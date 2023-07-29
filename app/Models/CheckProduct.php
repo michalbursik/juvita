@@ -30,6 +30,8 @@ use Illuminate\Database\Eloquent\Relations\Pivot;
  * @method static \Illuminate\Database\Eloquent\Builder|CheckProduct whereUpdatedAt($value)
  * @property string|null $price
  * @method static \Illuminate\Database\Eloquent\Builder|CheckProduct wherePrice($value)
+ * @property string $uuid
+ * @method static \Illuminate\Database\Eloquent\Builder|CheckProduct whereUuid($value)
  * @mixin \Eloquent
  */
 class CheckProduct extends Pivot

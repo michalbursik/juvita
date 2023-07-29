@@ -31,6 +31,8 @@ use Illuminate\Support\Carbon;
  * @method static \Illuminate\Database\Eloquent\Builder|Discount whereWarehouseId($value)
  * @property string|null $note
  * @method static \Illuminate\Database\Eloquent\Builder|Discount whereNote($value)
+ * @property string $uuid
+ * @method static \Illuminate\Database\Eloquent\Builder|Discount whereUuid($value)
  * @mixin \Eloquent
  */
 class Discount extends Model implements Transformable

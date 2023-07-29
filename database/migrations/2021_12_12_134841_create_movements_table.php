@@ -17,6 +17,7 @@ class CreateMovementsTable extends Migration
     {
         Schema::create('movements', function (Blueprint $table) {
             $table->id();
+            $table->uuid()->unique();
 
             $table->string('type')->default(Movement::TYPE_ISSUE);
             $table->float('amount', 8, 1);

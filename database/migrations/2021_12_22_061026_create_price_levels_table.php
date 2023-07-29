@@ -16,6 +16,8 @@ class CreatePriceLevelsTable extends Migration
     {
         Schema::create('price_levels', function (Blueprint $table) {
             $table->id();
+            $table->uuid()->unique();
+
             $table->float('amount', 8, 1);
             $table->float('price', 8, 1);
 
