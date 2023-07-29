@@ -2,9 +2,10 @@
 
 namespace App\Models;
 
+use App\Interfaces\Eventable;
+use App\Traits\UuidHelpers;
 use App\Transformers\UserTransformer;
 use Flugg\Responder\Contracts\Transformable;
-use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -49,6 +50,10 @@ use Laravel\Sanctum\HasApiTokens;
  * @property-read int|null $movements_count
  * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\Discount[] $discounts
  * @property-read int|null $discounts_count
+ * @property string $uuid
+ * @method static \Illuminate\Database\Eloquent\Builder|User whereUuid($value)
+ * @property string $warehouse_uuid
+ * @method static \Illuminate\Database\Eloquent\Builder|User whereWarehouseUuid($value)
  * @mixin \Eloquent
  */
 class User extends Authenticatable implements Transformable
@@ -64,7 +69,11 @@ class User extends Authenticatable implements Transformable
      * @var string[]
      */
     protected $fillable = [
-        'name', 'email', 'password', 'role', 'warehouse_id',
+        'name',
+        'email',
+        'password',
+        'role',
+        'warehouse_id',
     ];
 
     /**

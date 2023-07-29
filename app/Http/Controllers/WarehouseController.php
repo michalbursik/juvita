@@ -2,18 +2,15 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\StoreWarehouseRequest;
-use App\Http\Requests\UpdateWarehouseRequest;
-use App\Models\Discount;
-use App\Models\ProductWarehouse;
+use App\Http\Requests\MoveProductRequest;
+use App\Http\Requests\ReceiveProductRequest;
 use App\Models\Product;
 use App\Models\User;
 use App\Models\Warehouse;
 use App\Repositories\WarehouseRepository;
-use App\Transformers\WarehouseTransformer;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
+use Illuminate\Http\Response;
 
 class WarehouseController extends Controller
 {
@@ -60,6 +57,26 @@ class WarehouseController extends Controller
         return responder()->success()->respond();
     }
 
+    // Event sourcing
+    public function receive(ReceiveProductRequest $request): Response
+    {
+        $data = $request->validated();
+        $warehouse = Warehouse::uuid($data['warehouse_uuid']);
+        $warehouse->receiveProduct($data['product_uuid'], $data['price'], $data['amount']);
+
+        return response(null, 202);
+    }
+
+    public function move(MoveProductRequest $request): Response
+    {
+        $data = $request->validated();
+        $warehouse = Warehouse::uuid($data['source_warehouse_uuid']);
+        $warehouse->moveProduct($data['target_warehouse_uuid'], $data['product_uuid'], $data['price'], $data['amount']);
+
+        return response(null, 202);
+    }
+    // ------
+
     public function show(Warehouse $warehouse)
     {
         $user = auth()->user();
@@ -73,12 +90,12 @@ class WarehouseController extends Controller
             ->with([
                 'movements' => function ($query) {
                     $query->where('movements.created_at', '>=', now()->subDays(7))
-                    ->orderByDesc('created_at');
+                        ->orderByDesc('created_at');
                 },
                 'products.priceLevels',
                 'products' => function ($query) {
                     $query->where('products.active', true)
-                            ->orderBy('order');
+                        ->orderBy('order');
                 },
             ])
             ->respond();
@@ -94,9 +111,12 @@ class WarehouseController extends Controller
             ->first();
 
         return responder()->success($warehouse)
-            ->with(['movements', 'products' => function ($query) {
-                $query->where('products.active', true);
-            }])
+            ->with([
+                'movements',
+                'products' => function ($query) {
+                    $query->where('products.active', true);
+                }
+            ])
             ->respond();
     }
 }

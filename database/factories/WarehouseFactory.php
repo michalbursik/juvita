@@ -2,11 +2,15 @@
 
 namespace Database\Factories;
 
+use App\Enums\WarehouseTypeEnum;
 use App\Models\Warehouse;
+use App\Traits\SupportsProjections;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 class WarehouseFactory extends Factory
 {
+    use SupportsProjections;
+
     /**
      * Define the model's default state.
      *
@@ -14,14 +18,11 @@ class WarehouseFactory extends Factory
      */
     public function definition(): array
     {
+        $type = $this->faker->randomElement(WarehouseTypeEnum::cases());
+
         return [
             'name' => $this->faker->name,
-            'type' => $this->faker->randomElement([
-                Warehouse::TYPE_MAIN,
-                Warehouse::TYPE_TEMPORARY,
-                Warehouse::TYPE_INTERNAL,
-                Warehouse::TYPE_TRASH,
-            ]),
+            'type' => $type->value,
         ];
     }
 

@@ -4,14 +4,14 @@ namespace App\Http\Controllers;
 
 use App\Exceptions\InsufficientAmountException;
 use App\Http\Requests\TrashTransmissionMovementRequest;
-use App\Http\Requests\TransmissionMovementRequest;
+use App\Http\Requests\MoveProductRequest;
 use App\Managers\PricesManager;
 use App\Managers\WarehouseManager;
 use App\Models\ProductWarehouse;
 use App\Models\User;
 use App\Models\Warehouse;
 use App\Repositories\MovementRepository;
-use App\Http\Requests\ReceiptMovementRequest;
+use App\Http\Requests\ReceiveProductRequest;
 use App\Models\Product;
 use App\Models\Movement;
 use Carbon\Carbon;
@@ -176,8 +176,16 @@ class MovementController extends Controller
         return responder()->success($movement)->respond();
     }
 
-    public function receipt(ReceiptMovementRequest $request): JsonResponse
+    public function receipt(ReceiveProductRequest $request): JsonResponse
     {
+        $data = $request->validated();
+
+        $warehouse = Warehouse::query()->findOrFail($data['receipt_warehouse_id']);
+        $product = Product::query()->findOrFail($data['product_id']);
+
+        $warehouse->receiveProduct($product->uuid, $data['price'], $data['amount']);
+
+
         $movement = $this->repository->store($request->validated());
 
         $this->warehouseManager->receipt($movement);
@@ -186,7 +194,7 @@ class MovementController extends Controller
         return responder()->success($movement)->respond();
     }
 
-    public function transmission(TransmissionMovementRequest $request): JsonResponse
+    public function transmission(MoveProductRequest $request): JsonResponse
     {
         DB::beginTransaction();
 

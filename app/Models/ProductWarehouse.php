@@ -2,12 +2,16 @@
 
 namespace App\Models;
 
+use App\Events\ProductWarehouseCreated;
+use App\Interfaces\Eventable;
+use App\Traits\UuidHelpers;
 use App\Transformers\PriceLevelTransformer;
 use Flugg\Responder\Contracts\Transformable;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Spatie\EventSourcing\Projections\Projection;
 
 /**
  * App\Models\PriceLevel
@@ -43,20 +47,58 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @method static \Illuminate\Database\Query\Builder|ProductWarehouse withTrashed()
  * @method static \Illuminate\Database\Query\Builder|ProductWarehouse withoutTrashed()
  * @property-read \App\Models\Warehouse $warehouse
+ * @property string $uuid
+ * @property string $product_uuid
+ * @property string $warehouse_uuid
+ * @method static \Illuminate\Database\Eloquent\Builder|ProductWarehouse whereProductUuid($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|ProductWarehouse whereUuid($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|ProductWarehouse whereWarehouseUuid($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|ProductWarehouse from(\App\Models\Warehouse|string $warehouse, \App\Models\Product|string $product, float $price)
+ * @method static Builder|ProductWarehouse karamel(\App\Models\Warehouse|string $warehouse, \App\Models\Product|string $product, float $price)
+ * @method static Builder|ProductWarehouse exact(\App\Models\Warehouse|string $warehouse, \App\Models\Product|string $product, float $price)
  * @mixin \Eloquent
  */
-class ProductWarehouse extends Model implements Transformable
+class ProductWarehouse extends Projection implements Transformable, Eventable
 {
-    use HasFactory, SoftDeletes;
+    use HasFactory, SoftDeletes, UuidHelpers;
+
+    const STATUS_ACTIVE = 'active';
 
     // Warehouse receipt product with price.
-    const STATUS_ACTIVE = 'active';
-    // All amount of product was issued away from warehouse.
     const STATUS_DISABLED = 'disabled';
-    // When check issues all amount of product from any warehouse.
+    // All amount of product was issued away from warehouse.
     const STATUS_REMOVED = 'removed';
+    // When check issues all amount of product from any warehouse.
+    protected $table = 'product_warehouse';
+    protected $fillable = [
+        'warehouse_uuid',
+        'product_uuid',
+        'amount',
+        'price',
+        'validFrom',
+        'validTo',
+        'status',
+    ];
 
-    protected $fillable = ['amount', 'price', 'validFrom', 'validTo', 'status', 'product_id', 'warehouse_id'];
+    protected $casts = [
+        'amount' => 'float',
+        'price' => 'float',
+    ];
+
+    public static function setModelEvents(): void
+    {
+        static::setCreateEvent(ProductWarehouseCreated::class);
+    }
+
+    public function scopeExact(Builder $query, Warehouse|string $warehouse, Product|string $product, float $price)
+    {
+        $warehouseUuid = $warehouse instanceof Warehouse ? $warehouse->uuid : $warehouse;
+        $productUuid = $product instanceof Product ? $product->uuid : $product;
+
+        $query->where('product_uuid', $productUuid)
+            ->where('warehouse_uuid', $warehouseUuid)
+            ->where('price', $price);
+    }
 
     public function product(): BelongsTo
     {
