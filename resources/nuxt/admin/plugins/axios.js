@@ -1,4 +1,8 @@
-export default function ({ $axios, store, $auth }) {
+export default function ({ $axios, store }) {
+  $axios.onRequest(request => {
+    // console.log(request);
+  });
+
   // API_URL rewrites baseUrl from nuxt.config.js, I need to suffix /v1 to it.
   $axios.setBaseURL(process.env.API_URL + "/api")
 
@@ -12,15 +16,7 @@ export default function ({ $axios, store, $auth }) {
       return Promise.reject(error.response.data.error.errors);
     }
 
-  //   // Eprin - token after one hour expires. What nothing happens when pressing submit button. (API CALL)
-  //   if (code === 401) {
-  //     // TODO THIS DOES NOT WORK YET.
-  //     // $auth.login('social')
-  //   }
-  //
     if (code >= 400 && code !== 422) {
-      // error.message + ': ' +
-
       console.log('Axios - response: ', error.response.data);
 
       let message = 'Undefined error';
@@ -40,13 +36,4 @@ export default function ({ $axios, store, $auth }) {
     console.log('Axios - error: ', error);
     return Promise.reject(error);
   })
-  //
-  // $axios.onResponse(response => {
-  //   // TODO chyba validace v create strance rozbije presmerovani
-  //   // if (response.data !== undefined && response.data.warnings !== undefined) {
-  //   //   store.dispatch("setWarningMessages", response.data.warnings);
-  //   // }
-  //
-  //   return Promise.resolve(response);
-  // })
 }

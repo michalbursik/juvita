@@ -4,6 +4,11 @@ export default {
   // Disable server-side rendering: https://go.nuxtjs.dev/ssr-mode
   ssr: false,
 
+  server: {
+    port: 3000,
+    host: 'localhost'
+  },
+
   env: {
     APP_URL: process.env.APP_URL,
     API_URL: process.env.API_URL,
@@ -51,7 +56,7 @@ export default {
     strategies: {
       laravelSanctum: {
         provider: 'laravel/sanctum',
-        url: process.env.API_URL
+        url: 'http://localhost:8000', // process.env.API_URL
       },
     }
   },
@@ -77,10 +82,18 @@ export default {
 
   // Axios module configuration: https://go.nuxtjs.dev/config-axios
   axios: {
+    proxy: true,
     // Workaround to avoid enforcing hard-coded localhost:3000: https://github.com/nuxt-community/axios-module/issues/308
-    baseURL: process.env.API_URL + '/api',
-    credentials: true,
+    // baseURL: process.env.API_URL + '/api',
+    // credentials: true,
+    // withCredentials: true,
     // debug: true,
+  },
+  proxy: {
+    '/api': {
+      target: 'localhost:8000/api',
+      pathRewrite: {'^/api': '/api'},
+    }
   },
 
   // TODO cache files you find in console

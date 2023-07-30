@@ -53,7 +53,7 @@ export default {
     }
   },
   methods: {
-    login() {
+    async login() {
       this.$auth.loginWith('laravelSanctum', {
         data: this.credentials
       }).catch(r => {

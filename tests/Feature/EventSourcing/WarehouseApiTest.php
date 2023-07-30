@@ -122,3 +122,9 @@ test('warehouse can get total amount of products through the api', function () {
             'total_amount' => 60
     ]);
 });
+
+test('csrf', function () {
+    $response = $this->get('sanctum/csrf-cookie');
+
+    dd($response);
+});
