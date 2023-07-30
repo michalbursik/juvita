@@ -3,10 +3,9 @@
 namespace App\Transformers;
 
 use App\Models\WarehouseProduct;
-use App\Models\Warehouse;
 use Flugg\Responder\Transformers\Transformer;
 
-class WarehouseTransformer extends Transformer
+class WarehouseProductTransformer extends Transformer
 {
     /**
      * List of available relations.
@@ -14,9 +13,7 @@ class WarehouseTransformer extends Transformer
      * @var string[]
      */
     protected $relations = [
-        'products' => ProductTransformer::class,
-        'movements' => MovementTransformer::class,
-        'priceLevels' => WarehouseProductTransformer::class,
+        'product' => ProductTransformer::class
     ];
 
     /**
@@ -29,15 +26,16 @@ class WarehouseTransformer extends Transformer
     /**
      * Transform the model.
      *
-     * @param Warehouse $warehouse
+     * @param  WarehouseProduct $warehouseProduct
      * @return array
      */
-    public function transform(Warehouse $warehouse): array
+    public function transform(WarehouseProduct $warehouseProduct): array
     {
         return [
-            'id' => (int) $warehouse->id,
-            'name' => $warehouse->name,
-            'type' => $warehouse->type,
+            'id' => $warehouseProduct->id,
+            'product_name' => $warehouseProduct->product->name,
+            'total_amount' => $warehouseProduct->total_amount,
+            'image' => $warehouseProduct->product->image
         ];
     }
 }

@@ -14,7 +14,7 @@ class ProductTransformer extends Transformer
      * @var string[]
      */
     protected $relations = [
-        'priceLevels' => PriceLevelTransformer::class,
+        'priceLevels' => WarehouseProductTransformer::class,
         'movements' => MovementTransformer::class,
     ];
 

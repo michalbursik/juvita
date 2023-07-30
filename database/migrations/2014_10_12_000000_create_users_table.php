@@ -1,11 +1,12 @@
 <?php
 
 use App\Models\User;
+use App\Models\Warehouse;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateUsersTable extends Migration
+return new class extends Migration
 {
     /**
      * Run the migrations.
@@ -15,6 +16,8 @@ class CreateUsersTable extends Migration
     public function up()
     {
         Schema::create('users', function (Blueprint $table) {
+            $warehouse = new Warehouse();
+
             $table->id();
             // $table->uuid()->unique();
             $table->string('name');
@@ -23,7 +26,7 @@ class CreateUsersTable extends Migration
             $table->string('password');
             $table->string('role')->default(User::ROLE_EMPLOYEE);
 
-            $table->foreignUuid('warehouse_uuid')->constrained('warehouses', 'uuid');
+             $table->foreignUuid($warehouse->getForeignKey())->constrained($warehouse->getTable(), $warehouse->getKeyName());
 
             $table->rememberToken();
             $table->timestamps();
@@ -39,4 +42,4 @@ class CreateUsersTable extends Migration
     {
         Schema::dropIfExists('users');
     }
-}
+};

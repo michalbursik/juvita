@@ -6,8 +6,6 @@ use App\Enums\WarehouseTypeEnum;
 use App\Events\ProductMoved;
 use App\Events\ProductReceived;
 use App\Events\WarehouseCreated;
-use App\Interfaces\Eventable;
-use App\Traits\UuidHelpers;
 use App\Transformers\WarehouseTransformer;
 use Flugg\Responder\Contracts\Transformable;
 use Illuminate\Database\Eloquent\Collection;
@@ -18,50 +16,49 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Korridor\LaravelHasManyMerged\HasManyMerged;
 use Korridor\LaravelHasManyMerged\HasManyMergedRelation;
-use Spatie\EventSourcing\Projections\Projection;
 
 /**
  * App\Models\Warehouse
  *
  * @property int $id
+ * @property string $uuid
  * @property string $name
- * @property string $type
+ * @property WarehouseTypeEnum $type
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
- * @property-read Collection|\App\Models\Check[] $checks
+ * @property \Illuminate\Support\Carbon|null $deleted_at
+ * @property-read Collection<int, \App\Models\Check> $checks
  * @property-read int|null $checks_count
- * @property-read Collection|\App\Models\Movement[] $issueMovements
+ * @property-read Collection<int, \App\Models\Discount> $discounts
+ * @property-read int|null $discounts_count
+ * @property-read Collection<int, \App\Models\Movement> $issueMovements
  * @property-read int|null $issue_movements_count
- * @property-read Collection|\App\Models\Product[] $products
+ * @property-read Collection<int, \App\Models\WarehouseProduct> $priceLevels
+ * @property-read int|null $price_levels_count
+ * @property-read Collection<int, \App\Models\Product> $products
  * @property-read int|null $products_count
- * @property-read Collection|\App\Models\Movement[] $receiptMovements
+ * @property-read Collection<int, \App\Models\Movement> $receiptMovements
  * @property-read int|null $receipt_movements_count
  * @property-read \App\Models\User|null $user
- * @method static \Database\Factories\WarehouseFactory factory(...$parameters)
+ * @method static \Database\Factories\WarehouseFactory factory($count = null, $state = [])
  * @method static \Illuminate\Database\Eloquent\Builder|Warehouse newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|Warehouse newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|Warehouse onlyTrashed()
  * @method static \Illuminate\Database\Eloquent\Builder|Warehouse query()
  * @method static \Illuminate\Database\Eloquent\Builder|Warehouse whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Warehouse whereDeletedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Warehouse whereId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Warehouse whereName($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Warehouse whereType($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Warehouse whereUpdatedAt($value)
- * @property-read Collection|\App\Models\ProductWarehouse[] $priceLevels
- * @property-read int|null $price_levels_count
- * @property-read Collection|\App\Models\Discount[] $discounts
- * @property-read int|null $discounts_count
- * @property \Illuminate\Support\Carbon|null $deleted_at
- * @method static \Illuminate\Database\Query\Builder|Warehouse onlyTrashed()
- * @method static \Illuminate\Database\Eloquent\Builder|Warehouse whereDeletedAt($value)
- * @method static \Illuminate\Database\Query\Builder|Warehouse withTrashed()
- * @method static \Illuminate\Database\Query\Builder|Warehouse withoutTrashed()
- * @property string $uuid
  * @method static \Illuminate\Database\Eloquent\Builder|Warehouse whereUuid($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Warehouse withTrashed()
+ * @method static \Illuminate\Database\Eloquent\Builder|Warehouse withoutTrashed()
  * @mixin \Eloquent
  */
-class Warehouse extends Projection implements Transformable, Eventable
+class Warehouse extends ModelProjection implements Transformable
 {
-    use HasFactory, HasManyMergedRelation, SoftDeletes, UuidHelpers;
+    use HasFactory, HasManyMergedRelation, SoftDeletes;
 
     const TYPE_MAIN = 'warehouse';
     const TYPE_TEMPORARY = 'temporary_warehouse';
@@ -95,7 +92,7 @@ class Warehouse extends Projection implements Transformable, Eventable
 
     public function priceLevels(): HasMany
     {
-        return $this->hasMany(ProductWarehouse::class);
+        return $this->hasMany(WarehouseProduct::class);
     }
 
     public function issueMovements(): HasMany
@@ -118,11 +115,9 @@ class Warehouse extends Projection implements Transformable, Eventable
         return $this->products()->where('products.active', true)->get();
     }
 
-    public function products(): BelongsToMany
+    public function products(): HasMany
     {
-        return $this->belongsToMany(Product::class)
-            ->as('product_warehouse')
-            ->withPivot(['amount', 'price']);
+        return $this->hasMany(WarehouseProduct::class);
     }
 
     public function checks(): HasMany

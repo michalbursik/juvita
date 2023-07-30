@@ -6,7 +6,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateMovementsTable extends Migration
+return new class extends Migration
 {
     /**
      * Run the migrations.
@@ -41,4 +41,4 @@ class CreateMovementsTable extends Migration
     {
         Schema::dropIfExists('movements');
     }
-}
+};

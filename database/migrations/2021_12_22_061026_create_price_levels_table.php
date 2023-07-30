@@ -1,11 +1,11 @@
 <?php
 
-use App\Models\ProductWarehouse;
+use App\Models\WarehouseProduct;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreatePriceLevelsTable extends Migration
+return new class extends Migration
 {
     /**
      * Run the migrations.
@@ -25,7 +25,7 @@ class CreatePriceLevelsTable extends Migration
             $table->date('validFrom');
             $table->date('validTo');
 
-            $table->string('status')->default(ProductWarehouse::STATUS_ACTIVE);
+            $table->string('status')->default(WarehouseProduct::STATUS_ACTIVE);
 
             $table->foreignId('product_id')->constrained('products');
             $table->foreignId('warehouse_id')->constrained('warehouses');
@@ -44,4 +44,4 @@ class CreatePriceLevelsTable extends Migration
     {
         Schema::dropIfExists('price_levels');
     }
-}
+};

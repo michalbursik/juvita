@@ -7,7 +7,7 @@ use App\Http\Requests\TrashTransmissionMovementRequest;
 use App\Http\Requests\MoveProductRequest;
 use App\Managers\PricesManager;
 use App\Managers\WarehouseManager;
-use App\Models\ProductWarehouse;
+use App\Models\WarehouseProduct;
 use App\Models\User;
 use App\Models\Warehouse;
 use App\Repositories\MovementRepository;
@@ -140,7 +140,7 @@ class MovementController extends Controller
 
         try {
             $data = $request->validated();
-            $priceLevel = ProductWarehouse::query()->find($data['price_level_id']);
+            $priceLevel = WarehouseProduct::query()->find($data['price_level_id']);
             $data['price'] = $priceLevel->price;
 
             // Manage warehouses
@@ -200,7 +200,7 @@ class MovementController extends Controller
 
         try {
             $data = $request->validated();
-            $priceLevel = ProductWarehouse::query()->find($data['price_level_id']);
+            $priceLevel = WarehouseProduct::query()->find($data['price_level_id']);
             $data['price'] = $priceLevel->price;
 
             $movement = $this->repository->store($data);

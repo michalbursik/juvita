@@ -4,7 +4,6 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\MoveProductRequest;
 use App\Http\Requests\ReceiveProductRequest;
-use App\Models\Product;
 use App\Models\User;
 use App\Models\Warehouse;
 use App\Repositories\WarehouseRepository;
@@ -75,6 +74,14 @@ class WarehouseController extends Controller
 
         return response(null, 202);
     }
+
+    public function totalAmount(Warehouse $warehouse): JsonResponse
+    {
+        $warehouseProducts = $warehouse->products()->orderBy('id')->get();
+
+        return responder()->success($warehouseProducts)->respond();
+    }
+
     // ------
 
     public function show(Warehouse $warehouse)

@@ -2,7 +2,7 @@
 
 namespace App\Providers;
 
-use App\Projectors\WarehouseProductBalanceProjector;
+use App\Projectors\ProductAmountProjector;
 use Illuminate\Support\ServiceProvider;
 use Spatie\EventSourcing\Facades\Projectionist;
 
@@ -15,7 +15,7 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register()
     {
-        Projectionist::addProjector(WarehouseProductBalanceProjector::class);
+        Projectionist::addProjector(ProductAmountProjector::class);
     }
 
     /**

@@ -13,26 +13,26 @@ use Illuminate\Support\Carbon;
  * App\Models\Discount
  *
  * @property int $id
- * @property string $amount
+ * @property string $uuid
+ * @property float $amount
+ * @property string|null $note
  * @property int $warehouse_id
  * @property int $user_id
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
- * @property-read User $user
- * @property-read Warehouse $warehouse
+ * @property-read \App\Models\User $user
+ * @property-read \App\Models\Warehouse|null $warehouse
  * @method static \Illuminate\Database\Eloquent\Builder|Discount newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|Discount newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|Discount query()
  * @method static \Illuminate\Database\Eloquent\Builder|Discount whereAmount($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Discount whereCreatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Discount whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Discount whereNote($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Discount whereUpdatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Discount whereUserId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Discount whereWarehouseId($value)
- * @property string|null $note
- * @method static \Illuminate\Database\Eloquent\Builder|Discount whereNote($value)
- * @property string $uuid
  * @method static \Illuminate\Database\Eloquent\Builder|Discount whereUuid($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Discount whereWarehouseId($value)
  * @mixin \Eloquent
  */
 class Discount extends Model implements Transformable

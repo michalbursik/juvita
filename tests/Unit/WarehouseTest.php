@@ -1,7 +1,7 @@
 <?php
 
 use App\Models\Movement;
-use App\Models\ProductWarehouse;
+use App\Models\WarehouseProduct;
 use App\Models\Warehouse;
 use App\Services\WarehouseService;
 
@@ -16,7 +16,7 @@ it('can receive product', function () {
     $product = $service->processMovement($movement);
 
 
-    expect($product)->toBeInstanceOf(ProductWarehouse::class)
+    expect($product)->toBeInstanceOf(WarehouseProduct::class)
         ->and($product->amount)->toBeFloat()->toBe(100)
         ->and($product->price)->toBeFloat()->toBe(10);
 });

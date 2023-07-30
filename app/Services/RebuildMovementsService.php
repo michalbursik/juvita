@@ -6,7 +6,7 @@ use App\Exceptions\RebuildMovementsException;
 use App\Managers\PricesManager;
 use App\Managers\WarehouseManager;
 use App\Models\Movement;
-use App\Models\ProductWarehouse;
+use App\Models\WarehouseProduct;
 use App\Models\Product;
 use App\Models\Warehouse;
 use App\Repositories\PriceLevelRepository;
@@ -52,7 +52,7 @@ class RebuildMovementsService
     }
 
 
-    private function initializeProduct(): ProductWarehouse
+    private function initializeProduct(): WarehouseProduct
     {
         $priceLevelRepository = new PriceLevelRepository();
 
@@ -93,7 +93,7 @@ class RebuildMovementsService
         });
     }
 
-    private function applyMovements(Collection $movements, ProductWarehouse $priceLevel)
+    private function applyMovements(Collection $movements, WarehouseProduct $priceLevel)
     {
         $warehouseManager = new WarehouseManager();
         $pricesManager = new PricesManager();

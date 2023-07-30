@@ -10,11 +10,13 @@ use Illuminate\Database\Eloquent\Relations\Pivot;
  * App\Models\CheckProduct
  *
  * @property int $id
+ * @property string $uuid
  * @property float $amount_before
  * @property float $amount_after
+ * @property float|null $price
  * @property int $check_id
  * @property int $product_id
- * @property int|null $price_level_id
+ * @property int $price_level_id
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @method static \Illuminate\Database\Eloquent\Builder|CheckProduct newModelQuery()
@@ -25,12 +27,10 @@ use Illuminate\Database\Eloquent\Relations\Pivot;
  * @method static \Illuminate\Database\Eloquent\Builder|CheckProduct whereCheckId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|CheckProduct whereCreatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|CheckProduct whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|CheckProduct wherePrice($value)
  * @method static \Illuminate\Database\Eloquent\Builder|CheckProduct wherePriceLevelId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|CheckProduct whereProductId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|CheckProduct whereUpdatedAt($value)
- * @property string|null $price
- * @method static \Illuminate\Database\Eloquent\Builder|CheckProduct wherePrice($value)
- * @property string $uuid
  * @method static \Illuminate\Database\Eloquent\Builder|CheckProduct whereUuid($value)
  * @mixin \Eloquent
  */

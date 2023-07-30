@@ -13,26 +13,26 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
  * App\Models\Check
  *
  * @property int $id
+ * @property string $uuid
+ * @property float $discount
  * @property int $warehouse_id
  * @property int $user_id
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
- * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\Product[] $products
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\Product> $products
  * @property-read int|null $products_count
  * @property-read \App\Models\User $user
- * @property-read \App\Models\Warehouse $warehouse
+ * @property-read \App\Models\Warehouse|null $warehouse
  * @method static \Illuminate\Database\Eloquent\Builder|Check newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|Check newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|Check query()
  * @method static \Illuminate\Database\Eloquent\Builder|Check whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Check whereDiscount($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Check whereId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Check whereUpdatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Check whereUserId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Check whereWarehouseId($value)
- * @property string $discount
- * @method static \Illuminate\Database\Eloquent\Builder|Check whereDiscount($value)
- * @property string $uuid
  * @method static \Illuminate\Database\Eloquent\Builder|Check whereUuid($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Check whereWarehouseId($value)
  * @mixin \Eloquent
  */
 class Check extends Model implements Transformable

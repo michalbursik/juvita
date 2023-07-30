@@ -4,23 +4,23 @@
 namespace App\Repositories;
 
 
-use App\Models\ProductWarehouse;
+use App\Models\WarehouseProduct;
 use App\Models\Product;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 
 class PriceLevelRepository
 {
-    public function updateOrCreate(array $data): ProductWarehouse
+    public function updateOrCreate(array $data): WarehouseProduct
     {
-        $priceLevel = ProductWarehouse::query()
+        $priceLevel = WarehouseProduct::query()
         ->where('warehouse_id', $data['warehouse_id'])
         ->where('product_id', $data['product_id'])
         ->where('price', $data['price'])
         ->first();
 
         if (empty($priceLevel)) {
-            $priceLevel = new ProductWarehouse($data);
+            $priceLevel = new WarehouseProduct($data);
             $priceLevel->save();
         } else {
             $this->update($priceLevel, $data['amount']);
@@ -31,14 +31,14 @@ class PriceLevelRepository
 
     /**
      * @param int $id
-     * @return ProductWarehouse
+     * @return WarehouseProduct
      */
-    public function get(int $id): ProductWarehouse
+    public function get(int $id): WarehouseProduct
     {
-        return ProductWarehouse::query()->find($id);
+        return WarehouseProduct::query()->find($id);
     }
 
-    public function update(ProductWarehouse $priceLevel, float $amount): ProductWarehouse
+    public function update(WarehouseProduct $priceLevel, float $amount): WarehouseProduct
     {
         $priceLevel->amount = round((float) $priceLevel->amount + (float) $amount, 1);
         $priceLevel->save();
@@ -46,7 +46,7 @@ class PriceLevelRepository
         return $priceLevel;
     }
 
-    public function delete(ProductWarehouse $priceLevel): ?bool
+    public function delete(WarehouseProduct $priceLevel): ?bool
     {
         return $priceLevel->delete();
     }

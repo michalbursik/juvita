@@ -4,7 +4,7 @@ namespace App\Services;
 
 use App\Managers\WarehouseManager;
 use App\Models\Movement;
-use App\Models\ProductWarehouse;
+use App\Models\WarehouseProduct;
 use App\Models\Warehouse;
 
 class WarehouseService
@@ -13,7 +13,7 @@ class WarehouseService
         public readonly Warehouse $warehouse,
     ) {}
 
-    public function processMovement(Movement $movement): ProductWarehouse
+    public function processMovement(Movement $movement): WarehouseProduct
     {
         $method = $movement->type;
 

@@ -4,7 +4,7 @@
 namespace App\Managers;
 
 
-use App\Models\ProductWarehouse;
+use App\Models\WarehouseProduct;
 use App\Models\Product;
 use App\Models\User;
 use App\Models\Warehouse;
@@ -25,7 +25,7 @@ class PricesManager
         $this->priceLevelRepository = new PriceLevelRepository();
     }
 
-    public function issue(Movement $movement, ProductWarehouse $priceLevel): ProductWarehouse
+    public function issue(Movement $movement, WarehouseProduct $priceLevel): WarehouseProduct
     {
         $product = $this->priceLevelRepository->update($priceLevel, $movement->amount * -1);
 
@@ -36,7 +36,7 @@ class PricesManager
         return $priceLevel;
     }
 
-    public function receipt(Movement $movement): ProductWarehouse
+    public function receipt(Movement $movement): WarehouseProduct
     {
         $validFrom = now()->toImmutable();
         $validTo = $this->getValidTo($validFrom);
@@ -65,7 +65,7 @@ class PricesManager
         return $validTo;
     }
 
-    public function transmission(Movement $movement, ProductWarehouse $priceLevel)
+    public function transmission(Movement $movement, WarehouseProduct $priceLevel)
     {
         // Issue from issue warehouse
         $this->issue($movement, $priceLevel);

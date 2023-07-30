@@ -4,14 +4,14 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\StorePriceLevelRequest;
 use App\Http\Requests\UpdatePriceLevelRequest;
-use App\Models\ProductWarehouse;
+use App\Models\WarehouseProduct;
 use Illuminate\Http\Request;
 
 class PriceLevelController extends Controller
 {
     public function index(Request $request)
     {
-        $query = ProductWarehouse::query();
+        $query = WarehouseProduct::query();
 
         $query->when($request->input('warehouse_id'), function ($query) use ($request) {
                 $query->where('warehouse_id', $request->input('warehouse_id'));

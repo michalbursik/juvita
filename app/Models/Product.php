@@ -17,6 +17,7 @@ use Spatie\EventSourcing\Projections\Projection;
  * App\Models\Product
  *
  * @property int $id
+ * @property string $uuid
  * @property string $name
  * @property string|null $origin
  * @property int $active
@@ -25,13 +26,13 @@ use Spatie\EventSourcing\Projections\Projection;
  * @property string $unit
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
- * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\ProductWarehouse[] $priceLevels
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\Movement> $movements
+ * @property-read int|null $movements_count
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\WarehouseProduct> $priceLevels
  * @property-read int|null $price_levels_count
- * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\Movement[] $movements
- * @property-read int|null $warehouse_movements_count
- * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\Warehouse[] $warehouses
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\Warehouse> $warehouses
  * @property-read int|null $warehouses_count
- * @method static \Database\Factories\ProductFactory factory(...$parameters)
+ * @method static \Database\Factories\ProductFactory factory($count = null, $state = [])
  * @method static \Illuminate\Database\Eloquent\Builder|Product newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|Product newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|Product query()
@@ -44,14 +45,12 @@ use Spatie\EventSourcing\Projections\Projection;
  * @method static \Illuminate\Database\Eloquent\Builder|Product whereOrigin($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Product whereUnit($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Product whereUpdatedAt($value)
- * @property-read int|null $movements_count
- * @property string $uuid
  * @method static \Illuminate\Database\Eloquent\Builder|Product whereUuid($value)
  * @mixin \Eloquent
  */
-class Product extends Projection implements Transformable, Eventable
+class Product extends ModelProjection implements Transformable
 {
-    use HasFactory, UuidHelpers;
+    use HasFactory;
 
     const DEFAULT_UNIT = 'kg';
     const AVAILABLE_UNITS = ['kg', 'ks'];
@@ -81,7 +80,7 @@ class Product extends Projection implements Transformable, Eventable
 
     public function priceLevels(): HasMany
     {
-        return $this->hasMany(ProductWarehouse::class);
+        return $this->hasMany(WarehouseProduct::class);
     }
 
     public function movements(): HasMany
