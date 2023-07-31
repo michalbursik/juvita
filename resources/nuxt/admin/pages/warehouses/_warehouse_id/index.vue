@@ -10,9 +10,9 @@
               <select @change="changeWarehouse()" class="form-control" name="warehouse" id="warehouse">
                 <option disabled selected>Přepnout sklad</option>
                 <option v-for="warehouse of getAllWarehouses"
-                        v-if="warehouse.id !== currentWarehouse.id"
+                        v-if="warehouse.uuid !== currentWarehouse.uuid"
                         :key="warehouse.id"
-                        :value="warehouse.id"
+                        :value="warehouse.uuid"
                 >
                   {{ warehouse.name }}
                 </option>
@@ -37,7 +37,7 @@
                                 ">
                   <div style="margin-top: -15px;"
                        :style="highlight(product)">
-                    {{ `${product.name}` }} {{ `(${movementAmounts[product.id].amount}&nbsp;${product.unit})` }}
+                    {{ `${product.name}` }} {{ `(${product.total_amount}&nbsp;${product.unit})` }}
                   </div>
                 </div>
               </nuxt-link>
@@ -122,20 +122,16 @@ export default {
   scrollToTop: false,
   async asyncData({params, store}) {
     let currentWarehouse = await store.dispatch('warehouses/fetch', params.warehouse_id);
-    let movementAmounts = await store.dispatch('movements/fetchAllAmounts', {
-      warehouse_id: params.warehouse_id,
-      day: new Date().toUTCString(),
-    });
 
-    let movements = await store.dispatch('movements/fetchAll', {
-      receipt_warehouse_id: params.warehouse_id,
-      day: new Date().toUTCString(),
-    })
+    // let movements = await store.dispatch('movements/fetchAll', {
+    //   receipt_warehouse_id: params.warehouse_id,
+    //   day: new Date().toUTCString(),
+    // })
 
     return {
       currentWarehouse,
-      movementAmounts: movementAmounts.data,
-      movements: movements.data,
+      // movementAmounts: totalAmounts,
+      movements: [], // movements.data,
     }
   },
   fetch() {
@@ -153,7 +149,7 @@ export default {
       let id = localStorage.getItem('scroll_to_product');
 
       if (id) {
-        window.scrollTo(0, document.getElementById(id).offsetTop);
+        // window.scrollTo(0, document.getElementById(id).offsetTop);
       } else {
         window.scrollTo(0, 0);
       }

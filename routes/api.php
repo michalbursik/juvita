@@ -24,7 +24,7 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::post('/login', [AuthController::class, 'login']);
+// Route::post('/login', [AuthController::class, 'login']);
 
 
 Route::middleware('auth:sanctum')->group(function () {
@@ -39,48 +39,47 @@ Route::middleware('auth:sanctum')->group(function () {
     // ----
 
 
+    // Route::resource('discounts', DiscountController::class);
+//    Route::get('warehouses/trash', [WarehouseController::class, 'trash']);
+    // Route::get('warehouses/movements', [MovementController::class, 'index'])->name('movements.index');
 
-    Route::resource('discounts', DiscountController::class);
-    Route::get('warehouses/trash', [WarehouseController::class, 'trash']);
-    Route::get('warehouses/movements', [MovementController::class, 'index'])->name('movements.index');
 
+//    Route::get('warehouses/{warehouse}/products/{product}', [WarehouseController::class, 'showProduct'])
+//        ->name('warehouses.products.show');
+//
+//    Route::get('warehouses/{warehouse}/products/{product}/receipt', [WarehouseController::class, 'receipt'])
+//        ->name('warehouses.products.receipt');
+//    Route::get('warehouses/{warehouse}/products/{product}/issue', [WarehouseController::class, 'issue'])
+//        ->name('warehouses.products.issue');
+//    Route::get('warehouses/{warehouse}/products/{product}/transmission', [WarehouseController::class, 'transmission'])
+//        ->name('warehouses.products.transmission');
 
-    Route::get('warehouses/{warehouse}/products/{product}', [WarehouseController::class, 'showProduct'])
-        ->name('warehouses.products.show');
-
-    Route::get('warehouses/{warehouse}/products/{product}/receipt', [WarehouseController::class, 'receipt'])
-        ->name('warehouses.products.receipt');
-    Route::get('warehouses/{warehouse}/products/{product}/issue', [WarehouseController::class, 'issue'])
-        ->name('warehouses.products.issue');
-    Route::get('warehouses/{warehouse}/products/{product}/transmission', [WarehouseController::class, 'transmission'])
-        ->name('warehouses.products.transmission');
-
-    Route::post('warehouses/movements/transmission', [MovementController::class, 'transmission'])
-        ->name('movements.transmission');
-
-    Route::post('warehouses/movements/trash', [MovementController::class, 'trash'])->name('movements.trash');
-    Route::post('warehouses/movements/receipt', [MovementController::class, 'receipt'])->name('movements.receipt');
-
-    Route::resource('users', UserController::class);
-
-    Route::resource('priceLevels', PriceLevelController::class, ['only' => 'index']);
-    Route::get('movements/fetchAllAmounts', [MovementController::class, 'fetchAllAmounts'])->name('movements.fetchAllAmounts');
-    Route::resource('movements', MovementController::class, ['only' => 'index']);
-
-    Route::middleware('admin')->group(function () {
-        Route::get('/overviews', [OverviewController::class, 'index'])->name('overview.index');
-
-        Route::get('warehouses/checks/products', [CheckController::class, 'fetchAllProducts'])->name('checks.fetchAllProducts');
-
-        Route::resource('warehouses/checks', CheckController::class);
-        Route::resource('warehouses', WarehouseController::class, ['except' => ['show', 'index']]);
-
-        Route::resource('movements', MovementController::class, ['except' => ['store', 'index']]);
-
-        Route::get('products/nextOrder', [ProductController::class, 'nextOrder'])->name('products.nextOrder');
-        Route::resource('products', ProductController::class, ['except' => ['index', 'show']]);
-    });
-
+//    Route::post('warehouses/movements/transmission', [MovementController::class, 'transmission'])
+//        ->name('movements.transmission');
+//
+//    Route::post('warehouses/movements/trash', [MovementController::class, 'trash'])->name('movements.trash');
+//    Route::post('warehouses/movements/receipt', [MovementController::class, 'receipt'])->name('movements.receipt');
+//
+//    Route::resource('users', UserController::class);
+//
+//    Route::resource('priceLevels', PriceLevelController::class, ['only' => 'index']);
+//    Route::get('movements/fetchAllAmounts', [MovementController::class, 'fetchAllAmounts'])->name('movements.fetchAllAmounts');
+//    Route::resource('movements', MovementController::class, ['only' => 'index']);
+//
+//    Route::middleware('admin')->group(function () {
+//        Route::get('/overviews', [OverviewController::class, 'index'])->name('overview.index');
+//
+//        Route::get('warehouses/checks/products', [CheckController::class, 'fetchAllProducts'])->name('checks.fetchAllProducts');
+//
+//        Route::resource('warehouses/checks', CheckController::class);
+//        Route::resource('warehouses', WarehouseController::class, ['except' => ['show', 'index']]);
+//
+//        Route::resource('movements', MovementController::class, ['except' => ['store', 'index']]);
+//
+//        Route::get('products/nextOrder', [ProductController::class, 'nextOrder'])->name('products.nextOrder');
+//        Route::resource('products', ProductController::class, ['except' => ['index', 'show']]);
+//    });
+//
     Route::resource('warehouses', WarehouseController::class, ['only' => ['show', 'index']]);
-    Route::resource('products', ProductController::class, ['only' => ['index', 'show']]);
+//    Route::resource('products', ProductController::class, ['only' => ['index', 'show']]);
 });

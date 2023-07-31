@@ -66,5 +66,10 @@ export const actions = {
         await this.$axios.$delete('warehouses/' + warehouse_id);
 
         commit('REMOVE_WAREHOUSE', warehouse_id);
-    }
+    },
+  async fetchTotalAmounts({commit}, warehouse_id) {
+      const totalAmounts = await this.$axios.$get(`/warehouses/${warehouse_id}/products/total_amount`);
+
+      return totalAmounts.data
+  }
 }

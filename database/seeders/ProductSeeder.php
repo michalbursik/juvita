@@ -71,9 +71,7 @@ class ProductSeeder extends Seeder
         ];
 
         foreach ($products as $productData) {
-            $product = new Product($productData);
-
-            $product->save();
+            Product::createWithAttributes($productData);
         }
     }
 }

@@ -9,7 +9,7 @@ use Illuminate\Support\Facades\Auth;
 
 class AuthController extends Controller
 {
-    public function login(LoginRequest $request): JsonResponse
+    public function login(LoginRequest $request)
     {
         if (! Auth::attempt($request->validated())) {
             return responder()
@@ -17,12 +17,7 @@ class AuthController extends Controller
                 ->respond(401);
         }
 
-        /** @var User $user */
-        $user = auth()->user();
-
-        return responder()->success(
-            ["access_token" => $user->createToken('API Token')->plainTextToken]
-        )->respond();
+        return responder()->success()->respond();
     }
 
     public function logout()
@@ -34,9 +29,4 @@ class AuthController extends Controller
     {
         throw new \Exception('TODO: Implement - Class AuthController => Method register()');
     }
-
-//    public function changePassword(PasswordChangeRequest $request)
-//    {
-//
-//    }
 }

@@ -9,7 +9,7 @@
                  v-if="warehouse.type !== 'trash'"
                  class="col-6 col-md-4 col-lg-3 mt-3"
             >
-              <nuxt-link :to="`/warehouses/${warehouse.id}`" class="fw-bold text-decoration-none text-black">
+              <nuxt-link :to="`/warehouses/${warehouse.uuid}`" class="fw-bold text-decoration-none text-black">
                 <div @contextmenu.prevent="openContextMenu(warehouse.id, $event)" class="card" style="min-height: 100px;">
                   <div class="card-body" style="display:flex; align-items: center; justify-content: center;">
                     <div class="text-center font-weight-bold">
@@ -24,8 +24,8 @@
                            style="max-width: 200px;"
               >
                 <div class="d-flex align-items-center justify-content-center">
-                  <button @click="editWarehouse(warehouse.id)" type="button" class="btn btn-outline-primary me-2">Upravit</button>
-                  <button @click="deleteWarehouse(warehouse.id)" type="button" class="btn btn-outline-danger">Smazat</button>
+                  <button @click="editWarehouse(warehouse.uuid)" type="button" class="btn btn-outline-primary me-2">Upravit</button>
+                  <button @click="deleteWarehouse(warehouse.uuid)" type="button" class="btn btn-outline-danger">Smazat</button>
                 </div>
               </vue-context>
             </div>

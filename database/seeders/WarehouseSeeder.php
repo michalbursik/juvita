@@ -2,18 +2,21 @@
 
 namespace Database\Seeders;
 
+use App\Enums\WarehouseTypeEnum;
 use App\Models\Product;
+use App\Models\User;
 use App\Models\Warehouse;
-use App\Repositories\WarehouseRepository;
+use App\Repositories\WarehouseProductRepository;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\Hash;
 
 class WarehouseSeeder extends Seeder
 {
-    private WarehouseRepository $warehouseRepository;
+    private WarehouseProductRepository $warehouseProductRepository;
 
-    public function __construct(WarehouseRepository $warehouseRepository)
+    public function __construct(WarehouseProductRepository $warehouseProductRepository)
     {
-        $this->warehouseRepository = $warehouseRepository;
+        $this->warehouseProductRepository = $warehouseProductRepository;
     }
 
     /**
@@ -24,26 +27,73 @@ class WarehouseSeeder extends Seeder
     public function run()
     {
         $warehouses = [
-            ['name' => 'Uherský Brod - Králov', 'type' => Warehouse::TYPE_MAIN],
-            ['name' => 'Vozidlo Jaroslav', 'type' => Warehouse::TYPE_TEMPORARY],
-            ['name' => 'Vozidlo Honza', 'type' => Warehouse::TYPE_TEMPORARY],
-            ['name' => 'Vozidlo Tomáš', 'type' => Warehouse::TYPE_TEMPORARY],
-            ['name' => 'Prodej', 'type' => Warehouse::TYPE_INTERNAL],
-            ['name' => 'Kompost/Odpad ', 'type' => Warehouse::TYPE_TRASH],
+            [
+                'data' => ['name' => 'Uherský Brod - Králov', 'type' => WarehouseTypeEnum::MAIN],
+                'user' => [
+                    'name' => 'Josef Bursík',
+                    'email' => 'josef.bursik@seznam.cz',
+                    'password' => Hash::make('samuraj'),
+                    'role' => User::ROLE_ADMIN,
+                ]
+            ],
+            [
+                'data' => ['name' => 'Vozidlo Jaroslav', 'type' => WarehouseTypeEnum::TEMPORARY],
+                'user' => [
+                    'name' => 'Martin Bahula',
+                    'email' => 'bahula@seznam.cz',
+                    'password' => Hash::make('seba381'),
+                    'role' => User::ROLE_ADMIN,
+                ]
+            ],
+            [
+                'data' => ['name' => 'Vozidlo Honza', 'type' => WarehouseTypeEnum::TEMPORARY],
+                'user' => [
+                    'name' => 'Jaroslav Nožička',
+                    'email' => 'jaroslav@juvita.cz',
+                    'password' => Hash::make('okurek'),
+                    'role' => User::ROLE_EMPLOYEE,
+                ]
+            ],
+            [
+                'data' => ['name' => 'Vozidlo Tomáš', 'type' => WarehouseTypeEnum::TEMPORARY],
+                'user' => [
+                    'name' => 'Honza Hlaváček',
+                    'email' => 'honza@juvita.cz',
+                    'password' => Hash::make('precedenc'),
+                    'role' => User::ROLE_EMPLOYEE,
+                ]
+            ],
+            [
+                'data' => ['name' => 'Prodej', 'type' => WarehouseTypeEnum::INTERNAL],
+                'user' => [
+                    'name' => 'Tomáš Strapina',
+                    'email' => 'tomas@juvita.cz',
+                    'password' => Hash::make('kultivator'),
+                    'role' => User::ROLE_EMPLOYEE,
+                ]
+            ],
+            ['data' => ['name' => 'Kompost/Odpad ', 'type' => WarehouseTypeEnum::TRASH]],
         ];
 
-        $products = Product::all();
-
-        $pivotAttributes = [];
-        foreach ($products as $key => $product) {
-            $pivotAttributes[$key] = [
-                'amount' => 0,
-                'price' => 0.00,
-            ];
-        }
-
         foreach ($warehouses as $warehouseData) {
-            $warehouse = $this->warehouseRepository->store($warehouseData, $products, $pivotAttributes);
+            $warehouse = Warehouse::createWithAttributes($warehouseData['data']);
+
+            $products = Product::all();
+
+            /** @var Product $product */
+            foreach ($products as $product) {
+                $this->warehouseProductRepository->create(
+                    $warehouse->uuid, $product->uuid
+                );
+            }
+
+            if (!empty($warehouseData['user'])) {
+                $data = $warehouseData['user'];
+                $data = [...$data, 'warehouse_uuid' => $warehouse->uuid];
+                $user = new User($data);
+
+                $user->save();
+            }
         }
     }
 }

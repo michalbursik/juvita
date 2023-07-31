@@ -33,8 +33,9 @@ class WarehouseProductTransformer extends Transformer
     {
         return [
             'id' => $warehouseProduct->id,
-            'product_name' => $warehouseProduct->product->name,
             'total_amount' => $warehouseProduct->total_amount,
+            'name' => $warehouseProduct->product->name,
+            'unit' => $warehouseProduct->product->unit,
             'image' => $warehouseProduct->product->image
         ];
     }

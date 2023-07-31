@@ -87,23 +87,24 @@ class WarehouseController extends Controller
     public function show(Warehouse $warehouse)
     {
         $user = auth()->user();
-        if ($user->role === User::ROLE_EMPLOYEE && $user->warehouse_id !== $warehouse->id) {
+        if ($user->role === User::ROLE_EMPLOYEE && $user->warehouse_uuid !== $warehouse->uuid) {
             return redirect()->route('warehouses.show', [
-                'warehouse' => $user->warehouse_id
+                'warehouse' => $user->warehouse_uuid
             ]);
         }
 
         return responder()->success($warehouse)
             ->with([
-                'movements' => function ($query) {
-                    $query->where('movements.created_at', '>=', now()->subDays(7))
-                        ->orderByDesc('created_at');
-                },
-                'products.priceLevels',
-                'products' => function ($query) {
-                    $query->where('products.active', true)
-                        ->orderBy('order');
-                },
+                'products'
+//                'movements' => function ($query) {
+//                    $query->where('movements.created_at', '>=', now()->subDays(7))
+//                        ->orderByDesc('created_at');
+//                },
+                // 'products.priceLevels',
+//                'products' => function ($query) {
+//                    $query->where('products.active', true)
+//                        ->orderBy('order');
+//                },
             ])
             ->respond();
     }

@@ -38,6 +38,15 @@ class WarehouseProductRepository
         return $warehouseProduct;
     }
 
+    public function create(string $warehouseUuid, string $productUuid)
+    {
+        $warehouseProduct = WarehouseProduct::createWithAttributes([
+            'warehouse_uuid' => $warehouseUuid,
+            'product_uuid' => $productUuid,
+            'total_amount' => 0
+        ]);
+    }
+
     public function increaseTotalAmount(WarehouseProduct $warehouseProduct, float $amount): WarehouseProduct
     {
         $warehouseProduct->total_amount += $amount;
