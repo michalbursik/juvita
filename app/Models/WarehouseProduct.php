@@ -68,6 +68,10 @@ class WarehouseProduct extends ModelProjection implements Transformable
 //        'status',
     ];
 
+    protected $with = [
+        'prices'
+    ];
+
     protected $casts = [
         'total_amount' => 'float',
     ];

@@ -11,9 +11,9 @@ export default function ({ $axios, store }) {
 
     if (code === 422) {
       store.dispatch('validation/clearErrors')
-      store.dispatch('validation/setErrors', error.response.data.error.errors)
+      store.dispatch('validation/setErrors', error.response.data.errors)
 
-      return Promise.reject(error.response.data.error.errors);
+      return Promise.reject(error.response.data.errors);
     }
 
     if (code >= 400 && code !== 422) {

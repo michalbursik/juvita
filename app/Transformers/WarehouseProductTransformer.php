@@ -13,7 +13,7 @@ class WarehouseProductTransformer extends Transformer
      * @var string[]
      */
     protected $relations = [
-        'product' => ProductTransformer::class
+        'product' => ProductTransformer::class,
     ];
 
     /**
@@ -21,7 +21,9 @@ class WarehouseProductTransformer extends Transformer
      *
      * @var array
      */
-    protected $load = [];
+    protected $load = [
+        'prices' => WarehouseProductPriceTransformer::class
+    ];
 
     /**
      * Transform the model.
@@ -33,8 +35,11 @@ class WarehouseProductTransformer extends Transformer
     {
         return [
             'id' => $warehouseProduct->id,
-            'total_amount' => $warehouseProduct->total_amount,
+            'uuid' => $warehouseProduct->uuid,
+            'warehouse_uuid' => $warehouseProduct->warehouse_uuid,
+            'product_uuid' => $warehouseProduct->product_uuid,
             'name' => $warehouseProduct->product->name,
+            'total_amount' => $warehouseProduct->total_amount,
             'unit' => $warehouseProduct->product->unit,
             'image' => $warehouseProduct->product->image
         ];

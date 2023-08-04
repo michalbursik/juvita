@@ -27,20 +27,30 @@ use Illuminate\Support\Facades\Route;
 // Route::post('/login', [AuthController::class, 'login']);
 
 
+// TODO products
+//
+
+
 Route::middleware('auth:sanctum')->group(function () {
     Route::get('/user', function (Request $request) {
         return $request->user();
     });
 
     // Event sourcing
-    Route::post('warehouses/products/receive', [WarehouseController::class, 'receive'])->name('warehouses.products.receive');
-    Route::post('warehouses/products/move', [WarehouseController::class, 'move'])->name('warehouses.products.move');
-    Route::get('warehouses/{warehouse}/products/total_amount', [WarehouseController::class, 'totalAmount'])->name('warehouses.products.total_amount');
+    Route::controller(WarehouseController::class)->group(function () {
+        Route::post('warehouses/products/receive', 'receive')->name('warehouses.products.receive');
+        Route::post('warehouses/products/move', 'move')->name('warehouses.products.move');
+        Route::get('warehouses/{warehouse}/products/total_amount', 'totalAmount')->name('warehouses.products.total_amount');
+        // Route::get('warehouses/{warehouse}/products/{product}', 'getProducts')->name('warehouses.products.getProducts');
+        Route::get('warehouses/{warehouse}/products/{product}/prices', 'getProductPrices')->name('warehouses.products.getProductPrices');
+    });
+
+
     // ----
 
 
     // Route::resource('discounts', DiscountController::class);
-//    Route::get('warehouses/trash', [WarehouseController::class, 'trash']);
+    Route::get('warehouses/trash', [WarehouseController::class, 'trash']);
     // Route::get('warehouses/movements', [MovementController::class, 'index'])->name('movements.index');
 
 
@@ -80,6 +90,7 @@ Route::middleware('auth:sanctum')->group(function () {
 //        Route::resource('products', ProductController::class, ['except' => ['index', 'show']]);
 //    });
 //
+
     Route::resource('warehouses', WarehouseController::class, ['only' => ['show', 'index']]);
-//    Route::resource('products', ProductController::class, ['only' => ['index', 'show']]);
+    Route::resource('products', ProductController::class, ['only' => ['index', 'show']]);
 });

@@ -56,6 +56,10 @@ class Product extends ModelProjection implements Transformable
     const AVAILABLE_UNITS = ['kg', 'ks'];
     protected $fillable = ['name', 'origin', 'active', 'order', 'unit', 'image'];
 
+    protected $casts = [
+        'active' => 'boolean'
+    ];
+
     public static function setModelEvents(): void
     {
         static::setCreateEvent(ProductCreated::class);

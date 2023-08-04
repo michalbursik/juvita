@@ -5,12 +5,12 @@
         <top-panel :title="'Sklady'"></top-panel>
 
         <div class="row">
-            <div v-for="warehouse of warehouses" :key="warehouse.id"
+            <div v-for="warehouse of warehouses" :key="warehouse.uuid"
                  v-if="warehouse.type !== 'trash'"
                  class="col-6 col-md-4 col-lg-3 mt-3"
             >
               <nuxt-link :to="`/warehouses/${warehouse.uuid}`" class="fw-bold text-decoration-none text-black">
-                <div @contextmenu.prevent="openContextMenu(warehouse.id, $event)" class="card" style="min-height: 100px;">
+                <div @contextmenu.prevent="openContextMenu(warehouse.uuid, $event)" class="card" style="min-height: 100px;">
                   <div class="card-body" style="display:flex; align-items: center; justify-content: center;">
                     <div class="text-center font-weight-bold">
                       {{ warehouse.name }}
@@ -19,7 +19,7 @@
                 </div>
               </nuxt-link>
 
-              <vue-context :ref="`contextmenu-${warehouse.id}`" tag="div"
+              <vue-context :ref="`contextmenu-${warehouse.uuid}`" tag="div"
                            class="p-2"
                            style="max-width: 200px;"
               >
@@ -67,11 +67,11 @@ export default {
     })
   },
   methods: {
-    editWarehouse(warehouse_id) {
-      this.$router.push(`warehouses/${warehouse_id}/edit`)
+    editWarehouse(warehouse_uuid) {
+      this.$router.push(`warehouses/${warehouse_uuid}/edit`)
     },
-    async deleteWarehouse(warehouse_id) {
-      await this.$store.dispatch('warehouses/delete', warehouse_id);
+    async deleteWarehouse(warehouse_uuid) {
+      await this.$store.dispatch('warehouses/delete', warehouse_uuid);
     },
     openContextMenu(warehouse_id, $event) {
       let refName = `contextmenu-${warehouse_id}`;

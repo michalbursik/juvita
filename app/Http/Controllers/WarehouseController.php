@@ -4,8 +4,10 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\MoveProductRequest;
 use App\Http\Requests\ReceiveProductRequest;
+use App\Models\Product;
 use App\Models\User;
 use App\Models\Warehouse;
+use App\Models\WarehouseProduct;
 use App\Repositories\WarehouseRepository;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -82,6 +84,16 @@ class WarehouseController extends Controller
         return responder()->success($warehouseProducts)->respond();
     }
 
+    public function getProductPrices(string $warehouse, string $product): JsonResponse
+    {
+        $warehouseProduct = WarehouseProduct::query()
+            ->with('prices')
+            ->where('warehouse_uuid', $warehouse)
+            ->where('product_uuid', $product)
+            ->firstOrFail();
+
+        return responder()->success($warehouseProduct)->respond();
+    }
     // ------
 
     public function show(Warehouse $warehouse)
@@ -120,10 +132,11 @@ class WarehouseController extends Controller
 
         return responder()->success($warehouse)
             ->with([
-                'movements',
-                'products' => function ($query) {
-                    $query->where('products.active', true);
-                }
+                // 'movements',
+                'products'
+//                => function ($query) {
+//                    $query->where('products.active', true);
+//                }
             ])
             ->respond();
     }
