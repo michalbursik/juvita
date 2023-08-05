@@ -78,15 +78,6 @@ class WarehouseSeeder extends Seeder
         foreach ($warehouses as $warehouseData) {
             $warehouse = Warehouse::createWithAttributes($warehouseData['data']);
 
-            $products = Product::all();
-
-            /** @var Product $product */
-            foreach ($products as $product) {
-                $this->warehouseProductRepository->getOrCreate(
-                    $warehouse->uuid, $product->uuid
-                );
-            }
-
             if (!empty($warehouseData['user'])) {
                 $data = $warehouseData['user'];
                 $data = [...$data, 'warehouse_uuid' => $warehouse->uuid];

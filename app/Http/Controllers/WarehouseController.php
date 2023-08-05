@@ -7,6 +7,7 @@ use App\Models\User;
 use App\Models\Warehouse;
 use App\Repositories\WarehouseRepository;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 
 class WarehouseController extends Controller
@@ -54,7 +55,7 @@ class WarehouseController extends Controller
         return responder()->success()->respond();
     }
 
-    public function show(Warehouse $warehouse): JsonResponse|\Illuminate\Http\RedirectResponse
+    public function show(Warehouse $warehouse): JsonResponse|RedirectResponse
     {
         /** @var User $user */
         $user = auth()->user();
@@ -67,12 +68,8 @@ class WarehouseController extends Controller
         return responder()->success($warehouse)
             ->with([
                 'products' => function ($query) {
-                    $query->orderBy('id');
+                    $query->orderBy('order');
                 }
-//                'movements' => function ($query) {
-//                    $query->where('movements.created_at', '>=', now()->subDays(7))
-//                        ->orderByDesc('created_at');
-//                },
             ])
             ->respond();
     }
@@ -88,8 +85,9 @@ class WarehouseController extends Controller
 
         return responder()->success($warehouse)
             ->with([
-                // 'movements',
-                'products'
+                'products' => function ($query) {
+                    $query->orderBy('order');
+                }
             ])
             ->respond();
     }

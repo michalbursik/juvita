@@ -23,7 +23,7 @@
 
 
         <div class="row">
-          <div :id="`product_${warehouse_product.uuid}`" v-for="warehouse_product of currentWarehouse.products"
+          <div :id="`product_${warehouse_product.product_uuid}`" v-for="warehouse_product of currentWarehouse.products"
                class="col-6 col-md-4 col-lg-3"
           >
             <div class="card mt-3" :style="`
@@ -90,10 +90,10 @@
                 </tr>
                 </thead>
                 <tbody>
-                <tr v-for="movement of currentWarehouse.movements" :key="movement.uuid"
+                <tr v-for="movement of movements" :key="movement.uuid"
                     :class="`${movement.type}-color`">
-                  <td>{{ movement.issueWarehouse ? movement.issueWarehouse.name : '-' }}</td>
-                  <td>{{ movement.receiptWarehouse ? movement.receiptWarehouse.name : '-' }}</td>
+                  <td>{{ movement.sourceWarehouse ? movement.sourceWarehouse.name : '-' }}</td>
+                  <td>{{ movement.targetWarehouse ? movement.targetWarehouse.name : '-' }}</td>
                   <td>{{ movement.product.name }}</td>
                   <td>{{ movement.translated_type }}</td>
                   <td>{{ `${movement.amount}&nbsp;${movement.product.unit}` }}</td>
@@ -108,7 +108,6 @@
         </div>
       </div>
     </div>
-    <div id="RANDOM"></div>
   </div>
 </template>
 
@@ -123,15 +122,14 @@ export default {
   async asyncData({params, store}) {
     let currentWarehouse = await store.dispatch('warehouses/fetch', params.warehouse_id);
 
-    // let movements = await store.dispatch('movements/fetchAll', {
-    //   receipt_warehouse_id: params.warehouse_id,
-    //   day: new Date().toUTCString(),
-    // })
+    let movements = await store.dispatch('movements/fetchAll', {
+      warehouse_uuid: currentWarehouse.uuid,
+      day: new Date().toUTCString(),
+    })
 
     return {
       currentWarehouse,
-      // movementAmounts: totalAmounts,
-      movements: [], // movements.data,
+      movements: movements.data,
     }
   },
   fetch() {
@@ -140,7 +138,6 @@ export default {
   data() {
     return {
       currentWarehouse: null,
-      movementAmounts: [],
       movements: [],
     }
   },
@@ -149,7 +146,8 @@ export default {
       let id = localStorage.getItem('scroll_to_product');
 
       if (id) {
-        // window.scrollTo(0, document.getElementById(id).offsetTop);
+        console.log(id);
+        window.scrollTo(0, document.getElementById(id).offsetTop);
       } else {
         window.scrollTo(0, 0);
       }
@@ -174,8 +172,6 @@ export default {
         ));
 
         let hours_difference = now_utc.getHours() - created_at_utc.getHours()
-
-        console.log(hours_difference);
 
         return movement.product.uuid === warehouse_product.product_uuid && hours_difference < 4;
       })

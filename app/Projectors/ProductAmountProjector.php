@@ -2,12 +2,16 @@
 
 namespace App\Projectors;
 
+use App\Enums\MovementTypeEnum;
 use App\Events\ProductMoved;
 use App\Events\ProductReceived;
 use App\Events\ProductTrashed;
 use App\Exceptions\InsufficientAmountException;
+use App\Models\Movement;
 use App\Models\Price;
+use App\Models\User;
 use App\Models\WarehouseProduct;
+use App\Repositories\MovementRepository;
 use App\Repositories\PriceRepository;
 use App\Repositories\WarehouseProductRepository;
 use Exception;
@@ -20,12 +24,13 @@ class ProductAmountProjector extends Projector implements ShouldQueue
     public function __construct(
         private readonly WarehouseProductRepository $warehouseProductRepository,
         private readonly PriceRepository $priceRepository,
+        private readonly MovementRepository $movementRepository,
     ) {
     }
 
     public function onProductReceived(ProductReceived $event): void
     {
-        $warehouseProduct = $this->warehouseProductRepository->getOrCreate(
+        $warehouseProduct = $this->warehouseProductRepository->get(
             $event->warehouseUuid,
             $event->productUuid,
         );
@@ -40,6 +45,16 @@ class ProductAmountProjector extends Projector implements ShouldQueue
             $event->price,
             $event->amount
         );
+
+        $this->movementRepository->store([
+            'source_warehouse_uuid' => null,
+            'target_warehouse_uuid' => $warehouseProduct->warehouse_uuid,
+            'product_uuid' => $event->productUuid,
+            'type' => MovementTypeEnum::RECEIVE,
+            'amount' => $event->amount,
+            'price' => $event->price,
+            'user_uuid' => $event->userUuid
+        ]);
     }
 
     public function onProductTrashed(ProductTrashed $event): void
@@ -64,6 +79,16 @@ class ProductAmountProjector extends Projector implements ShouldQueue
                 $event->amount
             );
 
+            $this->movementRepository->store([
+                'source_warehouse_uuid' => $sourceWarehouseProduct->warehouse_uuid,
+                'target_warehouse_uuid' => $trashWarehouseProduct->warehouse_uuid,
+                'product_uuid' => $sourceWarehouseProduct->product_uuid,
+                'type' => MovementTypeEnum::MOVE,
+                'amount' => $event->amount,
+                'price' => $price->price,
+                'user_uuid' => $event->userUuid
+            ]);
+
             DB::commit();
         } catch (Exception $e) {
             DB::rollBack();
@@ -80,7 +105,7 @@ class ProductAmountProjector extends Projector implements ShouldQueue
         DB::beginTransaction();
         try {
             // Issue from source warehouse
-            $sourceWarehouseProduct = $this->warehouseProductRepository->getOrCreate(
+            $sourceWarehouseProduct = $this->warehouseProductRepository->get(
                 $event->sourceWarehouseUuid,
                 $event->productUuid,
             );
@@ -98,7 +123,7 @@ class ProductAmountProjector extends Projector implements ShouldQueue
             );
 
             // Receipt to target warehouse
-            $targetWarehouseProduct = $this->warehouseProductRepository->getOrCreate(
+            $targetWarehouseProduct = $this->warehouseProductRepository->get(
                 $event->targetWarehouseUuid,
                 $event->productUuid,
             );
@@ -113,6 +138,16 @@ class ProductAmountProjector extends Projector implements ShouldQueue
                 $price->price,
                 $event->amount
             );
+
+            $this->movementRepository->store([
+                'source_warehouse_uuid' => $event->sourceWarehouseUuid,
+                'target_warehouse_uuid' => $event->targetWarehouseUuid,
+                'product_uuid' => $event->productUuid,
+                'type' => MovementTypeEnum::MOVE,
+                'amount' => $event->amount,
+                'price' => $price->price,
+                'user_uuid' => $event->userUuid
+            ]);
 
             DB::commit();
         } catch (Exception $e) {

@@ -7,9 +7,9 @@
         <div class="row">
           <div class="col-12 col-md mt-2">
             <label for="products"><strong>Produkt</strong></label>
-            <select v-model="filters.product_id" name="products" id="products" class="form-control">
+            <select v-model="filters.product_uuid" name="products" id="products" class="form-control">
               <option value="">Všechny produkty</option>
-              <option v-for="product of products" :key="product.id" :value="product.id">{{ product.name }}</option>
+              <option v-for="product of products" :key="product.uuid" :value="product.uuid">{{ product.name }}</option>
             </select>
           </div>
           <div v-if="!($auth.user.role === 'employee')" class="col-12 col-md mt-2">
@@ -21,26 +21,26 @@
           </div>
           <div class="col-12 col-md mt-2">
             <label for="users"><strong>Uživatel</strong></label>
-            <select v-model="filters.user_id" name="users" id="users" class="form-control">
+            <select v-model="filters.user_uuid" name="users" id="users" class="form-control">
               <option value="">Všechny uživatele</option>
-              <option v-for="user of users" :key="user.id" :value="user.id">{{ user.name }}</option>
+              <option v-for="user of users" :key="user.uuid" :value="user.uuid">{{ user.name }}</option>
             </select>
           </div>
         </div>
 
         <div class="row">
           <div class="col-12 col-md mt-2">
-            <label for="issue_warehouse_id"><strong>Výdejní sklad</strong></label>
-            <select v-model="filters.issue_warehouse_id" name="issue_warehouse_id" id="issue_warehouse_id" class="form-control">
+            <label for="source_warehouse_uuid"><strong>Výdejní sklad</strong></label>
+            <select v-model="filters.source_warehouse_uuid" name="source_warehouse_uuid" id="source_warehouse_uuid" class="form-control">
               <option value="">Všechny výdejní sklady</option>
-              <option v-for="warehouse of warehouses" :key="warehouse.id" :value="warehouse.id">{{ warehouse.name }}</option>
+              <option v-for="warehouse of warehouses" :key="warehouse.uuid" :value="warehouse.uuid">{{ warehouse.name }}</option>
             </select>
           </div>
           <div class="col-12 col-md mt-2">
-            <label for="receipt_warehouse_id"><strong>Příjmový sklad</strong></label>
-            <select :disabled="($auth.user.role === 'employee')" v-model="filters.receipt_warehouse_id" name="receipt_warehouse_id" id="receipt_warehouse_id" class="form-control">
+            <label for="target_warehouse_uuid"><strong>Příjmový sklad</strong></label>
+            <select :disabled="($auth.user.role === 'employee')" v-model="filters.target_warehouse_uuid" name="target_warehouse_uuid" id="target_warehouse_uuid" class="form-control">
               <option value="">Všechny příjmové sklady</option>
-              <option v-for="warehouse of warehouses" :key="warehouse.id" :value="warehouse.id">{{ warehouse.name }}</option>
+              <option v-for="warehouse of warehouses" :key="warehouse.uuid" :value="warehouse.uuid">{{ warehouse.name }}</option>
             </select>
           </div>
         </div>
@@ -62,9 +62,9 @@
                 </tr>
                 </thead>
                 <tbody>
-                <tr v-for="movement of getMovements" :key="movement.id" :class="`${movement.type}-color`">
-                  <td>{{ movement.issueWarehouse ? movement.issueWarehouse.name : '-' }}</td>
-                  <td>{{ movement.receiptWarehouse ? movement.receiptWarehouse.name : '-' }}</td>
+                <tr v-for="movement of getMovements" :key="movement.uuid" :class="`${movement.type}-color`">
+                  <td>{{ movement.sourceWarehouse ? movement.sourceWarehouse.name : '-' }}</td>
+                  <td>{{ movement.targetWarehouse ? movement.targetWarehouse.name : '-' }}</td>
                   <td>{{ movement.product.name }}</td>
                   <td>{{ movement.translated_type }}</td>
                   <td>{{ `${movement.amount}&nbsp;${movement.product.unit}` }}</td>
@@ -111,7 +111,7 @@ export default {
   },
   mounted() {
     if (this.$auth.user.role === 'employee') {
-      this.filters.receipt_warehouse_id = this.$auth.user.warehouse_id;
+      this.filters.target_warehouse_uuid = this.$auth.user.warehouse_uuid;
     }
   },
   data() {
@@ -119,11 +119,11 @@ export default {
       pagination: null,
       warehouses: [],
       filters: {
-        product_id: "",
+        product_uuid: "",
         type: "",
-        user_id: "",
-        issue_warehouse_id: "",
-        receipt_warehouse_id: "",
+        user_uuid: "",
+        source_warehouse_uuid: "",
+        target_warehouse_uuid: "",
       }
     }
   },

@@ -2,5 +2,7 @@
 
 return [
     'issue' => 'issue',
-    'receipt' => 'receipt',
+    'receive' => 'receive',
+    'move' => 'move',
+    'check' => 'check',
 ];

@@ -137,7 +137,7 @@ export default {
   data() {
     return {
       warehouses: [],
-      warehouse: null,
+      currentWarehouse: null,
       warehouse_product: null,
       loading: false,
       form: {
@@ -157,9 +157,7 @@ export default {
       this.loading = true;
       await this.$store.dispatch('warehouse_products/move', this.form)
         .then(r => {
-          console.log(this.warehouse);
-
-          this.$router.push(`/warehouses/${this.warehouse.uuid}`)
+          this.$router.push(`/warehouses/${this.currentWarehouse.uuid}`)
         })
         .catch(r => {
           console.log(r);

@@ -6,9 +6,10 @@ use App\Events\WarehouseProductCreated;
 use App\Events\PriceCreated;
 use App\Models\WarehouseProduct;
 use App\Models\Price;
+use Illuminate\Contracts\Queue\ShouldQueue;
 use Spatie\EventSourcing\EventHandlers\Projectors\Projector;
 
-class WarehouseProductPriceProjector extends Projector
+class WarehouseProductPriceProjector extends Projector implements ShouldQueue
 {
     public function onWarehouseProductPriceCreated(PriceCreated $event): void
     {

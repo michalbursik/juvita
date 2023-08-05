@@ -28,7 +28,7 @@ class WarehouseProjector extends Projector implements ShouldQueue
 
         /** @var Product $product */
         foreach ($products as $product) {
-            $this->warehouseProductRepository->create($warehouse->uuid, $product->uuid);
+            $this->warehouseProductRepository->create($warehouse->uuid, $product->uuid, $product->order);
         }
     }
 

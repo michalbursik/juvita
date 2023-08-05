@@ -20,7 +20,7 @@ use Spatie\EventSourcing\Projections\Projection;
  * @property float $price
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
- * @property-read \App\Models\WarehouseProduct|null $warehouseProduct
+ * @property-read \App\Models\WarehouseProduct $warehouseProduct
  * @method static \Illuminate\Database\Eloquent\Builder|Price newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|Price newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|Price query()

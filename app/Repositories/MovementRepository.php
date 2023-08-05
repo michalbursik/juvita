@@ -10,15 +10,11 @@ class MovementRepository
 {
     public function store(array $data): Movement
     {
-        $movement = new Movement($data);
-
-        $movement->save();
-
-        return $movement;
+        return Movement::createWithAttributes($data);
     }
 
-    public function destroy(Movement $movement)
-    {
-        $movement->delete();
-    }
+//    public function destroy(Movement $movement)
+//    {
+//        $movement->delete();
+//    }
 }

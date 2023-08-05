@@ -4,45 +4,39 @@
 namespace App\Repositories;
 
 
-use App\Exceptions\InsufficientAmountException;
-use App\Models\Product;
-use App\Models\Warehouse;
-use App\Models\WarehouseProduct;
 use App\Models\Price;
-use Illuminate\Support\Collection;
+use App\Models\WarehouseProduct;
 
 class WarehouseProductRepository
 {
     public function __construct(
         private readonly PriceRepository $priceRepository
-    ){}
+    ) {
+    }
+
+    public function getOrCreate(string $warehouseUuid, string $productUuid, int $order): WarehouseProduct
+    {
+        $warehouseProduct = $this->get($warehouseUuid, $productUuid);
+
+        if (empty($warehouseProduct)) {
+            $this->create($warehouseUuid, $productUuid, $order);
+        }
+
+        return $warehouseProduct;
+    }
 
     public function get(string $warehouseUuid, string $productUuid): ?WarehouseProduct
     {
         return WarehouseProduct::exact($warehouseUuid, $productUuid)->first();
     }
 
-    public function getOrCreate(string $warehouseUuid, string $productUuid): WarehouseProduct
-    {
-        $warehouseProduct = $this->get($warehouseUuid, $productUuid);
-
-        if (empty($warehouseProduct)) {
-            $warehouseProduct = WarehouseProduct::createWithAttributes([
-               'warehouse_uuid' => $warehouseUuid,
-               'product_uuid' => $productUuid,
-               'total_amount' => 0
-            ]);
-        }
-
-        return $warehouseProduct;
-    }
-
-    public function create(string $warehouseUuid, string $productUuid): WarehouseProduct
+    public function create(string $warehouseUuid, string $productUuid, int $order): WarehouseProduct
     {
         return WarehouseProduct::createWithAttributes([
             'warehouse_uuid' => $warehouseUuid,
             'product_uuid' => $productUuid,
-            'total_amount' => 0
+            'total_amount' => 0,
+            'order' => $order
         ]);
     }
 

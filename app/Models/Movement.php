@@ -2,31 +2,33 @@
 
 namespace App\Models;
 
+use App\Enums\MovementTypeEnum;
+use App\Traits\Eventable;
 use App\Transformers\MovementTransformer;
 use Carbon\Carbon;
 use Flugg\Responder\Contracts\Transformable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Spatie\EventSourcing\Projections\Projection;
 
 /**
  * App\Models\Movement
  *
  * @property int $id
  * @property string $uuid
- * @property string $type
+ * @property string|null $source_warehouse_name
+ * @property string $target_warehouse_name
+ * @property string $product_name
+ * @property MovementTypeEnum $type
  * @property float $amount
- * @property float|null $price
- * @property int $product_id
- * @property int $user_id
- * @property int|null $issue_warehouse_id
- * @property int|null $receipt_warehouse_id
+ * @property float $price
+ * @property string $user_name
  * @property string $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property-read \App\Models\Warehouse|null $issueWarehouse
- * @property-read \App\Models\Product $product
+ * @property-read \App\Models\Product|null $product
  * @property-read \App\Models\Warehouse|null $receiptWarehouse
- * @property-read \App\Models\User $user
+ * @property-read \App\Models\User|null $user
  * @method static \Database\Factories\MovementFactory factory($count = null, $state = [])
  * @method static \Illuminate\Database\Eloquent\Builder|Movement newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|Movement newQuery()
@@ -34,41 +36,47 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @method static \Illuminate\Database\Eloquent\Builder|Movement whereAmount($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Movement whereCreatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Movement whereId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Movement whereIssueWarehouseId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Movement wherePrice($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Movement whereProductId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Movement whereReceiptWarehouseId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Movement whereProductName($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Movement whereSourceWarehouseName($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Movement whereTargetWarehouseName($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Movement whereType($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Movement whereUpdatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Movement whereUserId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Movement whereUserName($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Movement whereUuid($value)
  * @mixin \Eloquent
  */
-class Movement extends Model implements Transformable
+class Movement extends Projection implements Transformable
 {
-    const TYPE_ISSUE = 'issue';
-    const TYPE_RECEIPT = 'receipt';
-    const TYPE_TRANSMISSION = 'transmission';
+    use HasFactory, Eventable;
 
-    const TYPE_CHECK = 'check'; // Check changes warehouse amounts
+    protected $fillable = [
+        'product_uuid',
+        'source_warehouse_uuid',
+        'target_warehouse_uuid',
+        'user_uuid',
+        'type',
+        'amount',
+        'price',
+    ];
 
-    use HasFactory;
-
-    protected $fillable = ['type', 'amount', 'price', 'product_id', 'issue_warehouse_id', 'receipt_warehouse_id', 'user_id'];
+    protected $casts = [
+        'type' => MovementTypeEnum::class
+    ];
 
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
     }
 
-    public function issueWarehouse(): BelongsTo
+    public function sourceWarehouse(): BelongsTo
     {
-        return $this->belongsTo(Warehouse::class);
+        return $this->belongsTo(Warehouse::class, 'source_warehouse_uuid');
     }
 
-    public function receiptWarehouse(): BelongsTo
+    public function targetWarehouse(): BelongsTo
     {
-        return $this->belongsTo(Warehouse::class);
+        return $this->belongsTo(Warehouse::class, 'target_warehouse_uuid');
     }
 
     public function product(): BelongsTo

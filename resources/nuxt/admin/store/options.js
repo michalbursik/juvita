@@ -7,9 +7,8 @@ export const state = () => ({
   },
   movements: {
     types: [
-      { value: 'transmission', text: 'Převodka' },
-      { value: 'receipt', text: 'Příjemka' },
-      { value: 'issue', text: 'Výdejka' },
+      { value: 'move', text: 'Převodka' },
+      { value: 'receive', text: 'Příjemka' },
     ]
   }
 });

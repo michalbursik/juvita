@@ -24,15 +24,27 @@ url("~bootstrap-icons/font/fonts/bootstrap-icons.woff?30af91bf14e37666a085fb8a16
 }
 
 .issue-color {
-    @include background-opacity($danger, 0.3)
+    @include background-opacity($danger, 0.3);
+
+  td {
+    background: inherit;
+  }
 }
 
-.receipt-color {
-    @include background-opacity($success, 0.3)
+.receive-color {
+    @include background-opacity($success, 0.3);
+
+  td {
+    background: inherit;
+  }
 }
 
-.transmission-color {
-    @include background-opacity($warning, 0.3)
+.move-color {
+    @include background-opacity($warning, 0.3);
+
+  td {
+    background: inherit;
+  }
 }
 
 .numeric-pad {

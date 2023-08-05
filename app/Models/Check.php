@@ -21,8 +21,8 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\Product> $products
  * @property-read int|null $products_count
- * @property-read \App\Models\User $user
- * @property-read \App\Models\Warehouse $warehouse
+ * @property-read \App\Models\User|null $user
+ * @property-read \App\Models\Warehouse|null $warehouse
  * @method static \Illuminate\Database\Eloquent\Builder|Check newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|Check newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|Check query()

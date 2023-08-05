@@ -2,7 +2,7 @@
 
 return [
     'issue' => 'Výdejka',
-    'receipt' => 'Příjemka',
-    'transmission' => 'Převodka',
+    'receive' => 'Příjemka',
+    'move' => 'Převodka',
     'check' => 'Kontrola',
 ];

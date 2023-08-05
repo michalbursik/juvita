@@ -1,5 +1,8 @@
 <?php
 
+use App\Enums\MovementTypeEnum;
+use App\Models\Product;
+use App\Models\User;
 use App\Models\Warehouse;
 use App\Models\Movement;
 use Illuminate\Database\Migrations\Migration;
@@ -16,17 +19,34 @@ return new class extends Migration
     public function up()
     {
         Schema::create('movements', function (Blueprint $table) {
+            $product = new Product();
+            $user = new User();
+            $warehouse = new Warehouse();
+
             $table->id();
             $table->uuid()->unique();
+            $table->string('type');
+            $table->float('amount', 12, 4);
+            $table->float('price', 12, 4);
 
-            $table->string('type')->default(Movement::TYPE_ISSUE);
-            $table->float('amount', 8, 1);
-            $table->float('price', 8, 1)->nullable();
+            $table->foreignUuid($product->getForeignKey())->constrained(
+                $product->getTable(),
+                $product->getKeyName()
+            );
 
-            $table->foreignId('product_id')->constrained('products');
-            $table->foreignId('user_id')->constrained('users');
-            $table->foreignId('issue_warehouse_id')->nullable()->constrained('warehouses');
-            $table->foreignId('receipt_warehouse_id')->nullable()->constrained('warehouses');
+            $table->foreignUuid($user->getForeignKey())->constrained(
+                $user->getTable(),
+                $user->getKeyName()
+            );
+
+            $table->foreignUuid('source_warehouse_uuid')->nullable()->constrained(
+                $warehouse->getTable(),
+                $warehouse->getKeyName()
+            );
+            $table->foreignUuid('target_warehouse_uuid')->constrained(
+                $warehouse->getTable(),
+                $warehouse->getKeyName()
+            );
 
             $table->timestamps();
         });

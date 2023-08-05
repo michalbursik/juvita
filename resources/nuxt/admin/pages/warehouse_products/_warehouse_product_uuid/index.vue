@@ -7,7 +7,7 @@
           title-class="text-warning"
           :back-url="`/warehouses/${warehouse.uuid}`"></top-panel>
 
-        <div v-if="priceLevels" class="card mt-3">
+        <div v-if="warehouse_product.prices" class="card mt-3">
           <div class="card-header">{{ warehouse_product.name }} - Cenové hladiny</div>
           <div class="card-body">
             <div class="row">
@@ -43,13 +43,13 @@
                 </thead>
                 <tbody>
                 <tr v-for="movement of movements"
-                    :key="movement.id"
+                    :key="movement.uuid"
                     :class="`${movement.type}-color`">
-                  <td>{{ movement.issueWarehouse ? movement.issueWarehouse.name : '-' }}</td>
-                  <td>{{ movement.receiptWarehouse ? movement.receiptWarehouse.name : '-' }}</td>
-                  <td>{{ movement.warehouse_product.name }}</td>
+                  <td>{{ movement.sourceWarehouse ? movement.sourceWarehouse.name : '-' }}</td>
+                  <td>{{ movement.targetWarehouse ? movement.targetWarehouse.name : '-' }}</td>
+                  <td>{{ movement.product.name }}</td>
                   <td>{{ movement.translated_type }}</td>
-                  <td>{{ `${movement.amount}&nbsp;${movement.warehouse_product.unit}` }}</td>
+                  <td>{{ `${movement.amount}&nbsp;${movement.product.unit}` }}</td>
                   <td>{{ movement.price }}&nbsp;Kč</td>
                   <td>{{ movement.user.name }}</td>
                   <td>{{ movement.created_at }}</td>
@@ -74,15 +74,15 @@ export default {
     let warehouse_product = await store.dispatch('warehouse_products/fetch', params.warehouse_product_uuid);
     let warehouse = await store.dispatch('warehouses/fetch', warehouse_product.warehouse_uuid);
 
-    // let movements = await store.dispatch('movements/fetchAll', {
-    //   warehouse_id: params.warehouse_id,
-    //   product_id: params.product_id
-    // });
+    let movements = await store.dispatch('movements/fetchAll', {
+      warehouse_uuid: warehouse_product.warehouse_uuid,
+      product_uuid: warehouse_product.product_uuid
+    });
 
     return {
       warehouse_product,
       warehouse,
-      // movements: movements.data, // todo pagination
+      movements: movements.data, // todo pagination
     }
   },
   data() {
@@ -90,7 +90,6 @@ export default {
       warehouse: null,
       warehouse_product: null,
       movements: [],
-      priceLevels: [],
     }
   },
   methods: {

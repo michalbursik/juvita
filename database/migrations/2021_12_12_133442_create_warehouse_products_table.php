@@ -22,6 +22,7 @@ return new class extends Migration
             $table->id();
             $table->uuid()->unique();
             $table->unique([$warehouse->getForeignKey(), $product->getForeignKey()]);
+            $table->integer('order');
 
             $table->foreignUuid($product->getForeignKey())->constrained($product->getTable(), $product->getKeyName());
             $table->foreignUuid($warehouse->getForeignKey())->constrained($warehouse->getTable(), $warehouse->getKeyName());

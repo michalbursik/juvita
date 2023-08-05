@@ -23,8 +23,8 @@ class MovementTransformer extends Transformer
      */
     protected $load = [
         'product' => ProductTransformer::class,
-        'issueWarehouse' => WarehouseTransformer::class,
-        'receiptWarehouse' => WarehouseTransformer::class,
+        'sourceWarehouse' => WarehouseTransformer::class,
+        'targetWarehouse' => WarehouseTransformer::class,
         'user' => UserTransformer::class,
     ];
 
@@ -37,16 +37,12 @@ class MovementTransformer extends Transformer
     public function transform(Movement $movement): array
     {
         return [
-            'id' => (int) $movement->id,
+            'id' => $movement->id,
+            'uuid' => $movement->uuid,
             'type' => $movement->type,
-            'translated_type' => __('global.' . $movement->type),
+            'translated_type' => __('global.' . $movement->type->value),
             'amount' => $movement->amount,
             'price' => $movement->price,
-            // Loaded with relation
-//            'product_id' => $movement->product_id,
-//            'issue_warehouse_id' => $movement->issue_warehouse_id,
-//            'receipt_warehouse_id' => $movement->receipt_warehouse_id,
-//            'user_id' => $movement->user_id,
             'created_at' => $movement->created_at,
             'created_at_utc' => $movement->getAttributes()['created_at'],
         ];

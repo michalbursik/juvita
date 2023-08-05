@@ -7,7 +7,6 @@ use App\Transformers\WarehouseProductTransformer;
 use Flugg\Responder\Contracts\Transformable;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -49,8 +48,10 @@ class WarehouseProduct extends Projection implements Transformable
 {
     use HasFactory, SoftDeletes, Eventable;
 
+    // Clear activation ??
     const STATUS_ACTIVE = 'active';
 
+    // TODO - whe issue all amounts => REMOVE warehouseProductPrice
     // Warehouse receipt product with price.
     const STATUS_DISABLED = 'disabled';
     // All amount of product was issued away from warehouse.
@@ -61,6 +62,7 @@ class WarehouseProduct extends Projection implements Transformable
         'warehouse_uuid',
         'product_uuid',
         'total_amount',
+        'order',
 
 //        'validFrom',
 //        'validTo',
