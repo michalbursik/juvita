@@ -67,17 +67,4 @@ export const actions = {
 
     commit('REMOVE_WAREHOUSE', warehouse_id);
   },
-  async fetchTotalAmounts({commit}, warehouse_id) {
-    const totalAmounts = await this.$axios.$get(`/warehouses/${warehouse_id}/products/total_amount`);
-
-    return totalAmounts.data
-  },
-  async fetchProductPrices({commit}, {warehouse_uuid, product_uuid}) {
-    const productsPrices = await this.$axios.$get(`/warehouses/${warehouse_uuid}/products/${product_uuid}/prices`)
-
-    return productsPrices.data;
-  },
-  async receiveProduct({commit}, data) {
-    await this.$axios.$post('/warehouses/products/receive', data);
-  }
 }

@@ -9,6 +9,7 @@ use App\Http\Controllers\ProductController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\WarehouseController;
 use App\Http\Controllers\MovementController;
+use App\Http\Controllers\WarehouseProductController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
@@ -37,20 +38,35 @@ Route::middleware('auth:sanctum')->group(function () {
     });
 
     // Event sourcing
-    Route::controller(WarehouseController::class)->group(function () {
-        Route::post('warehouses/products/receive', 'receive')->name('warehouses.products.receive');
-        Route::post('warehouses/products/move', 'move')->name('warehouses.products.move');
-        Route::get('warehouses/{warehouse}/products/total_amount', 'totalAmount')->name('warehouses.products.total_amount');
-        // Route::get('warehouses/{warehouse}/products/{product}', 'getProducts')->name('warehouses.products.getProducts');
-        Route::get('warehouses/{warehouse}/products/{product}/prices', 'getProductPrices')->name('warehouses.products.getProductPrices');
+    Route::controller(WarehouseController::class)
+        ->prefix('warehouses')
+        ->name('warehouses.')->group(function () {
+        Route::get('', 'index')->name('index');
+        Route::get('trash', 'trash')->name('trash');
+        Route::get('{warehouse}', 'show')->name('show');
     });
+
+    Route::controller(WarehouseProductController::class)
+        ->prefix('warehouse_products')
+        ->name('warehouse_products.')->group(function () {
+        Route::post('trash', 'trash')->name('trash');
+        Route::post('receive', 'receive')->name('receive');
+        Route::post('move', 'move')->name('move');
+
+        // Route::get('{warehouse}/products/total_amount', 'totalAmount')->name('total_amount');
+        // Route::get('{warehouse}/products/{product}', 'getProducts')->name('getProducts');
+        Route::get('{warehouse_product}', 'show')->name('show');
+    });
+
+    // warehouse_products/{warehouse_product_uuid}/index => list of warehouseProducts => uuids
+    // warehouse_products/{warehouse_product_uuid}/receive/
+    // warehouse_products/{warehouse_product_uuid}/move/{warehouse_product_uuid}
 
 
     // ----
 
 
     // Route::resource('discounts', DiscountController::class);
-    Route::get('warehouses/trash', [WarehouseController::class, 'trash']);
     // Route::get('warehouses/movements', [MovementController::class, 'index'])->name('movements.index');
 
 
@@ -91,6 +107,5 @@ Route::middleware('auth:sanctum')->group(function () {
 //    });
 //
 
-    Route::resource('warehouses', WarehouseController::class, ['only' => ['show', 'index']]);
     Route::resource('products', ProductController::class, ['only' => ['index', 'show']]);
 });

@@ -90,9 +90,7 @@ class WarehouseSeeder extends Seeder
             if (!empty($warehouseData['user'])) {
                 $data = $warehouseData['user'];
                 $data = [...$data, 'warehouse_uuid' => $warehouse->uuid];
-                $user = new User($data);
-
-                $user->save();
+                $user = User::createWithAttributes($data);
             }
         }
     }

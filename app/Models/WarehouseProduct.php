@@ -25,11 +25,11 @@ use Spatie\EventSourcing\Projections\Projection;
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property \Illuminate\Support\Carbon|null $deleted_at
- * @property-read \Illuminate\Database\Eloquent\Collection<int, WarehouseProduct> $prices
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\Price> $prices
  * @property-read int|null $prices_count
  * @property-read \App\Models\Product $product
  * @property-read \App\Models\Warehouse $warehouse
- * @method static Builder|WarehouseProduct exact(\App\Models\Warehouse|string $warehouse, \App\Models\Product|string $product, ?float $price = null)
+ * @method static Builder|WarehouseProduct exact(\App\Models\Warehouse|string $warehouse, \App\Models\Product|string $product)
  * @method static Builder|WarehouseProduct newModelQuery()
  * @method static Builder|WarehouseProduct newQuery()
  * @method static Builder|WarehouseProduct onlyTrashed()
@@ -92,7 +92,7 @@ class WarehouseProduct extends ModelProjection implements Transformable
 
     public function prices(): HasMany
     {
-        return $this->hasMany(WarehouseProductPrice::class);
+        return $this->hasMany(Price::class);
     }
     public function product(): BelongsTo
     {

@@ -3,7 +3,7 @@
 use App\Models\Product;
 use App\Models\User;
 use App\Models\Warehouse;
-use App\Repositories\WarehouseProductPriceRepository;
+use App\Repositories\PriceRepository;
 use App\Repositories\WarehouseProductRepository;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
@@ -22,8 +22,8 @@ beforeEach(function () {
     $warehouseProductRepository = app(WarehouseProductRepository::class);
     $this->warehouseProductRepository = $warehouseProductRepository;
 
-    /** @var WarehouseProductPriceRepository $warehouseProductPriceRepository */
-    $warehouseProductPriceRepository = app(WarehouseProductPriceRepository::class);
+    /** @var PriceRepository $warehouseProductPriceRepository */
+    $warehouseProductPriceRepository = app(PriceRepository::class);
     $this->warehouseProductPriceRepository = $warehouseProductPriceRepository;
 });
 

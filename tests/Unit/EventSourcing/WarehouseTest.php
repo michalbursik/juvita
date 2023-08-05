@@ -4,8 +4,8 @@ use App\Exceptions\InsufficientAmountException;
 use App\Models\Product;
 use App\Models\Warehouse;
 use App\Models\WarehouseProduct;
-use App\Models\WarehouseProductPrice;
-use App\Repositories\WarehouseProductPriceRepository;
+use App\Models\Price;
+use App\Repositories\PriceRepository;
 use App\Repositories\WarehouseProductRepository;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
@@ -21,8 +21,8 @@ beforeEach(function () {
     $warehouseProductRepository = app(WarehouseProductRepository::class);
     $this->warehouseProductRepository = $warehouseProductRepository;
 
-    /** @var WarehouseProductPriceRepository $warehouseProductPriceRepository */
-    $warehouseProductPriceRepository = app(WarehouseProductPriceRepository::class);
+    /** @var PriceRepository $warehouseProductPriceRepository */
+    $warehouseProductPriceRepository = app(PriceRepository::class);
     $this->warehouseProductPriceRepository = $warehouseProductPriceRepository;
 });
 
@@ -41,11 +41,11 @@ test('warehouse can receive a product', function () {
     );
 
     $warehouseProductPrice = $this->warehouseProductPriceRepository
-        ->getOrCreateWarehouseProductPrice($warehouseProduct, 100);
+        ->getOrCreatePrice($warehouseProduct, 100);
 
     expect($warehouseProduct)->toBeInstanceOf(WarehouseProduct::class)
         ->and($warehouseProduct->total_amount)->toBeFloat()->toBe(10.0)
-        ->and($warehouseProductPrice)->toBeInstanceOf(WarehouseProductPrice::class)
+        ->and($warehouseProductPrice)->toBeInstanceOf(Price::class)
         ->and($warehouseProductPrice->amount)->toBeFloat()->toBe(10.0)
         ->and($warehouseProductPrice->price)->toBeFloat()->toBe(100.0);
 });
@@ -63,11 +63,11 @@ test('warehouse can receive more products', function () {
     );
 
     $warehouseProductPrice = $this->warehouseProductPriceRepository
-        ->getOrCreateWarehouseProductPrice($warehouseProduct, 100);
+        ->getOrCreatePrice($warehouseProduct, 100);
 
     expect($warehouseProduct)->toBeInstanceOf(WarehouseProduct::class)
         ->and($warehouseProduct->total_amount)->toBeFloat()->toBe(30.0)
-        ->and($warehouseProductPrice)->toBeInstanceOf(WarehouseProductPrice::class)
+        ->and($warehouseProductPrice)->toBeInstanceOf(Price::class)
         ->and($warehouseProductPrice->amount)->toBeFloat()->toBe(30.0)
         ->and($warehouseProductPrice->price)->toBeFloat()->toBe(100.0);
 });
@@ -87,11 +87,11 @@ test('warehouse can move a received product within amount', function () {
     );
 
     $sourceWarehouseProductPrice = $this->warehouseProductPriceRepository
-        ->getOrCreateWarehouseProductPrice($sourceWarehouseProduct, 100);
+        ->getOrCreatePrice($sourceWarehouseProduct, 100);
 
     expect($sourceWarehouseProduct)->toBeInstanceOf(WarehouseProduct::class)
         ->and($sourceWarehouseProduct->total_amount)->toBeFloat()->toBe(5.0)
-        ->and($sourceWarehouseProductPrice)->toBeInstanceOf(WarehouseProductPrice::class)
+        ->and($sourceWarehouseProductPrice)->toBeInstanceOf(Price::class)
         ->and($sourceWarehouseProductPrice->amount)->toBeFloat()->toBe(5.0)
         ->and($sourceWarehouseProductPrice->price)->toBeFloat()->toBe(100.0);
 
@@ -100,11 +100,11 @@ test('warehouse can move a received product within amount', function () {
     );
 
     $targetWarehouseProductPrice = $this->warehouseProductPriceRepository
-        ->getOrCreateWarehouseProductPrice($targetWarehouseProduct, 100);
+        ->getOrCreatePrice($targetWarehouseProduct, 100);
 
     expect($targetWarehouseProduct)->toBeInstanceOf(WarehouseProduct::class)
         ->and($targetWarehouseProduct->total_amount)->toBeFloat()->toBe(5.0)
-        ->and($targetWarehouseProductPrice)->toBeInstanceOf(WarehouseProductPrice::class)
+        ->and($targetWarehouseProductPrice)->toBeInstanceOf(Price::class)
         ->and($targetWarehouseProductPrice->amount)->toBeFloat()->toBe(5.0)
         ->and($targetWarehouseProductPrice->price)->toBeFloat()->toBe(100.0);
 });
@@ -124,11 +124,11 @@ test('warehouse can move more received products within amount', function () {
     );
 
     $sourceWarehouseProductPrice = $this->warehouseProductPriceRepository
-        ->getOrCreateWarehouseProductPrice($sourceWarehouseProduct, 100);
+        ->getOrCreatePrice($sourceWarehouseProduct, 100);
 
     expect($sourceWarehouseProduct)->toBeInstanceOf(WarehouseProduct::class)
         ->and($sourceWarehouseProduct->total_amount)->toBeFloat()->toBe(0.0)
-        ->and($sourceWarehouseProductPrice)->toBeInstanceOf(WarehouseProductPrice::class)
+        ->and($sourceWarehouseProductPrice)->toBeInstanceOf(Price::class)
         ->and($sourceWarehouseProductPrice->amount)->toBeFloat()->toBe(0.0)
         ->and($sourceWarehouseProductPrice->price)->toBeFloat()->toBe(100.0);
 
@@ -137,11 +137,11 @@ test('warehouse can move more received products within amount', function () {
     );
 
     $targetWarehouseProductPrice = $this->warehouseProductPriceRepository
-        ->getOrCreateWarehouseProductPrice($targetWarehouseProduct, 100);
+        ->getOrCreatePrice($targetWarehouseProduct, 100);
 
     expect($targetWarehouseProduct)->toBeInstanceOf(WarehouseProduct::class)
         ->and($targetWarehouseProduct->total_amount)->toBeFloat()->toBe(10.0)
-        ->and($targetWarehouseProductPrice)->toBeInstanceOf(WarehouseProductPrice::class)
+        ->and($targetWarehouseProductPrice)->toBeInstanceOf(Price::class)
         ->and($targetWarehouseProductPrice->amount)->toBeFloat()->toBe(10.0)
         ->and($targetWarehouseProductPrice->price)->toBeFloat()->toBe(100.0);
 });

@@ -2,14 +2,12 @@
 
 namespace App\Models;
 
-use App\Interfaces\Eventable;
-use App\Traits\UuidHelpers;
+use App\Events\UserCreated;
 use App\Transformers\UserTransformer;
 use Flugg\Responder\Contracts\Transformable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
 
@@ -17,6 +15,7 @@ use Laravel\Sanctum\HasApiTokens;
  * App\Models\User
  *
  * @property int $id
+ * @property string $uuid
  * @property string $name
  * @property string $email
  * @property \Illuminate\Support\Carbon|null $email_verified_at
@@ -48,10 +47,11 @@ use Laravel\Sanctum\HasApiTokens;
  * @method static \Illuminate\Database\Eloquent\Builder|User whereRememberToken($value)
  * @method static \Illuminate\Database\Eloquent\Builder|User whereRole($value)
  * @method static \Illuminate\Database\Eloquent\Builder|User whereUpdatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|User whereUuid($value)
  * @method static \Illuminate\Database\Eloquent\Builder|User whereWarehouseUuid($value)
  * @mixin \Eloquent
  */
-class User extends Authenticatable implements Transformable
+class User extends AuthenticatableModelProjection implements Transformable
 {
     use HasApiTokens, HasFactory, Notifiable;
 
@@ -89,6 +89,11 @@ class User extends Authenticatable implements Transformable
     protected $casts = [
         'email_verified_at' => 'datetime',
     ];
+
+    public static function setModelEvents(): void
+    {
+        self::setCreateEvent(UserCreated::class);
+    }
 
     public function warehouse(): BelongsTo
     {

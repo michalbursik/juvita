@@ -26,7 +26,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @property-read \App\Models\Warehouse|null $issueWarehouse
  * @property-read \App\Models\Product|null $product
  * @property-read \App\Models\Warehouse|null $receiptWarehouse
- * @property-read \App\Models\User $user
+ * @property-read \App\Models\User|null $user
  * @method static \Database\Factories\MovementFactory factory($count = null, $state = [])
  * @method static \Illuminate\Database\Eloquent\Builder|Movement newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|Movement newQuery()

@@ -2,15 +2,12 @@
 
 namespace App\Http\Requests;
 
-use App\Models\Movement;
 use Illuminate\Foundation\Http\FormRequest;
 
-class ReceiveProductRequest extends FormRequest
+class TrashProductRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
-     *
-     * @return bool
      */
     public function authorize(): bool
     {
@@ -20,25 +17,25 @@ class ReceiveProductRequest extends FormRequest
     /**
      * Get the validation rules that apply to the request.
      *
-     * @return array
+     * @return array<string, \Illuminate\Contracts\Validation\ValidationRule|array|string>
      */
     public function rules(): array
     {
         return [
-            'warehouse_uuid' => 'required|string',
+            'warehouse_product_uuid' => 'required|string',
             'product_uuid' => 'required|string',
+            'price_uuid' => 'required|string',
             'amount' => 'required|numeric|min:0.1',
-            'price' => 'nullable|numeric',
         ];
     }
 
     public function attributes(): array
     {
         return [
-            'amount' => 'množství',
-            'price' => 'cena',
+            'warehouse_product_uuid' => 'produkt skladu',
             'product_uuid' => 'produkt',
-            'warehouse_uuid' => 'sklad',
+            'price_uuid' => 'cena',
+            'amount' => 'množství',
         ];
     }
 }

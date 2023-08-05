@@ -6,7 +6,7 @@
         <top-panel
           :title="`${warehouse.name} - příjemka`"
           title-class="text-success"
-          :back-url="`/warehouses/${$route.params.warehouse_id}`"></top-panel>
+          :back-url="`/warehouses/${warehouse.uuid}`"></top-panel>
 
         <form @submit.prevent="onSubmit()" id="movements_form">
 
@@ -57,19 +57,16 @@
 
 <script>
 import {mapGetters} from "vuex";
-import TopPanel from "~/components/TopPanel";
-import NumericPad from "~/components/NumericPad";
+import TopPanel from "~/components/TopPanel.vue";
+import NumericPad from "~/components/NumericPad.vue";
 
 export default {
   name: "WarehouseProductReceipt",
   components: {TopPanel, NumericPad},
   middleware: ['admin'],
   async asyncData({params, store}) {
-    let warehouse = await store.dispatch('warehouses/fetch', params.warehouse_id);
-    let warehouse_product = await store.dispatch('warehouses/fetchProductPrices', {
-      warehouse_uuid: params.warehouse_id,
-      product_uuid: params.product_id,
-    })
+    const warehouse_product = await store.dispatch('warehouse_products/fetch', params.warehouse_product_uuid)
+    const warehouse = await store.dispatch('warehouses/fetch', warehouse_product.warehouse_uuid);
 
     return {
       warehouse,
@@ -78,11 +75,10 @@ export default {
   },
   mounted() {
     // Load last one => just for easier input
-    const maxAmount = Math.max(...this.warehouse_product.prices.map(p => p.amount));
-    this.form.price = this.warehouse_product.prices.filter(function (price) {
-      return price.amount === maxAmount
-    })[0].price;
-
+    // const maxAmount = Math.max(...this.warehouse_product.prices.map(p => p.amount));
+    // this.form.price = this.warehouse_product.prices.filter(function (price) {
+    //   return price.amount === maxAmount
+    // })[0].price;
 
     this.form.product_uuid = this.warehouse_product.product_uuid;
     this.form.warehouse_uuid = this.warehouse_product.warehouse_uuid;
@@ -97,8 +93,6 @@ export default {
         price: 0,
         warehouse_uuid: null,
         product_uuid: null,
-        // user_id: this.$auth.user.id,
-        // type: this.getType(),
       }
     }
   },
@@ -109,9 +103,9 @@ export default {
     async onSubmit() {
       this.loading = true;
 
-      await this.$store.dispatch('warehouses/receiveProduct', this.form)
+      await this.$store.dispatch('warehouse_products/receive', this.form)
         .then(r => {
-          this.$router.push(`/warehouses/${this.$route.params.warehouse_id}`)
+          this.$router.push(`/warehouses/${this.warehouse.uuid}`)
         }).catch(r => {
           console.log(r);
           this.loading = false;
@@ -121,11 +115,6 @@ export default {
     setCurrentInput(type) {
       this.$refs.num_pad.setCurrentInput(type);
     },
-    // getType() {
-    //   let url = this.$nuxt.$route.path;
-    //
-    //   return url.split('/').at(-1);
-    // }
   },
   computed: {
     ...mapGetters({

@@ -31,7 +31,7 @@
                 background-size: contain;
                 border-bottom-left-radius: 0; border-bottom-right-radius: 0;
               `">
-              <nuxt-link :to="`/warehouses/${currentWarehouse.uuid}/products/${warehouse_product.product_uuid}`" style="text-decoration: none;">
+              <nuxt-link :to="`/warehouse_products/${warehouse_product.uuid}`" style="text-decoration: none;">
                 <div class="card-body text-center text-white fw-bold" style="
                                 min-height: 140px; font-size: 1.2rem; padding: 0; margin-top: 15px;
                                 ">
@@ -45,20 +45,20 @@
             <div class="row">
               <div class="col text-center">
                 <div class="btn-group w-100" role="group" aria-label="Product operations">
-                  <nuxt-link v-if="isAdmin() && currentWarehouse.type === 'warehouse'" event="" @click.native="changePage(`/warehouses/${currentWarehouse.uuid}/products/${warehouse_product.product_uuid}/receipt`, warehouse_product.product_uuid)" to="" type="button" class="btn btn-success" style="border-top-left-radius: 0; border-top-right-radius: 0;">
+                  <nuxt-link v-if="isAdmin() && currentWarehouse.type === 'warehouse'" event="" @click.native="changePage(`/warehouse_products/${warehouse_product.uuid}/receive`, warehouse_product.product_uuid)" to="" type="button" class="btn btn-success" style="border-top-left-radius: 0; border-top-right-radius: 0;">
                     <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" class="bi bi-plus text-white" viewBox="0 0 16 16">
                       <path d="M14 1a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H2a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1h12zM2 0a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2H2z"/>
                       <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4z"/>
                     </svg>
                   </nuxt-link>
 
-                  <nuxt-link event="" @click.native="changePage(`/warehouses/${currentWarehouse.uuid}/products/${warehouse_product.product_uuid}/transmission`, warehouse_product.product_uuid)" to="" type="button" class="btn btn-warning" style="border-top-left-radius: 0; border-top-right-radius: 0;">
+                  <nuxt-link event="" @click.native="changePage(`/warehouse_products/${warehouse_product.uuid}/move`, warehouse_product.product_uuid)" to="" type="button" class="btn btn-warning" style="border-top-left-radius: 0; border-top-right-radius: 0;">
                     <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" class="bi bi-arrow-left-right text-white" viewBox="0 0 16 16">
                       <path fill-rule="evenodd" d="M1 11.5a.5.5 0 0 0 .5.5h11.793l-3.147 3.146a.5.5 0 0 0 .708.708l4-4a.5.5 0 0 0 0-.708l-4-4a.5.5 0 0 0-.708.708L13.293 11H1.5a.5.5 0 0 0-.5.5zm14-7a.5.5 0 0 1-.5.5H2.707l3.147 3.146a.5.5 0 1 1-.708.708l-4-4a.5.5 0 0 1 0-.708l4-4a.5.5 0 1 1 .708.708L2.707 4H14.5a.5.5 0 0 1 .5.5z"/>
                     </svg>
                   </nuxt-link>
 
-                  <nuxt-link event="" @click.native="changePage(`/warehouses/${currentWarehouse.uuid}/products/${warehouse_product.product_uuid}/issue`, warehouse_product.product_uuid)" to="" type="button" class="btn btn-danger" style="border-top-left-radius: 0; border-top-right-radius: 0;">
+                  <nuxt-link event="" @click.native="changePage(`/warehouse_products/${warehouse_product.uuid}/trash`, warehouse_product.product_uuid)" to="" type="button" class="btn btn-danger" style="border-top-left-radius: 0; border-top-right-radius: 0;">
                     <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" class="bi bi-trash text-white" viewBox="0 0 16 16">
                       <path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0V6z"/>
                       <path fill-rule="evenodd" d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1v1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4H4.118zM2.5 3V2h11v1h-11z"/>
@@ -186,8 +186,8 @@ export default {
 
       return highlight;
     },
-    changePage(url, product_id) {
-      localStorage.setItem('scroll_to_product', `product_${product_id}`);
+    changePage(url, product_uuid) {
+      localStorage.setItem('scroll_to_product', `product_${product_uuid}`);
 
       this.$router.push(url);
     },

@@ -5,7 +5,7 @@
         <top-panel
           :title="`${warehouse.name} - ${warehouse_product.name}`"
           title-class="text-warning"
-          :back-url="`/warehouses/${$route.params.warehouse_id}`"></top-panel>
+          :back-url="`/warehouses/${warehouse.uuid}`"></top-panel>
 
         <div v-if="priceLevels" class="card mt-3">
           <div class="card-header">{{ warehouse_product.name }} - Cenové hladiny</div>
@@ -65,28 +65,16 @@
 </template>
 
 <script>
-import TopPanel from "~/components/TopPanel";
+import TopPanel from "~/components/TopPanel.vue";
 
 export default {
   name: "WarehousesProductsShow",
   components: {TopPanel},
   async asyncData({params, store}) {
-    console.log(params);
-
-    let warehouse = await store.dispatch('warehouses/fetch', params.warehouse_id);
+    let warehouse_product = await store.dispatch('warehouse_products/fetch', params.warehouse_product_uuid);
+    let warehouse = await store.dispatch('warehouses/fetch', warehouse_product.warehouse_uuid);
 
     // let movements = await store.dispatch('movements/fetchAll', {
-    //   warehouse_id: params.warehouse_id,
-    //   product_id: params.product_id
-    // });
-
-    let warehouse_product = await store.dispatch('warehouses/fetchProductPrices', {
-      warehouse_uuid: params.warehouse_id,
-      product_uuid: params.product_id,
-    });
-
-
-    // let priceLevels = await store.dispatch('priceLevels/fetchAll', {
     //   warehouse_id: params.warehouse_id,
     //   product_id: params.product_id
     // });
@@ -95,7 +83,6 @@ export default {
       warehouse_product,
       warehouse,
       // movements: movements.data, // todo pagination
-      // priceLevels: priceLevels.data,
     }
   },
   data() {

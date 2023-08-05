@@ -20,7 +20,7 @@ use Spatie\EventSourcing\Projections\Projection;
  * @property string $uuid
  * @property string $name
  * @property string|null $origin
- * @property int $active
+ * @property bool $active
  * @property int $order
  * @property string|null $image
  * @property string $unit

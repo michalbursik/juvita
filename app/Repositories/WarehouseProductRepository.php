@@ -8,15 +8,14 @@ use App\Exceptions\InsufficientAmountException;
 use App\Models\Product;
 use App\Models\Warehouse;
 use App\Models\WarehouseProduct;
-use App\Models\WarehouseProductPrice;
+use App\Models\Price;
 use Illuminate\Support\Collection;
 
 class WarehouseProductRepository
 {
     public function __construct(
-        private readonly WarehouseProductPriceRepository $warehouseProductPriceRepository
-    )
-    {}
+        private readonly PriceRepository $priceRepository
+    ){}
 
     public function get(string $warehouseUuid, string $productUuid): ?WarehouseProduct
     {
@@ -63,10 +62,10 @@ class WarehouseProductRepository
         return $warehouseProduct;
     }
 
-    public function getWarehouseProductPrice(string $warehouseUuid, string $productUuid, float $price): WarehouseProductPrice
+    public function getWarehouseProductPrice(string $warehouseUuid, string $productUuid, float $price): Price
     {
         $warehouseProduct = $this->get($warehouseUuid, $productUuid);
 
-        return $this->warehouseProductPriceRepository->getOrCreateWarehouseProductPrice($warehouseProduct, $price);
+        return $this->priceRepository->getOrCreatePrice($warehouseProduct, $price);
     }
 }

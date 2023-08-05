@@ -73,7 +73,7 @@ class ProductSeeder extends Seeder
             ['name' => 'Křen', 'unit' => 'ks', 'image' => '/images/horseradish.jpeg', 'order' => 540],
             ['name' => 'Kukuřice - 3ks', 'unit' => 'ks', 'image' => '/images/corn.avif', 'order' => 550],
             ['name' => 'Kozí rohy', 'unit' => 'ks', 'image' => '/images/goat_horns.png', 'order' => 560],
-            ['name' => 'Červená řepa', 'unit' => 'ks', 'image' => '/images/blooms.avif', 'order' => 570],
+            ['name' => 'Červená řepa', 'unit' => 'ks', 'image' => '/images/beetroot.png', 'order' => 570],
 
 
         ];

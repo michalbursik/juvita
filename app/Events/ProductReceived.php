@@ -21,6 +21,7 @@ class ProductReceived extends ShouldBeStored
     public function __construct(
         public readonly string $warehouseUuid,
         public readonly string $productUuid,
+        public readonly string $userUuid,
         public readonly float $price,
         public readonly float $amount,
     ) {}

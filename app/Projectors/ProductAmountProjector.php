@@ -4,10 +4,12 @@ namespace App\Projectors;
 
 use App\Events\ProductMoved;
 use App\Events\ProductReceived;
+use App\Events\ProductTrashed;
 use App\Exceptions\InsufficientAmountException;
+use App\Models\Price;
 use App\Models\WarehouseProduct;
 use App\Models\Warehouse;
-use App\Repositories\WarehouseProductPriceRepository;
+use App\Repositories\PriceRepository;
 use App\Repositories\WarehouseProductRepository;
 use App\Repositories\WarehouseRepository;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -18,7 +20,7 @@ class ProductAmountProjector extends Projector implements ShouldQueue
 {
     public function __construct(
         private readonly WarehouseProductRepository $warehouseProductRepository,
-        private readonly WarehouseProductPriceRepository $warehouseProductPriceRepository,
+        private readonly PriceRepository $priceRepository,
     ){}
 
     public function onProductReceived(ProductReceived $event): void
@@ -32,9 +34,29 @@ class ProductAmountProjector extends Projector implements ShouldQueue
             $warehouseProduct, $event->amount
         );
 
-        $this->warehouseProductPriceRepository->receiveProduct(
+        $this->priceRepository->receiveProduct(
             $warehouseProduct,
             $event->price,
+            $event->amount
+        );
+    }
+
+    public function onProductTrashed(ProductTrashed $event): void
+    {
+        // Issue from source warehouse
+        $sourceWarehouseProduct = WarehouseProduct::uuid($event->sourceWarehouseProductUuid);
+        $this->warehouseProductRepository->decreaseTotalAmount($sourceWarehouseProduct, $event->amount);
+
+        $price = Price::uuid($event->priceUuid);
+        $this->priceRepository->issueProduct($price, $event->amount);
+
+        // Receive on target trash warehouse
+        $trashWarehouseProduct = WarehouseProduct::uuid($event->targetWarehouseProductUuid);
+        $this->warehouseProductRepository->increaseTotalAmount($trashWarehouseProduct, $event->amount);
+
+        $this->priceRepository->receiveProduct(
+            $trashWarehouseProduct,
+            $price->price,
             $event->amount
         );
     }
@@ -42,25 +64,24 @@ class ProductAmountProjector extends Projector implements ShouldQueue
     /**
      * @throws InsufficientAmountException
      */
-    public function onProductWarehouseMoved(ProductMoved $event): void
+    public function onProductMoved(ProductMoved $event): void
     {
         // Issue from source warehouse
-        if ($event->sourceWarehouseUuid) {
-            $sourceWarehouseProduct = $this->warehouseProductRepository->getOrCreate(
-                $event->sourceWarehouseUuid,
-                $event->productUuid,
-            );
+        $sourceWarehouseProduct = $this->warehouseProductRepository->getOrCreate(
+            $event->sourceWarehouseUuid,
+            $event->productUuid,
+        );
 
-            $this->warehouseProductRepository->decreaseTotalAmount(
-                $sourceWarehouseProduct, $event->amount
-            );
+        $this->warehouseProductRepository->decreaseTotalAmount(
+            $sourceWarehouseProduct, $event->amount
+        );
 
-            $this->warehouseProductPriceRepository->issueProduct(
-                $sourceWarehouseProduct,
-                $event->price,
-                $event->amount
-            );
-        }
+        $price = Price::uuid($event->priceUuid);
+
+        $this->priceRepository->issueProduct(
+            $price,
+            $event->amount
+        );
 
         // Receipt to target warehouse
         $targetWarehouseProduct = $this->warehouseProductRepository->getOrCreate(
@@ -72,9 +93,9 @@ class ProductAmountProjector extends Projector implements ShouldQueue
             $targetWarehouseProduct, $event->amount
         );
 
-        $this->warehouseProductPriceRepository->receiveProduct(
+        $this->priceRepository->receiveProduct(
             $targetWarehouseProduct,
-            $event->price,
+            $price->price,
             $event->amount
         );
     }

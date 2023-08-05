@@ -3,11 +3,13 @@
 
 namespace App\Repositories;
 
+use App\Enums\WarehouseTypeEnum;
 use App\Exceptions\InsufficientAmountException;
 use App\Models\Product;
 use App\Models\WarehouseProduct;
 use App\Models\Warehouse;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Cache;
 
 class WarehouseRepository
 {
@@ -51,5 +53,20 @@ class WarehouseRepository
         $warehouse->update($data);
 
         return $warehouse;
+    }
+
+    public function getTrashWarehouse(): Warehouse
+    {
+        $trashWarehouse = Cache::get('trash_warehouse');
+
+        if (empty($trashWarehouse)) {
+            $trashWarehouse = Warehouse::query()
+                ->where('type', WarehouseTypeEnum::TRASH)
+                ->first();
+
+            Cache::set('trash_warehouse', $trashWarehouse);
+        }
+
+        return $trashWarehouse;
     }
 }

@@ -5,6 +5,7 @@ namespace App\Models;
 use App\Enums\WarehouseTypeEnum;
 use App\Events\ProductMoved;
 use App\Events\ProductReceived;
+use App\Events\ProductTrashed;
 use App\Events\WarehouseCreated;
 use App\Transformers\WarehouseTransformer;
 use Flugg\Responder\Contracts\Transformable;
@@ -14,6 +15,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Facades\Auth;
 use Korridor\LaravelHasManyMerged\HasManyMerged;
 use Korridor\LaravelHasManyMerged\HasManyMergedRelation;
 
@@ -35,7 +37,7 @@ use Korridor\LaravelHasManyMerged\HasManyMergedRelation;
  * @property-read int|null $issue_movements_count
  * @property-read Collection<int, \App\Models\WarehouseProduct> $priceLevels
  * @property-read int|null $price_levels_count
- * @property-read Collection<int, \App\Models\Product> $products
+ * @property-read Collection<int, \App\Models\WarehouseProduct> $products
  * @property-read int|null $products_count
  * @property-read Collection<int, \App\Models\Movement> $receiptMovements
  * @property-read int|null $receipt_movements_count
@@ -77,12 +79,23 @@ class Warehouse extends ModelProjection implements Transformable
 
     public function receiveProduct(string $productUuid, float $price, float $amount): void
     {
-        event(new ProductReceived($this->uuid, $productUuid, $price, $amount));
+        $user = Auth::user();
+        event(new ProductReceived(
+            $this->uuid, $productUuid,  $user->uuid, $price, $amount
+        ));
     }
 
-    public function moveProduct(string $targetWarehouseUuid, string $productId, float $price, float $amount): void
+    public function moveProduct(string $targetWarehouseUuid, string $productUuid, string $warehouse_product_price_uuid, float $amount): void
     {
-        event(new ProductMoved($this->uuid, $targetWarehouseUuid, $productId, $price, $amount));
+        $user = Auth::user();
+        event(new ProductMoved(
+            $this->uuid,
+            $targetWarehouseUuid,
+            $productUuid,
+            $user->uuid,
+            $warehouse_product_price_uuid,
+            $amount
+        ));
     }
 
     public function user(): HasOne

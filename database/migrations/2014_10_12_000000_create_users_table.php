@@ -6,8 +6,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-return new class extends Migration
-{
+return new class extends Migration {
     /**
      * Run the migrations.
      *
@@ -19,14 +18,17 @@ return new class extends Migration
             $warehouse = new Warehouse();
 
             $table->id();
-            // $table->uuid()->unique();
+            $table->uuid()->unique();
             $table->string('name');
             $table->string('email')->unique();
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
             $table->string('role')->default(User::ROLE_EMPLOYEE);
 
-             $table->foreignUuid($warehouse->getForeignKey())->constrained($warehouse->getTable(), $warehouse->getKeyName());
+            $table->foreignUuid($warehouse->getForeignKey())->constrained(
+                $warehouse->getTable(),
+                $warehouse->getKeyName()
+            );
 
             $table->rememberToken();
             $table->timestamps();

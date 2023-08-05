@@ -3,7 +3,7 @@
 use App\Models\Product;
 use App\Models\WarehouseProduct;
 use App\Models\Warehouse;
-use App\Models\WarehouseProductPrice;
+use App\Models\Price;
 use App\Repositories\WarehouseProductRepository;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
@@ -29,14 +29,14 @@ it('creates or gets non existing warehouse product price', function () {
         $this->warehouse->uuid, $product->uuid, $price
     );
 
-    expect($warehouseProductPrice)->toBeInstanceOf(WarehouseProductPrice::class)
+    expect($warehouseProductPrice)->toBeInstanceOf(Price::class)
         ->and($warehouseProductPrice->uuid)->toBeString()->toBe($warehouseProductPrice->uuid);
 
     $nextProductWarehouse = $this->warehouseProductRepository->getWarehouseProductPrice(
         $this->warehouse->uuid, $product->uuid, $price
     );
 
-    expect($nextProductWarehouse)->toBeInstanceOf(WarehouseProductPrice::class)
+    expect($nextProductWarehouse)->toBeInstanceOf(Price::class)
         ->and($nextProductWarehouse->id)->toBeInt()->toBe(1)
         ->and($nextProductWarehouse->uuid)->toBeString()->toBe($warehouseProductPrice->uuid);
 })->skip();

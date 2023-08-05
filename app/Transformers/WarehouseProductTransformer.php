@@ -14,6 +14,7 @@ class WarehouseProductTransformer extends Transformer
      */
     protected $relations = [
         'product' => ProductTransformer::class,
+        'prices' => PriceTransformer::class
     ];
 
     /**
@@ -21,9 +22,7 @@ class WarehouseProductTransformer extends Transformer
      *
      * @var array
      */
-    protected $load = [
-        'prices' => WarehouseProductPriceTransformer::class
-    ];
+    protected $load = [];
 
     /**
      * Transform the model.

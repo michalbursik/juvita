@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\MoveProductRequest;
 use App\Http\Requests\ReceiveProductRequest;
-use App\Models\Product;
+use App\Http\Requests\TrashProductRequest;
 use App\Models\User;
 use App\Models\Warehouse;
 use App\Models\WarehouseProduct;
@@ -12,6 +12,7 @@ use App\Repositories\WarehouseRepository;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
+use Illuminate\Support\Facades\Log;
 
 class WarehouseController extends Controller
 {
@@ -22,7 +23,7 @@ class WarehouseController extends Controller
         $this->warehouseRepository = $warehouseRepository;
     }
 
-    public function index()
+    public function index(): JsonResponse
     {
         $warehouses = Warehouse::all();
 
@@ -58,46 +59,9 @@ class WarehouseController extends Controller
         return responder()->success()->respond();
     }
 
-    // Event sourcing
-    public function receive(ReceiveProductRequest $request): Response
+    public function show(Warehouse $warehouse): JsonResponse|\Illuminate\Http\RedirectResponse
     {
-        $data = $request->validated();
-        $warehouse = Warehouse::uuid($data['warehouse_uuid']);
-        $warehouse->receiveProduct($data['product_uuid'], $data['price'], $data['amount']);
-
-        return response(null, 202);
-    }
-
-    public function move(MoveProductRequest $request): Response
-    {
-        $data = $request->validated();
-        $warehouse = Warehouse::uuid($data['source_warehouse_uuid']);
-        $warehouse->moveProduct($data['target_warehouse_uuid'], $data['product_uuid'], $data['price'], $data['amount']);
-
-        return response(null, 202);
-    }
-
-    public function totalAmount(Warehouse $warehouse): JsonResponse
-    {
-        $warehouseProducts = $warehouse->products()->orderBy('id')->get();
-
-        return responder()->success($warehouseProducts)->respond();
-    }
-
-    public function getProductPrices(string $warehouse, string $product): JsonResponse
-    {
-        $warehouseProduct = WarehouseProduct::query()
-            ->with('prices')
-            ->where('warehouse_uuid', $warehouse)
-            ->where('product_uuid', $product)
-            ->firstOrFail();
-
-        return responder()->success($warehouseProduct)->respond();
-    }
-    // ------
-
-    public function show(Warehouse $warehouse)
-    {
+        /** @var User $user */
         $user = auth()->user();
         if ($user->role === User::ROLE_EMPLOYEE && $user->warehouse_uuid !== $warehouse->uuid) {
             return redirect()->route('warehouses.show', [
@@ -107,15 +71,12 @@ class WarehouseController extends Controller
 
         return responder()->success($warehouse)
             ->with([
-                'products'
+                'products' => function ($query) {
+                    $query->orderBy('id');
+                }
 //                'movements' => function ($query) {
 //                    $query->where('movements.created_at', '>=', now()->subDays(7))
 //                        ->orderByDesc('created_at');
-//                },
-                // 'products.priceLevels',
-//                'products' => function ($query) {
-//                    $query->where('products.active', true)
-//                        ->orderBy('order');
 //                },
             ])
             ->respond();
@@ -134,9 +95,6 @@ class WarehouseController extends Controller
             ->with([
                 // 'movements',
                 'products'
-//                => function ($query) {
-//                    $query->where('products.active', true);
-//                }
             ])
             ->respond();
     }
