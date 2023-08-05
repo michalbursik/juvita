@@ -2,9 +2,12 @@
 
 namespace App\Http\Controllers;
 
+use App\Aggregates\WarehouseProductAggregate;
+use App\Dtos\ProductMovedDto;
 use App\Enums\WarehouseTypeEnum;
 use App\Events\ProductMoved;
 use App\Events\ProductTrashed;
+use App\Exceptions\InsufficientAmountException;
 use App\Http\Requests\MoveProductRequest;
 use App\Http\Requests\ReceiveProductRequest;
 use App\Http\Requests\TrashProductRequest;
@@ -39,18 +42,17 @@ class WarehouseProductController extends Controller
         $user = auth()->user();
         $data = $request->validated();
 
-        event(new ProductMoved(
-            $data['source_warehouse_uuid'],
-            $data['target_warehouse_uuid'],
-            $data['product_uuid'],
-            $user->uuid,
-            $data['price_uuid'],
-            $data['amount'],
-        ));
+         event(new ProductMoved(
+             $data['source_warehouse_uuid'],
+             $data['target_warehouse_uuid'],
+             $data['product_uuid'],
+             $user->uuid,
+             $data['price_uuid'],
+             $data['amount']
+         ));
 
         return response(null, 202);
     }
-
 
     public function trash(TrashProductRequest $request): Response
     {

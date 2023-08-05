@@ -44,6 +44,12 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::get('', 'index')->name('index');
         Route::get('trash', 'trash')->name('trash');
         Route::get('{warehouse}', 'show')->name('show');
+
+        Route::middleware('admin')->group(function () {
+            Route::post('', 'store')->name('store');
+            Route::patch('{warehouse}', 'update')->name('update');
+            Route::delete('{warehouse}', 'destroy')->name('destroy');
+        });
     });
 
     Route::controller(WarehouseProductController::class)

@@ -3,11 +3,13 @@
 namespace App\Models;
 
 use App\Events\UserCreated;
+use App\Traits\Eventable;
 use App\Transformers\UserTransformer;
 use Flugg\Responder\Contracts\Transformable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
 
@@ -51,9 +53,9 @@ use Laravel\Sanctum\HasApiTokens;
  * @method static \Illuminate\Database\Eloquent\Builder|User whereWarehouseUuid($value)
  * @mixin \Eloquent
  */
-class User extends AuthenticatableModelProjection implements Transformable
+class User extends AuthenticatableProjection implements Transformable
 {
-    use HasApiTokens, HasFactory, Notifiable;
+    use HasApiTokens, HasFactory, Notifiable, Eventable;
 
     const ROLE_ADMIN = 'admin';
     const ROLE_EMPLOYEE = 'employee';
@@ -89,11 +91,6 @@ class User extends AuthenticatableModelProjection implements Transformable
     protected $casts = [
         'email_verified_at' => 'datetime',
     ];
-
-    public static function setModelEvents(): void
-    {
-        self::setCreateEvent(UserCreated::class);
-    }
 
     public function warehouse(): BelongsTo
     {

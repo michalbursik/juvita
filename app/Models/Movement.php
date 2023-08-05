@@ -24,9 +24,9 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @property string $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property-read \App\Models\Warehouse|null $issueWarehouse
- * @property-read \App\Models\Product|null $product
+ * @property-read \App\Models\Product $product
  * @property-read \App\Models\Warehouse|null $receiptWarehouse
- * @property-read \App\Models\User|null $user
+ * @property-read \App\Models\User $user
  * @method static \Database\Factories\MovementFactory factory($count = null, $state = [])
  * @method static \Illuminate\Database\Eloquent\Builder|Movement newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|Movement newQuery()

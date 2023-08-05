@@ -2,14 +2,16 @@
 
 namespace App\Models;
 
-use App\Events\PriceCreated;
+use App\Traits\Eventable;
 use App\Transformers\PriceTransformer;
 use Flugg\Responder\Contracts\Transformable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Spatie\EventSourcing\Projections\Projection;
 
 /**
- * App\Models\WarehouseProductPrice
+ * App\Models\Price
  *
  * @property int $id
  * @property string $uuid
@@ -18,7 +20,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @property float $price
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
- * @property-read \App\Models\WarehouseProduct $warehouseProduct
+ * @property-read \App\Models\WarehouseProduct|null $warehouseProduct
  * @method static \Illuminate\Database\Eloquent\Builder|Price newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|Price newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|Price query()
@@ -31,9 +33,9 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @method static \Illuminate\Database\Eloquent\Builder|Price whereWarehouseProductUuid($value)
  * @mixin \Eloquent
  */
-class Price extends ModelProjection implements Transformable
+class Price extends Projection implements Transformable
 {
-    use HasFactory;
+    use HasFactory, Eventable;
 
     public $fillable = [
         'price',
@@ -46,11 +48,6 @@ class Price extends ModelProjection implements Transformable
         'price' => 'float',
     ];
 
-    public static function setModelEvents(): void
-    {
-         static::setCreateEvent(PriceCreated::class);
-    }
-
     public function warehouseProduct(): BelongsTo
     {
         return $this->belongsTo(WarehouseProduct::class);
@@ -58,6 +55,6 @@ class Price extends ModelProjection implements Transformable
 
     public function transformer(): string
     {
-         return PriceTransformer::class;
+        return PriceTransformer::class;
     }
 }

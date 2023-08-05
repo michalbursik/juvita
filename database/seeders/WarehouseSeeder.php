@@ -82,7 +82,7 @@ class WarehouseSeeder extends Seeder
 
             /** @var Product $product */
             foreach ($products as $product) {
-                $this->warehouseProductRepository->create(
+                $this->warehouseProductRepository->getOrCreate(
                     $warehouse->uuid, $product->uuid
                 );
             }
@@ -90,7 +90,7 @@ class WarehouseSeeder extends Seeder
             if (!empty($warehouseData['user'])) {
                 $data = $warehouseData['user'];
                 $data = [...$data, 'warehouse_uuid' => $warehouse->uuid];
-                $user = User::createWithAttributes($data);
+                User::createWithAttributes($data);
             }
         }
     }

@@ -2,13 +2,11 @@
 
 namespace App\Models;
 
-use App\Events\ProductCreated;
-use App\Interfaces\Eventable;
-use App\Traits\UuidHelpers;
+use App\Traits\Eventable;
 use App\Transformers\ProductTransformer;
 use Flugg\Responder\Contracts\Transformable;
-use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Spatie\EventSourcing\Projections\Projection;
@@ -48,9 +46,9 @@ use Spatie\EventSourcing\Projections\Projection;
  * @method static \Illuminate\Database\Eloquent\Builder|Product whereUuid($value)
  * @mixin \Eloquent
  */
-class Product extends ModelProjection implements Transformable
+class Product extends Projection implements Transformable
 {
-    use HasFactory;
+    use HasFactory, Eventable;
 
     const DEFAULT_UNIT = 'kg';
     const AVAILABLE_UNITS = ['kg', 'ks'];
@@ -59,11 +57,6 @@ class Product extends ModelProjection implements Transformable
     protected $casts = [
         'active' => 'boolean'
     ];
-
-    public static function setModelEvents(): void
-    {
-        static::setCreateEvent(ProductCreated::class);
-    }
 
     public static function getListOfAvailableUnits($separator = ','): string
     {

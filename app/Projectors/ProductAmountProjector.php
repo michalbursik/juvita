@@ -8,12 +8,11 @@ use App\Events\ProductTrashed;
 use App\Exceptions\InsufficientAmountException;
 use App\Models\Price;
 use App\Models\WarehouseProduct;
-use App\Models\Warehouse;
 use App\Repositories\PriceRepository;
 use App\Repositories\WarehouseProductRepository;
-use App\Repositories\WarehouseRepository;
+use Exception;
 use Illuminate\Contracts\Queue\ShouldQueue;
-use Ramsey\Uuid\Uuid;
+use Illuminate\Support\Facades\DB;
 use Spatie\EventSourcing\EventHandlers\Projectors\Projector;
 
 class ProductAmountProjector extends Projector implements ShouldQueue
@@ -21,7 +20,8 @@ class ProductAmountProjector extends Projector implements ShouldQueue
     public function __construct(
         private readonly WarehouseProductRepository $warehouseProductRepository,
         private readonly PriceRepository $priceRepository,
-    ){}
+    ) {
+    }
 
     public function onProductReceived(ProductReceived $event): void
     {
@@ -31,7 +31,8 @@ class ProductAmountProjector extends Projector implements ShouldQueue
         );
 
         $this->warehouseProductRepository->increaseTotalAmount(
-            $warehouseProduct, $event->amount
+            $warehouseProduct,
+            $event->amount
         );
 
         $this->priceRepository->receiveProduct(
@@ -43,60 +44,80 @@ class ProductAmountProjector extends Projector implements ShouldQueue
 
     public function onProductTrashed(ProductTrashed $event): void
     {
-        // Issue from source warehouse
-        $sourceWarehouseProduct = WarehouseProduct::uuid($event->sourceWarehouseProductUuid);
-        $this->warehouseProductRepository->decreaseTotalAmount($sourceWarehouseProduct, $event->amount);
+        DB::beginTransaction();
 
-        $price = Price::uuid($event->priceUuid);
-        $this->priceRepository->issueProduct($price, $event->amount);
+        try {
+            // Issue from source warehouse
+            $sourceWarehouseProduct = WarehouseProduct::uuid($event->sourceWarehouseProductUuid);
+            $this->warehouseProductRepository->decreaseTotalAmount($sourceWarehouseProduct, $event->amount);
 
-        // Receive on target trash warehouse
-        $trashWarehouseProduct = WarehouseProduct::uuid($event->targetWarehouseProductUuid);
-        $this->warehouseProductRepository->increaseTotalAmount($trashWarehouseProduct, $event->amount);
+            $price = Price::uuid($event->priceUuid);
+            $this->priceRepository->issueProduct($price, $event->amount);
 
-        $this->priceRepository->receiveProduct(
-            $trashWarehouseProduct,
-            $price->price,
-            $event->amount
-        );
+            // Receive on target trash warehouse
+            $trashWarehouseProduct = WarehouseProduct::uuid($event->targetWarehouseProductUuid);
+            $this->warehouseProductRepository->increaseTotalAmount($trashWarehouseProduct, $event->amount);
+
+            $this->priceRepository->receiveProduct(
+                $trashWarehouseProduct,
+                $price->price,
+                $event->amount
+            );
+
+            DB::commit();
+        } catch (Exception $e) {
+            DB::rollBack();
+            throw $e;
+        }
     }
 
     /**
-     * @throws InsufficientAmountException
+     * @param ProductMoved $event
+     * @throws InsufficientAmountException|Exception
      */
     public function onProductMoved(ProductMoved $event): void
     {
-        // Issue from source warehouse
-        $sourceWarehouseProduct = $this->warehouseProductRepository->getOrCreate(
-            $event->sourceWarehouseUuid,
-            $event->productUuid,
-        );
+        DB::beginTransaction();
+        try {
+            // Issue from source warehouse
+            $sourceWarehouseProduct = $this->warehouseProductRepository->getOrCreate(
+                $event->sourceWarehouseUuid,
+                $event->productUuid,
+            );
 
-        $this->warehouseProductRepository->decreaseTotalAmount(
-            $sourceWarehouseProduct, $event->amount
-        );
+            $this->warehouseProductRepository->decreaseTotalAmount(
+                $sourceWarehouseProduct,
+                $event->amount
+            );
 
-        $price = Price::uuid($event->priceUuid);
+            $price = Price::uuid($event->priceUuid);
 
-        $this->priceRepository->issueProduct(
-            $price,
-            $event->amount
-        );
+            $this->priceRepository->issueProduct(
+                $price,
+                $event->amount
+            );
 
-        // Receipt to target warehouse
-        $targetWarehouseProduct = $this->warehouseProductRepository->getOrCreate(
-            $event->targetWarehouseUuid,
-            $event->productUuid,
-        );
+            // Receipt to target warehouse
+            $targetWarehouseProduct = $this->warehouseProductRepository->getOrCreate(
+                $event->targetWarehouseUuid,
+                $event->productUuid,
+            );
 
-        $this->warehouseProductRepository->increaseTotalAmount(
-            $targetWarehouseProduct, $event->amount
-        );
+            $this->warehouseProductRepository->increaseTotalAmount(
+                $targetWarehouseProduct,
+                $event->amount
+            );
 
-        $this->priceRepository->receiveProduct(
-            $targetWarehouseProduct,
-            $price->price,
-            $event->amount
-        );
+            $this->priceRepository->receiveProduct(
+                $targetWarehouseProduct,
+                $price->price,
+                $event->amount
+            );
+
+            DB::commit();
+        } catch (Exception $e) {
+            DB::rollBack();
+            throw $e;
+        }
     }
 }

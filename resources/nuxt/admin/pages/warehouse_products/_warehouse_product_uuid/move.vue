@@ -3,9 +3,9 @@
     <div class="row justify-content-center">
       <div class="col-12 col-lg-10">
         <top-panel
-          :title="`${warehouse.name} - převodka`"
+          :title="`${currentWarehouse.name} - převodka`"
           title-class="text-warning"
-          :back-url="`/warehouses/${warehouse.uuid}`"></top-panel>
+          :back-url="`/warehouses/${currentWarehouse.uuid}`"></top-panel>
 
         <form @submit.prevent="onSubmit()" id="movements_form">
 
@@ -33,6 +33,7 @@
                           id="target_warehouse_uuid">
                     <option
                       v-for="warehouse of warehouses"
+                      :key="warehouse.uuid"
                       :value="warehouse.uuid">
                       {{ warehouse.name }}
                     </option>
@@ -102,7 +103,7 @@ export default {
     return {
       warehouses: warehouses.data,
       warehouse_product,
-      warehouse
+      currentWarehouse: warehouse
     }
   },
   mounted() {
@@ -114,7 +115,7 @@ export default {
 
     // Default target warehouse is either user warehouse or first temporary warehouse
     // When we have remembered warehouse, it overrules it.
-    let target_warehouse = this.warehouses.find(warehouse => warehouse.id === this.$auth.user.warehouse_id);
+    let target_warehouse = this.warehouses.find(warehouse => warehouse.uuid === this.$auth.user.warehouse_uuid);
     if (!target_warehouse || this.form.source_warehouse_uuid === target_warehouse.uuid) {
       target_warehouse = this.warehouses.find(warehouse => warehouse.type === 'temporary_warehouse');
     }
@@ -125,8 +126,6 @@ export default {
     if (rememberedTargetWarehouseUuid) {
       target_warehouse_uuid = rememberedTargetWarehouseUuid;
     }
-
-    console.log(target_warehouse_uuid);
 
     // WHY ?
     // if (this.warehouse.type === 'trash_warehouse') {
@@ -158,6 +157,8 @@ export default {
       this.loading = true;
       await this.$store.dispatch('warehouse_products/move', this.form)
         .then(r => {
+          console.log(this.warehouse);
+
           this.$router.push(`/warehouses/${this.warehouse.uuid}`)
         })
         .catch(r => {

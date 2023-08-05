@@ -20,8 +20,8 @@ use Illuminate\Support\Carbon;
  * @property int $user_id
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
- * @property-read \App\Models\User|null $user
- * @property-read \App\Models\Warehouse|null $warehouse
+ * @property-read \App\Models\User $user
+ * @property-read \App\Models\Warehouse $warehouse
  * @method static \Illuminate\Database\Eloquent\Builder|Discount newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|Discount newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|Discount query()

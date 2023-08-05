@@ -2,17 +2,12 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\MoveProductRequest;
-use App\Http\Requests\ReceiveProductRequest;
-use App\Http\Requests\TrashProductRequest;
+use App\Events\WarehouseRemoved;
 use App\Models\User;
 use App\Models\Warehouse;
-use App\Models\WarehouseProduct;
 use App\Repositories\WarehouseRepository;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Illuminate\Http\Response;
-use Illuminate\Support\Facades\Log;
 
 class WarehouseController extends Controller
 {
@@ -36,7 +31,7 @@ class WarehouseController extends Controller
             'name' => 'required|string'
         ]);
 
-        $warehouse = $this->warehouseRepository->store($data);
+        $warehouse = Warehouse::createWithAttributes($data);
 
         return responder()->success($warehouse)->respond();
     }
@@ -47,14 +42,14 @@ class WarehouseController extends Controller
             'name' => 'required|string'
         ]);
 
-        $warehouse = $this->warehouseRepository->update($warehouse, $data);
+        $warehouse->modify($data);
 
         return responder()->success($warehouse)->respond();
     }
 
     public function destroy(Warehouse $warehouse): JsonResponse
     {
-        $this->warehouseRepository->destroy($warehouse);
+        $warehouse->remove();
 
         return responder()->success()->respond();
     }

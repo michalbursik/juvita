@@ -37,9 +37,9 @@ class WarehouseProductRepository
         return $warehouseProduct;
     }
 
-    public function create(string $warehouseUuid, string $productUuid)
+    public function create(string $warehouseUuid, string $productUuid): WarehouseProduct
     {
-        $warehouseProduct = WarehouseProduct::createWithAttributes([
+        return WarehouseProduct::createWithAttributes([
             'warehouse_uuid' => $warehouseUuid,
             'product_uuid' => $productUuid,
             'total_amount' => 0

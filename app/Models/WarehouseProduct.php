@@ -2,13 +2,12 @@
 
 namespace App\Models;
 
-use App\Events\WarehouseProductCreated;
-use App\Interfaces\Eventable;
-use App\Traits\UuidHelpers;
+use App\Traits\Eventable;
 use App\Transformers\WarehouseProductTransformer;
 use Flugg\Responder\Contracts\Transformable;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -46,9 +45,9 @@ use Spatie\EventSourcing\Projections\Projection;
  * @method static Builder|WarehouseProduct withoutTrashed()
  * @mixin \Eloquent
  */
-class WarehouseProduct extends ModelProjection implements Transformable
+class WarehouseProduct extends Projection implements Transformable
 {
-    use HasFactory, SoftDeletes;
+    use HasFactory, SoftDeletes, Eventable;
 
     const STATUS_ACTIVE = 'active';
 
@@ -76,11 +75,6 @@ class WarehouseProduct extends ModelProjection implements Transformable
         'total_amount' => 'float',
     ];
 
-    public static function setModelEvents(): void
-    {
-        static::setCreateEvent(WarehouseProductCreated::class);
-    }
-
     public function scopeExact(Builder $query, Warehouse|string $warehouse, Product|string $product)
     {
         $warehouseUuid = $warehouse instanceof Warehouse ? $warehouse->uuid : $warehouse;
@@ -94,6 +88,7 @@ class WarehouseProduct extends ModelProjection implements Transformable
     {
         return $this->hasMany(Price::class);
     }
+
     public function product(): BelongsTo
     {
         return $this->belongsTo(Product::class);

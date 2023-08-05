@@ -5,19 +5,18 @@ namespace App\Models;
 use App\Enums\WarehouseTypeEnum;
 use App\Events\ProductMoved;
 use App\Events\ProductReceived;
-use App\Events\ProductTrashed;
-use App\Events\WarehouseCreated;
+use App\Traits\Eventable;
 use App\Transformers\WarehouseTransformer;
 use Flugg\Responder\Contracts\Transformable;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Facades\Auth;
 use Korridor\LaravelHasManyMerged\HasManyMerged;
 use Korridor\LaravelHasManyMerged\HasManyMergedRelation;
+use Spatie\EventSourcing\Projections\Projection;
 
 /**
  * App\Models\Warehouse
@@ -58,9 +57,9 @@ use Korridor\LaravelHasManyMerged\HasManyMergedRelation;
  * @method static \Illuminate\Database\Eloquent\Builder|Warehouse withoutTrashed()
  * @mixin \Eloquent
  */
-class Warehouse extends ModelProjection implements Transformable
+class Warehouse extends Projection implements Transformable
 {
-    use HasFactory, HasManyMergedRelation, SoftDeletes;
+    use HasFactory, HasManyMergedRelation, SoftDeletes, Eventable;
 
     const TYPE_MAIN = 'warehouse';
     const TYPE_TEMPORARY = 'temporary_warehouse';
@@ -72,35 +71,38 @@ class Warehouse extends ModelProjection implements Transformable
         'type' => WarehouseTypeEnum::class
     ];
 
-    public static function setModelEvents(): void
-    {
-        static::setCreateEvent(WarehouseCreated::class);
-    }
-
     public function receiveProduct(string $productUuid, float $price, float $amount): void
     {
         $user = Auth::user();
-        event(new ProductReceived(
-            $this->uuid, $productUuid,  $user->uuid, $price, $amount
-        ));
-    }
-
-    public function moveProduct(string $targetWarehouseUuid, string $productUuid, string $warehouse_product_price_uuid, float $amount): void
-    {
-        $user = Auth::user();
-        event(new ProductMoved(
-            $this->uuid,
-            $targetWarehouseUuid,
-            $productUuid,
-            $user->uuid,
-            $warehouse_product_price_uuid,
-            $amount
-        ));
+        event(
+            new ProductReceived(
+                $this->uuid, $productUuid, $user->uuid, $price, $amount
+            )
+        );
     }
 
     public function user(): HasOne
     {
         return $this->hasOne(User::class);
+    }
+
+    public function moveProduct(
+        string $targetWarehouseUuid,
+        string $productUuid,
+        string $warehouse_product_price_uuid,
+        float $amount
+    ): void {
+        $user = Auth::user();
+        event(
+            new ProductMoved(
+                $this->uuid,
+                $targetWarehouseUuid,
+                $productUuid,
+                $user->uuid,
+                $warehouse_product_price_uuid,
+                $amount
+            )
+        );
     }
 
     public function priceLevels(): HasMany

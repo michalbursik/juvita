@@ -7,7 +7,7 @@ use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
 use Spatie\EventSourcing\StoredEvents\ShouldBeStored;
 
-class ProductMoved extends ShouldBeStored
+class WarehouseModified extends ShouldBeStored
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
@@ -15,12 +15,8 @@ class ProductMoved extends ShouldBeStored
      * Create a new event instance.
      */
     public function __construct(
-        public readonly string $sourceWarehouseUuid,
-        public readonly string $targetWarehouseUuid,
-        public readonly string $productUuid,
-        public readonly string $userUuid,
-        public readonly string $priceUuid,
-        public readonly float $amount,
+        public readonly string $warehouseUuid,
+        public readonly array $warehouseAttributes
     ) {
     }
 }
