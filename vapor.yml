@@ -1,38 +1,28 @@
-id: 27052
-name: Juvita
+id: 50705
+name: zelenina-juvita
 environments:
-  production:
-    domain: app.zeleninajuvita.cz
-    memory: 1024
-    cli-memory: 512
-    runtime: 'php-8.1:al2'
-    build:
-      - 'COMPOSER_MIRROR_PATH_REPOS=1 composer install --no-dev'
-      - 'php artisan event:cache'
-      - "cd resources/nuxt/admin && npm ci && npm run build && rm -rf node_modules"
-      - "cp -R resources/nuxt/admin/static/images/ public/images/"
-      - "cp -R resources/nuxt/admin/dist/ public/dist/"
-      - "cp resources/nuxt/admin/dist/manifest.*.json resources/"
-      - "cp public/dist/sw.js public/"
-      - "rm -R resources/nuxt/admin/"
-    deploy:
-      - 'php artisan config:cache'
-      - 'php artisan migrate --force'
-
-  staging:
-    domain: staging.zeleninajuvita.cz
-    memory: 1024
-    cli-memory: 512
-    runtime: 'php-8.1:al2'
-    build:
-      - 'COMPOSER_MIRROR_PATH_REPOS=1 composer install'
-      - 'php artisan event:cache'
-      - "cd resources/nuxt/admin && npm ci && npm run build && rm -rf node_modules"
-      - "cp -R resources/nuxt/admin/static/images/ public/images/"
-      - "cp -R resources/nuxt/admin/dist/ public/dist/"
-      - "cp resources/nuxt/admin/dist/manifest.*.json resources/"
-      - "cp public/dist/sw.js public/"
-      - "rm -R resources/nuxt/admin/"
-    deploy:
-      - 'php artisan config:cache'
-      - 'php artisan migrate'
+    production:
+        memory: 1024
+        cli-memory: 512
+        runtime: 'php-8.2:al2'
+        build:
+            - 'COMPOSER_MIRROR_PATH_REPOS=1 composer install --no-dev'
+            - 'php artisan event:cache'
+            - 'npm ci && npm run build && rm -rf node_modules'
+    staging:
+      domain: staging.zeleninajuvita.cz
+      memory: 1024
+      cli-memory: 512
+      runtime: 'php-8.2:al2'
+      build:
+        - 'COMPOSER_MIRROR_PATH_REPOS=1 composer install'
+        - 'php artisan event:cache'
+        - "cd resources/nuxt/admin && npm ci && npm run build && rm -rf node_modules"
+        - "cp -R resources/nuxt/admin/static/images/ public/images/"
+        - "cp -R resources/nuxt/admin/dist/ public/dist/"
+        - "cp resources/nuxt/admin/dist/manifest.*.json resources/"
+        - "cp public/dist/sw.js public/"
+        - "rm -R resources/nuxt/admin/"
+      deploy:
+        - 'php artisan config:cache'
+        - 'php artisan migrate'
