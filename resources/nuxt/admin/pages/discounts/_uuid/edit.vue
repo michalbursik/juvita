@@ -20,13 +20,13 @@
                     <div v-if="hasError('amount')" class="invalid-feedback d-block">{{ getError('amount') }}</div>
                   </div>
                   <div class="col-12 col-md-6 mb-2">
-                    <label for="warehouse_id">Sklad<span class="text-danger">*</span></label>
+                    <label for="warehouse_uuid">Sklad<span class="text-danger">*</span></label>
 
-                    <select v-model="form.warehouse_id" class="form-control" name="warehouse_id" id="warehouse_id">
-                      <option v-for="warehouse of warehouses" :key="warehouse.id" :value="warehouse.id">{{ warehouse.name }}</option>
+                    <select v-model="form.warehouse_uuid" class="form-control" name="warehouse_uuid" id="warehouse_uuid">
+                      <option v-for="warehouse of warehouses" :key="warehouse.uuid" :value="warehouse.uuid">{{ warehouse.name }}</option>
                     </select>
 
-                    <div v-if="hasError('warehouse_id')" class="invalid-feedback d-block">{{ getError('warehouse_id') }}</div>
+                    <div v-if="hasError('warehouse_uuid')" class="invalid-feedback d-block">{{ getError('warehouse_uuid') }}</div>
                   </div>
                 </div>
                 <div class="row">
@@ -58,10 +58,10 @@
 import {mapGetters} from "vuex";
 
 export default {
-  name: "ProductsCreate",
+  name: "DiscountsEdit",
   middleware: ['admin'],
   async asyncData({params, store}) {
-      let discount = await store.dispatch('discounts/fetch', params.id);
+      let discount = await store.dispatch('discounts/fetch', params.uuid);
       let warehouses = await store.dispatch('warehouses/fetchAll');
 
       return {
@@ -70,7 +70,7 @@ export default {
         form: {
           amount: discount.amount,
           note: discount.note,
-          warehouse_id: discount.warehouse.id,
+          warehouse_uuid: discount.warehouse.uuid,
         }
       }
   },
@@ -82,14 +82,14 @@ export default {
       form: {
         amount: '',
         note: '',
-        warehouse_id: null,
+        warehouse_uuid: null,
       }
     }
   },
   methods: {
     async deleteDiscount() {
       this.loading = true;
-      await this.$store.dispatch('discounts/delete', this.$route.params.id)
+      await this.$store.dispatch('discounts/delete', this.$route.params.uuid)
         .then(r => {
           this.$router.push('/discounts')
         });
@@ -101,7 +101,7 @@ export default {
 
       await this.$store.dispatch('discounts/update', {
         discount: this.form,
-        discount_id: this.$route.params.id
+        discount_uuid: this.$route.params.uuid
       })
       .then(r => {
         this.$router.push('/discounts')

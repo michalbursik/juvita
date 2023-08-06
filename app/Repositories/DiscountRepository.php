@@ -16,24 +16,23 @@ class DiscountRepository extends BaseRepository
         return $this->orderAndPaginate($query);
     }
 
-    public function store(array $data): Discount
+    public function store(array $attributes): Discount
     {
-        $discount = new Discount($data);
-
-        $discount->save();
+        $discount = new Discount($attributes);
+        $discount->writeable()->save();
 
         return $discount;
     }
 
-    public function update(Discount $discount, array $data): Discount
+    public function update(Discount $discount, array $attributes): Discount
     {
-        $discount->update($data);
+        $discount->writeable()->update($attributes);
 
-        return $discount;
+        return $discount->fresh();
     }
 
     public function destroy(Discount $discount): void
     {
-        $discount->delete();
+        $discount->writeable()->delete();
     }
 }

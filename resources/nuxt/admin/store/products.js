@@ -41,8 +41,8 @@ export const actions = {
 
         return products;
     },
-    async fetch({ commit }, product_id) {
-        let product = await this.$axios.$get('products/' + product_id);
+    async fetch({ commit }, product_uuid) {
+        let product = await this.$axios.$get('products/' + product_uuid);
 
         commit('PUSH_OR_REPLACE_PRODUCT', product.data);
 
@@ -55,15 +55,15 @@ export const actions = {
 
         return product.data;
     },
-    async update({ commit }, { product, product_id }) {
-        product = await this.$axios.$patch('products/' + product_id, product);
+    async update({ commit }, { product, product_uuid }) {
+        product = await this.$axios.$patch('products/' + product_uuid, product);
 
         commit('PUSH_OR_REPLACE_PRODUCT', product.data);
 
         return product.data;
     },
-    async delete({ commit }, product_id) {
-        await this.$axios.$delete('products/' + product_id);
+    async delete({ commit }, product_uuid) {
+        await this.$axios.$delete('products/' + product_uuid);
 
         commit('REMOVE_PRODUCT', product_id);
     },

@@ -18,5 +18,7 @@ class ProductCreated extends ShouldBeStored
     /**
      * Create a new event instance.
      */
-    public function __construct(public readonly array $productAttributes) {}
+    public function __construct(
+        public readonly array $productAttributes
+    ) {}
 }

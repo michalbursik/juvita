@@ -33,11 +33,12 @@ class DiscountTransformer extends Transformer
     public function transform(Discount $discount): array
     {
         return [
-            'id' => (int) $discount->id,
+            'id' => $discount->id,
+            'uuid' => $discount->uuid,
             'amount' => $discount->amount,
             'note' => $discount->note,
-            'created_at' => $discount->created_at,
-            'updated_at' => $discount->updated_at,
+            'created_at' => $discount->created_at->format('d. m. Y H:i:s'),
+            'updated_at' => $discount->updated_at->format('d. m. Y H:i:s'),
         ];
     }
 }

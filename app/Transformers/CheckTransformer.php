@@ -3,6 +3,7 @@
 namespace App\Transformers;
 
 use App\Models\Check;
+use App\Models\WarehouseProduct;
 use Flugg\Responder\Transformers\Transformer;
 
 class CheckTransformer extends Transformer
@@ -22,7 +23,7 @@ class CheckTransformer extends Transformer
      * @var array
      */
     protected $load = [
-        'products' => ProductTransformer::class,
+        'productChecks' => ProductCheckTransformer::class,
         'warehouse' => WarehouseTransformer::class,
         'user' => UserTransformer::class,
     ];
@@ -36,9 +37,11 @@ class CheckTransformer extends Transformer
     public function transform(Check $check): array
     {
         return [
-            'id' => (int) $check->id,
-            'discount' => (float) $check->discount,
+            'id' => $check->id,
+            'uuid' => $check->uuid,
+            'discount' => $check->discount,
             'created_at' => $check->created_at->format('d. m. Y H:i:s'),
+            'warehouse_uuid' => $check->warehouse_uuid,
         ];
     }
 }

@@ -41,8 +41,8 @@ export const actions = {
 
         return discounts;
     },
-    async fetch({ commit }, discount_id) {
-        let discount = await this.$axios.$get('discounts/' + discount_id);
+    async fetch({ commit }, discount_uuid) {
+        let discount = await this.$axios.$get('discounts/' + discount_uuid);
 
         commit('PUSH_OR_REPLACE_DISCOUNT', discount.data);
 
@@ -55,16 +55,16 @@ export const actions = {
 
         return discount.data;
     },
-    async update({ commit }, { discount, discount_id }) {
-        discount = await this.$axios.$patch('discounts/' + discount_id, discount);
+    async update({ commit }, { discount, discount_uuid }) {
+        discount = await this.$axios.$patch('discounts/' + discount_uuid, discount);
 
         commit('PUSH_OR_REPLACE_DISCOUNT', discount.data);
 
         return discount.data;
     },
-    async delete({ commit }, discount_id) {
-        await this.$axios.$delete('discounts/' + discount_id);
+    async delete({ commit }, discount_uuid) {
+        await this.$axios.$delete('discounts/' + discount_uuid);
 
-        commit('REMOVE_DISCOUNT', discount_id);
+        commit('REMOVE_DISCOUNT', discount_uuid);
     },
 }

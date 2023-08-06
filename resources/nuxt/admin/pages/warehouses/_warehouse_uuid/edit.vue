@@ -38,7 +38,7 @@ export default {
   name: "WarehouseEdit",
   middleware: ['admin'],
   async asyncData({params, store}) {
-    let warehouse = await store.dispatch('warehouses/fetch', params.warehouse_id);
+    let warehouse = await store.dispatch('warehouses/fetch', params.warehouse_uuid);
 
       return {
         warehouse,
@@ -62,7 +62,7 @@ export default {
 
       await this.$store.dispatch('warehouses/update', {
         warehouse: this.form,
-        warehouse_id: this.$route.params.warehouse_id
+        warehouse_uuid: this.$route.params.warehouse_uuid
       })
       .then(r => {
         this.$router.push('/warehouses')

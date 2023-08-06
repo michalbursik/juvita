@@ -120,7 +120,7 @@ export default {
   components: {TopPanel},
   scrollToTop: false,
   async asyncData({params, store}) {
-    let currentWarehouse = await store.dispatch('warehouses/fetch', params.warehouse_id);
+    let currentWarehouse = await store.dispatch('warehouses/fetch', params.warehouse_uuid);
 
     let movements = await store.dispatch('movements/fetchAll', {
       warehouse_uuid: currentWarehouse.uuid,
@@ -143,11 +143,11 @@ export default {
   },
   mounted() {
     this.$nextTick(function () {
-      let id = localStorage.getItem('scroll_to_product');
+      const id = localStorage.getItem('scroll_to_product');
+      const element = document.getElementById(id)
 
-      if (id) {
-        console.log(id);
-        window.scrollTo(0, document.getElementById(id).offsetTop);
+      if (element) {
+        window.scrollTo(0, element.offsetTop);
       } else {
         window.scrollTo(0, 0);
       }

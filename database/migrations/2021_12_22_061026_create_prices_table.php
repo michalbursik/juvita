@@ -9,8 +9,10 @@ return new class extends Migration
 {
     /**
      * Run the migrations.
+     *
+     * @return void
      */
-    public function up(): void
+    public function up()
     {
         Schema::create('prices', function (Blueprint $table) {
             $warehouseProduct = new WarehouseProduct();
@@ -18,7 +20,9 @@ return new class extends Migration
             $table->id();
             $table->uuid()->unique();
 
-            $table->foreignUuid($warehouseProduct->getForeignKey())->constrained($warehouseProduct->getTable(), $warehouseProduct->getKeyName());
+            $table->foreignUuid($warehouseProduct->getForeignKey())->constrained(
+                $warehouseProduct->getTable(), $warehouseProduct->getKeyName()
+            );
 
             $table->float('amount', 12, 4);
             $table->float('price', 12, 4);
@@ -29,8 +33,10 @@ return new class extends Migration
 
     /**
      * Reverse the migrations.
+     *
+     * @return void
      */
-    public function down(): void
+    public function down()
     {
         Schema::dropIfExists('prices');
     }

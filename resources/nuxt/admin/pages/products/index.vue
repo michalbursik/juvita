@@ -22,7 +22,7 @@
               </tr>
               </thead>
               <tbody>
-              <tr v-for="product of products" :key="product.id" style="cursor: pointer;" @click="$router.push(`/products/${product.id}/edit`)">
+              <tr v-for="product of products" :key="product.uuid" style="cursor: pointer;" @click="$router.push(`/products/${product.uuid}/edit`)">
                 <td>{{ product.id }}</td>
                 <td>{{ product.name }} ({{ product.unit }})</td>
                 <td class="d-none d-md-table-cell">{{ product.origin }}</td>

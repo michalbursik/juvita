@@ -18,11 +18,11 @@
                   <div class="col-12 col-md-6 mb-2">
                     <label for="unit">Sklad<span class="text-danger">*</span></label>
 
-                    <select v-model="form.warehouse_id" class="form-control" name="unit" id="unit">
-                      <option v-for="warehouse of warehouses" :key="warehouse.id" :value="warehouse.id">{{ warehouse.name }}</option>
+                    <select v-model="form.warehouse_uuid" class="form-control" name="unit" id="unit">
+                      <option v-for="warehouse of warehouses" :key="warehouse.uuid" :value="warehouse.uuid">{{ warehouse.name }}</option>
                     </select>
 
-                    <div v-if="hasError('warehouse_id')" class="invalid-feedback d-block">{{ getError('warehouse_id') }}</div>
+                    <div v-if="hasError('warehouse_uuid')" class="invalid-feedback d-block">{{ getError('warehouse_uuid') }}</div>
                   </div>
                 </div>
                 <div class="row">
@@ -60,7 +60,7 @@ export default {
       }
   },
   mounted() {
-    this.form.warehouse_id = this.$auth.user.warehouse_id;
+    this.form.warehouse_uuid = this.$auth.user.warehouse_uuid;
   },
   data() {
     return {
@@ -69,7 +69,7 @@ export default {
       form: {
         amount: '',
         note: '',
-        warehouse_id: null,
+        warehouse_uuid: null,
       }
     }
   },
@@ -80,9 +80,9 @@ export default {
       await this.$store.dispatch('discounts/store', this.form)
         .then(r => {
           this.$router.push('/discounts')
+        }).catch(e => {
+          this.loading = false;
         });
-
-      this.loading = false;
     }
   },
   computed: {

@@ -22,7 +22,7 @@
                 </tr>
                 </thead>
                 <tbody>
-                <tr style="cursor: pointer;" @click="$router.push(`/warehouses/checks/${check.id}`)" v-for="check of getChecks" :key="check.id">
+                <tr style="cursor: pointer;" @click="$router.push(`/warehouses/checks/${check.uuid}`)" v-for="check of getChecks" :key="check.uuid">
                   <td>{{ check.id }}</td>
                   <td>{{ check.warehouse.name }}</td>
                   <td>{{ check.created_at }}</td>

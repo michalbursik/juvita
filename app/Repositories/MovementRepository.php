@@ -8,13 +8,11 @@ use App\Models\Movement;
 
 class MovementRepository
 {
-    public function store(array $data): Movement
+    public function store(array $attributes): Movement
     {
-        return Movement::createWithAttributes($data);
-    }
+        $movement = new Movement($attributes);
+        $movement->writeable()->save();
 
-//    public function destroy(Movement $movement)
-//    {
-//        $movement->delete();
-//    }
+        return $movement;
+    }
 }

@@ -5,15 +5,12 @@ namespace App\Http\Controllers;
 use App\Http\Requests\StoreProductRequest;
 use App\Http\Requests\UpdateProductRequest;
 use App\Models\Product;
-use App\Models\Warehouse;
 use App\Repositories\ProductRepository;
-use Flugg\Responder\Serializers\NoopSerializer;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
 class ProductController extends Controller
 {
-
     private ProductRepository $repository;
 
     public function __construct(ProductRepository $repository)
@@ -25,12 +22,6 @@ class ProductController extends Controller
     {
         $query = Product::query();
 
-        $warehouse_id = $request->input('priceLevels.warehouse_id');
-
-        $query->when($warehouse_id, function ($query) use ($warehouse_id) {
-            $query->where('priceLevels.warehouse_id', $warehouse_id);
-        });
-
         $products = $query
             ->orderBy($request->input('orderBy', 'created_at'))
             ->paginate($request->input('perPage'), ['*'], 'currentPage');
@@ -40,26 +31,12 @@ class ProductController extends Controller
 
     public function show(Product $product): JsonResponse
     {
-        return responder()->success($product)
-            ->with([
-                // 'movements',
-                // 'priceLevels'
-            ])
-            ->respond();
+        return responder()->success($product)->respond();
     }
 
     public function store(StoreProductRequest $request): JsonResponse
     {
         $product = $this->repository->store($request->validated());
-
-        $warehouses = Warehouse::all();
-
-        foreach ($warehouses as $warehouse) {
-            $warehouse->products()->save($product, [
-                'amount' => 0,
-                'price' => 0.00,
-            ]);
-        }
 
         return responder()->success($product)->respond();
     }

@@ -14,7 +14,6 @@ class ProductTransformer extends Transformer
      * @var string[]
      */
     protected $relations = [
-        'priceLevels' => WarehouseProductTransformer::class,
         'movements' => MovementTransformer::class,
     ];
 
@@ -33,33 +32,15 @@ class ProductTransformer extends Transformer
      */
     public function transform(Product $product): array
     {
-        $data = [
-            'uuid' => $product->uuid,
+        return [
             'id' => $product->id,
+            'uuid' => $product->uuid,
             'name' => $product->name,
             'origin' => $product->origin,
             'active' => $product->active,
             'order' => $product->order,
             'unit' => $product->unit,
             'image' => $product->image,
-
-
-            //'amount' => null,
-            // 'price' => null,
         ];
-
-//        if ($product->product_warehouse) {
-//            $data['amount'] = $product->product_warehouse->amount;
-//            $data['price'] = $product->product_warehouse->price;
-//        }
-//
-//        if ($product->product_check) {
-//            $data['amount_before'] = $product->product_check->amount_before;
-//            $data['amount_after'] = $product->product_check->amount_after;
-//            $data['price_level_id'] = $product->product_check->price_level_id;
-//            $data['price'] = $product->product_check->price;
-//        }
-
-        return $data;
     }
 }

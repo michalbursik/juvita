@@ -33,7 +33,7 @@ export const mutations = {
 
 export const actions = {
     async fetchAll({ commit }, params = null) {
-        let checks = await this.$axios.$get('warehouses/checks', {
+        let checks = await this.$axios.$get('checks', {
             params: params
         });
 
@@ -41,34 +41,34 @@ export const actions = {
 
         return checks;
     },
-    async fetchAllProducts({ commit }, params = null) {
-      return await this.$axios.$get('warehouses/checks/products', {
+    async fetchAllProductPrices({ commit }, params = null) {
+      return await this.$axios.$get('checks/products', {
           params: params
         });
     },
     async fetch({ commit }, check_id) {
-        let check = await this.$axios.$get('warehouses/checks/' + check_id);
+        let check = await this.$axios.$get('checks/' + check_id);
 
       commit('PUSH_OR_REPLACE_CHECK', check.data);
 
         return check.data;
     },
     async store({ commit }, check) {
-        check = await this.$axios.$post('warehouses/checks', check);
+        check = await this.$axios.$post('checks', check);
 
         commit('PUSH_OR_REPLACE_CHECK', check.data);
 
         return check.data;
     },
     async update({ commit }, { check, check_id }) {
-        check = await this.$axios.$patch('warehouses/checks/' + check_id, check);
+        check = await this.$axios.$patch('checks/' + check_id, check);
 
         commit('PUSH_OR_REPLACE_CHECK', check.data);
 
         return check.data;
     },
     async delete({ commit }, check_id) {
-        await this.$axios.$delete('warehouses/checks/' + check_id);
+        await this.$axios.$delete('checks/' + check_id);
 
         commit('REMOVE_CHECK', check_id);
     }

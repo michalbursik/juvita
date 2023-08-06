@@ -70,7 +70,7 @@ export default {
   name: "ProductsCreate",
   middleware: ['admin'],
   async asyncData({params, store}) {
-      let product = await store.dispatch('products/fetch', params.id);
+      let product = await store.dispatch('products/fetch', params.uuid);
 
       return {
         product,
@@ -102,7 +102,7 @@ export default {
 
       await this.$store.dispatch('products/update', {
         product: this.form,
-        product_id: this.$route.params.id
+        product_uuid: this.$route.params.uuid
       })
       .then(r => {
         this.$router.push('/products')

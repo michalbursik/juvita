@@ -24,11 +24,13 @@ trait Eventable
         return static::uuid($attributes['uuid']);
     }
 
-    public function modify(array $attributes): void
+    public function modify(array $attributes): static
     {
         $event = static::getEventName('Modified');
 
         event(new $event($this->uuid, $attributes));
+
+        return static::uuid($this->uuid);
     }
 
     public function remove(): void

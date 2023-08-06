@@ -20,7 +20,7 @@ use Spatie\EventSourcing\Projections\Projection;
  * @property float $price
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
- * @property-read \App\Models\WarehouseProduct $warehouseProduct
+ * @property-read \App\Models\WarehouseProduct $product
  * @method static \Illuminate\Database\Eloquent\Builder|Price newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|Price newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|Price query()
@@ -48,9 +48,9 @@ class Price extends Projection implements Transformable
         'price' => 'float',
     ];
 
-    public function warehouseProduct(): BelongsTo
+    public function product(): BelongsTo
     {
-        return $this->belongsTo(WarehouseProduct::class);
+        return $this->belongsTo(WarehouseProduct::class, 'warehouse_product_uuid');
     }
 
     public function transformer(): string

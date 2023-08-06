@@ -24,7 +24,6 @@ class ProductAmountProjector extends Projector implements ShouldQueue
     public function __construct(
         private readonly WarehouseProductRepository $warehouseProductRepository,
         private readonly PriceRepository $priceRepository,
-        private readonly MovementRepository $movementRepository,
     ) {
     }
 
@@ -46,7 +45,7 @@ class ProductAmountProjector extends Projector implements ShouldQueue
             $event->amount
         );
 
-        $this->movementRepository->store([
+        Movement::createWithAttributes([
             'source_warehouse_uuid' => null,
             'target_warehouse_uuid' => $warehouseProduct->warehouse_uuid,
             'product_uuid' => $event->productUuid,
@@ -79,7 +78,7 @@ class ProductAmountProjector extends Projector implements ShouldQueue
                 $event->amount
             );
 
-            $this->movementRepository->store([
+            Movement::createWithAttributes([
                 'source_warehouse_uuid' => $sourceWarehouseProduct->warehouse_uuid,
                 'target_warehouse_uuid' => $trashWarehouseProduct->warehouse_uuid,
                 'product_uuid' => $sourceWarehouseProduct->product_uuid,
@@ -139,7 +138,7 @@ class ProductAmountProjector extends Projector implements ShouldQueue
                 $event->amount
             );
 
-            $this->movementRepository->store([
+            Movement::createWithAttributes([
                 'source_warehouse_uuid' => $event->sourceWarehouseUuid,
                 'target_warehouse_uuid' => $event->targetWarehouseUuid,
                 'product_uuid' => $event->productUuid,

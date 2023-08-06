@@ -9,12 +9,10 @@
           <div class="card-body form-group">
             <div class="row">
               <div class="col">
-                <label for="warehouse_id">Sklad</label>
-                <select v-model="warehouse_id" class="form-control" name="warehouse_id" id="warehouse_id">
-<!--                  <option selected value="">Vyberte sklad</option>-->
-                  <option v-for="warehouse of getWarehouses" :key="warehouse.id" :value="warehouse.id">{{
-                      warehouse.name
-                    }}
+                <label for="warehouse_uuid">Sklad</label>
+                <select v-model="warehouse_uuid" class="form-control" name="warehouse_uuid" id="warehouse_uuid">
+                  <option v-for="warehouse of getWarehouses" :key="warehouse.uuid" :value="warehouse.uuid">
+                    {{ warehouse.name }}
                   </option>
                 </select>
               </div>
@@ -22,7 +20,7 @@
           </div>
         </div>
 
-        <form v-if="warehouse_id" @submit.prevent="onSubmit()" class="mt-3">
+        <form v-if="warehouse_uuid" @submit.prevent="onSubmit()" class="mt-3">
           <div class="card">
             <div class="card-body">
               <div class="form-group">
@@ -36,12 +34,12 @@
                   </tr>
                   </thead>
                   <tbody>
-                  <tr class="align-middle" v-for="priceLevel of getPriceLevels">
-                    <td>{{ priceLevel.product.name }}</td>
-                    <td>{{ priceLevel.price }} Kč</td>
-                    <td>{{ priceLevel.amount }} {{ priceLevel.product.unit }}</td>
+                  <tr class="align-middle" v-for="price of productPrices">
+                    <td>{{ price.product.name }}</td>
+                    <td>{{ price.price }} Kč</td>
+                    <td>{{ price.amount }} {{ price.product.unit }}</td>
                     <td>
-                        <input @input="syncPriceLevel($event, priceLevel)"
+                        <input @input="syncPrices($event, price)"
                                class="form-control"
                                type="number"
                                id="amount"
@@ -80,10 +78,7 @@ export default {
   components: {TopPanel},
   middleware: ['admin'],
   async asyncData({params, store}) {
-    let warehouses = await store.dispatch('warehouses/fetchAll', {
-      with: ['priceLevels.product']
-    });
-
+    let warehouses = await store.dispatch('warehouses/fetchAll');
     let discounts = await store.dispatch('discounts/fetchAll', {
       perPage: 1000
     });
@@ -94,7 +89,7 @@ export default {
     }
   },
   mounted() {
-    this.warehouse_id = this.warehouses[0].id;
+    this.warehouse_uuid = this.warehouses[0].uuid;
   },
   data() {
     return {
@@ -102,7 +97,8 @@ export default {
         products: false,
         check: false,
       },
-      warehouse_id: null,
+      warehouse_uuid: null,
+      productPrices: [],
       chosenProducts: [],
       warehouses: [],
       discounts: [],
@@ -115,11 +111,18 @@ export default {
   },
   methods: {
     getDiscount() {
-      let discounts = this.discounts.filter(discount => discount.warehouse.id === this.warehouse_id);
+      let discounts = this.discounts.filter(discount => discount.warehouse.uuid === this.warehouse_uuid);
 
       return discounts.reduce((carry, discount) => carry - Number.parseFloat(discount.amount), 0.00);
     },
-    syncPriceLevel($el, priceLevel) {
+    async fetchProductPrices() {
+      const response = await this.$store.dispatch('checks/fetchAllProductPrices', {
+        warehouse_uuid: this.warehouse_uuid
+      });
+
+      this.productPrices = response.data;
+    },
+    syncPrices($el, price) {
       let amount = parseFloat($el.target.value);
 
       if (Number.isNaN(amount)) {
@@ -127,16 +130,14 @@ export default {
       }
 
       let new_product = {
-        warehouse_id: priceLevel.warehouse_id,
-        product_id: priceLevel.product_id,
-        price_level_id: priceLevel.id,
+        warehouse_product_uuid: price.warehouse_product_uuid,
+        price_uuid: price.uuid,
         amount: amount,
       }
 
       let index = this.chosenProducts.findIndex(chosenProduct => {
-        return parseInt(chosenProduct.warehouse_id) === parseInt(priceLevel.warehouse_id) &&
-               parseInt(chosenProduct.product_id) === parseInt(priceLevel.product_id) &&
-               parseInt(chosenProduct.price_level_id) === parseInt(priceLevel.id)
+        return chosenProduct.warehouse_product_uuid === price.warehouse_product_uuid &&
+               chosenProduct.price_uuid === price.uuid
       });
 
       if (index >= 0) {
@@ -150,38 +151,37 @@ export default {
           this.chosenProducts.push(new_product);
         }
       }
+
+      console.log(this.chosenProducts);
     },
     async onSubmit() {
       let data = {
-        warehouse_id: this.warehouse_id,
+        warehouse_uuid: this.warehouse_uuid,
         products: this.chosenProducts
       }
 
       this.loading.check = true;
       await this.$store.dispatch('checks/store', data)
         .then(r => {
-          localStorage.removeItem('check.create.warehouse_id');
-          localStorage.removeItem('check.create.products.' + this.warehouse_id);
+          localStorage.removeItem('check.create.warehouse_uuid');
+          localStorage.removeItem('check.create.products.' + this.warehouse_uuid);
 
           this.$router.push('/warehouses/checks')
         })
         .catch(r => {
-          console.log(r);
           this.loading.check = false;
         });
     },
+  },
+  watch: {
+    warehouse_uuid(newValue, oldValue) {
+      this.fetchProductPrices();
+    }
   },
   computed: {
     ...mapGetters({
       getWarehouses: 'warehouses/getAll'
     }),
-    getPriceLevels() {
-      let warehouse = this.warehouses.find(warehouse => warehouse.id === parseInt(this.warehouse_id));
-
-      let priceLevels = JSON.parse(JSON.stringify(warehouse.priceLevels));
-
-      return priceLevels.sort((priceLevel, priceLevel2) => (priceLevel.product.order >= priceLevel2.product.order) ? 1 : -1);
-    },
   },
 }
 </script>

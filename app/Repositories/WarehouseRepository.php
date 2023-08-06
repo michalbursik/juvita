@@ -9,10 +9,23 @@ use Illuminate\Support\Facades\Cache;
 
 class WarehouseRepository
 {
-    public function destroy($warehouseUuid): void
+    public function store(array $attributes): Warehouse
     {
-        $warehouse = Warehouse::uuid($warehouseUuid);
+        $warehouse = new Warehouse($attributes);
+        $warehouse->writeable()->save();
 
+        return $warehouse;
+    }
+
+    public function update(Warehouse $warehouse, array $attributes): Warehouse
+    {
+        $warehouse->writeable()->update($attributes);
+
+        return $warehouse->fresh();
+    }
+
+    public function destroy(Warehouse $warehouse): void
+    {
         foreach ($warehouse->products as $warehouseProduct) {
             $warehouseProduct->remove();
         }
@@ -20,13 +33,6 @@ class WarehouseRepository
         $warehouse->writeable()->delete();
     }
 
-    // TODO
-//    public function update(Warehouse $warehouse, array $data): Warehouse
-//    {
-//        $warehouse->update($data);
-//
-//        return $warehouse;
-//    }
 
     public function getTrashWarehouse(): Warehouse
     {

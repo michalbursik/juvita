@@ -43,7 +43,7 @@ return new class extends Migration
                 $warehouse->getTable(),
                 $warehouse->getKeyName()
             );
-            $table->foreignUuid('target_warehouse_uuid')->constrained(
+            $table->foreignUuid('target_warehouse_uuid')->nullable()->constrained(
                 $warehouse->getTable(),
                 $warehouse->getKeyName()
             );

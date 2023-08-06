@@ -18,11 +18,11 @@
                 </tr>
                 </thead>
                 <tbody>
-                <tr v-for="product of check.products" :key="`${product.id}${product.price}`">
-                  <td>{{ product.name }}</td>
-                  <td>{{ `${product.amount_before} ${product.unit}/${product.amount_after} ${product.unit}` }}</td>
-                  <td>{{ product.price }} Kč</td>
-                  <td>{{ product.amount_before - product.amount_after }} {{ product.unit }} {{ `(${(product.amount_before - product.amount_after) * product.price} Kč)`}}</td>
+                <tr v-for="check of product_checks" :key="`${check.uuid}`">
+                  <td>{{ check.product.name }}</td>
+                  <td>{{ `${check.amount_before} ${check.product.unit}/${check.amount_after} ${check.product.unit}` }}</td>
+                  <td>{{ check.price }} Kč</td>
+                  <td>{{ check.amount_before - check.amount_after }} {{ check.product.unit }} {{ `(${(check.amount_before - check.amount_after) * check.price} Kč)`}}</td>
                 </tr>
                 <tr v-if="check.discount">
                   <td colspan="3">Sleva</td>
@@ -51,10 +51,17 @@ export default {
   middleware: ['admin'],
   components: {TopPanel, Pagination},
   async asyncData({params, store}) {
-    let check = await store.dispatch('checks/fetch', params.id);
+    let check = await store.dispatch('checks/fetch', params.uuid);
+
+    const product_checks = await store.dispatch('product_checks/fetchAll', {
+      warehouse_uuid: check.warehouse_uuid,
+      check_uuid: check.uuid,
+      with: 'product'
+    })
 
     return {
-      check
+      check,
+      product_checks: product_checks.data,
     }
   },
   data() {
@@ -64,7 +71,9 @@ export default {
   },
   methods: {
     getTotalPrice() {
-      return this.check.products.reduce((previousValue, currentValue) => previousValue + ((currentValue.amount_before - currentValue.amount_after) * currentValue.price), 0) + this.check.discount;
+      return this.product_checks.reduce(
+        (carry, value) => carry + (value.amount_before - value.amount_after) * value.price, 0
+      ) + this.check.discount
     }
   },
 }

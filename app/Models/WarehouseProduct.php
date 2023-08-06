@@ -17,6 +17,7 @@ use Spatie\EventSourcing\Projections\Projection;
  *
  * @property int $id
  * @property string $uuid
+ * @property int $order
  * @property string $product_uuid
  * @property string $warehouse_uuid
  * @property float $total_amount
@@ -35,6 +36,7 @@ use Spatie\EventSourcing\Projections\Projection;
  * @method static Builder|WarehouseProduct whereCreatedAt($value)
  * @method static Builder|WarehouseProduct whereDeletedAt($value)
  * @method static Builder|WarehouseProduct whereId($value)
+ * @method static Builder|WarehouseProduct whereOrder($value)
  * @method static Builder|WarehouseProduct whereProductUuid($value)
  * @method static Builder|WarehouseProduct whereTotalAmount($value)
  * @method static Builder|WarehouseProduct whereUpdatedAt($value)

@@ -11,33 +11,31 @@ class WarehouseProductRepository
 {
     public function __construct(
         private readonly PriceRepository $priceRepository
-    ) {
-    }
-
-    public function getOrCreate(string $warehouseUuid, string $productUuid, int $order): WarehouseProduct
-    {
-        $warehouseProduct = $this->get($warehouseUuid, $productUuid);
-
-        if (empty($warehouseProduct)) {
-            $this->create($warehouseUuid, $productUuid, $order);
-        }
-
-        return $warehouseProduct;
-    }
+    ) {}
 
     public function get(string $warehouseUuid, string $productUuid): ?WarehouseProduct
     {
         return WarehouseProduct::exact($warehouseUuid, $productUuid)->first();
     }
 
-    public function create(string $warehouseUuid, string $productUuid, int $order): WarehouseProduct
+    public function store(array $attributes): WarehouseProduct
     {
-        return WarehouseProduct::createWithAttributes([
-            'warehouse_uuid' => $warehouseUuid,
-            'product_uuid' => $productUuid,
-            'total_amount' => 0,
-            'order' => $order
-        ]);
+        $warehouseProduct = new WarehouseProduct($attributes);
+        $warehouseProduct->writeable()->save();
+
+        return $warehouseProduct;
+    }
+
+    public function update(WarehouseProduct $warehouseProduct, array $attributes): WarehouseProduct
+    {
+        $warehouseProduct->writeable()->update($attributes);
+
+        return $warehouseProduct->fresh();
+    }
+
+    public function destroy(WarehouseProduct $warehouseProduct): ?bool
+    {
+        return $warehouseProduct->writeable()->delete();
     }
 
     public function increaseTotalAmount(WarehouseProduct $warehouseProduct, float $amount): WarehouseProduct

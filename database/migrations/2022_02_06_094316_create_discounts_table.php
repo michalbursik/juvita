@@ -1,5 +1,7 @@
 <?php
 
+use App\Models\User;
+use App\Models\Warehouse;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -14,14 +16,22 @@ return new class extends Migration
     public function up()
     {
         Schema::create('discounts', function (Blueprint $table) {
+            $user = new User();
+            $warehouse = new Warehouse();
+
             $table->id();
             $table->uuid()->unique();
 
-            $table->float('amount', 8, 1);
+            $table->float('amount', 12, 3);
             $table->text('note')->nullable();
-            $table->foreignId('warehouse_id')->constrained('warehouses');
-            $table->foreignId('user_id')->constrained('users');
+            $table->foreignUuid($warehouse->getForeignKey())->constrained(
+                $warehouse->getTable(), $warehouse->getKeyName()
+            );
+            $table->foreignUuid($user->getForeignKey())->constrained(
+                $user->getTable(), $user->getKeyName()
+            );
 
+            $table->softDeletes();
             $table->timestamps();
         });
     }

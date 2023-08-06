@@ -3,6 +3,7 @@
 namespace App\Transformers;
 
 use App\Models\Price;
+use App\Models\WarehouseProduct;
 use Flugg\Responder\Transformers\Transformer;
 
 class PriceTransformer extends Transformer
@@ -12,7 +13,9 @@ class PriceTransformer extends Transformer
      *
      * @var string[]
      */
-    protected $relations = [];
+    protected $relations = [
+        'product' => WarehouseProductTransformer::class
+    ];
 
     /**
      * List of autoloaded default relations.

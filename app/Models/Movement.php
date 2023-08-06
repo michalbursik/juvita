@@ -16,19 +16,19 @@ use Spatie\EventSourcing\Projections\Projection;
  *
  * @property int $id
  * @property string $uuid
- * @property string|null $source_warehouse_name
- * @property string $target_warehouse_name
- * @property string $product_name
  * @property MovementTypeEnum $type
  * @property float $amount
  * @property float $price
- * @property string $user_name
+ * @property string $product_uuid
+ * @property string $user_uuid
+ * @property string|null $source_warehouse_uuid
+ * @property string|null $target_warehouse_uuid
  * @property string $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
- * @property-read \App\Models\Warehouse|null $issueWarehouse
- * @property-read \App\Models\Product|null $product
- * @property-read \App\Models\Warehouse|null $receiptWarehouse
- * @property-read \App\Models\User|null $user
+ * @property-read \App\Models\Product $product
+ * @property-read \App\Models\Warehouse|null $sourceWarehouse
+ * @property-read \App\Models\Warehouse|null $targetWarehouse
+ * @property-read \App\Models\User $user
  * @method static \Database\Factories\MovementFactory factory($count = null, $state = [])
  * @method static \Illuminate\Database\Eloquent\Builder|Movement newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|Movement newQuery()
@@ -37,12 +37,12 @@ use Spatie\EventSourcing\Projections\Projection;
  * @method static \Illuminate\Database\Eloquent\Builder|Movement whereCreatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Movement whereId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Movement wherePrice($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Movement whereProductName($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Movement whereSourceWarehouseName($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Movement whereTargetWarehouseName($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Movement whereProductUuid($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Movement whereSourceWarehouseUuid($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Movement whereTargetWarehouseUuid($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Movement whereType($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Movement whereUpdatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Movement whereUserName($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Movement whereUserUuid($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Movement whereUuid($value)
  * @mixin \Eloquent
  */
