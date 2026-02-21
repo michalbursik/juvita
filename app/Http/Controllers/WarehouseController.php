@@ -9,7 +9,7 @@ use App\Models\PriceLevel;
 use App\Models\Product;
 use App\Models\User;
 use App\Models\Warehouse;
-use App\Repositories\WarehouseRepository;
+use App\Services\WarehouseService;
 use App\Transformers\WarehouseTransformer;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -17,16 +17,16 @@ use Illuminate\Support\Facades\Auth;
 
 class WarehouseController extends Controller
 {
-    private WarehouseRepository $warehouseRepository;
+    private WarehouseService $service;
 
-    public function __construct(WarehouseRepository $warehouseRepository)
+    public function __construct(WarehouseService $service)
     {
-        $this->warehouseRepository = $warehouseRepository;
+        $this->service = $service;
     }
 
     public function index()
     {
-        $warehouses = Warehouse::all();
+        $warehouses = $this->service->listWarehouses();
 
         return responder()->success($warehouses)->respond();
     }
@@ -37,7 +37,7 @@ class WarehouseController extends Controller
             'name' => 'required|string'
         ]);
 
-        $warehouse = $this->warehouseRepository->store($data);
+        $warehouse = $this->service->createWarehouse($data);
 
         return responder()->success($warehouse)->respond();
     }
@@ -48,14 +48,14 @@ class WarehouseController extends Controller
             'name' => 'required|string'
         ]);
 
-        $warehouse = $this->warehouseRepository->update($warehouse, $data);
+        $warehouse = $this->service->updateWarehouse($warehouse, $data);
 
         return responder()->success($warehouse)->respond();
     }
 
     public function destroy(Warehouse $warehouse): JsonResponse
     {
-        $this->warehouseRepository->destroy($warehouse);
+        $this->service->deleteWarehouse($warehouse);
 
         return responder()->success()->respond();
     }
@@ -80,6 +80,21 @@ class WarehouseController extends Controller
                     $query->where('products.active', true)
                             ->orderBy('order');
                 },
+            ])
+            ->respond();
+    }
+
+    public function showProduct(Warehouse $warehouse, Product $product): JsonResponse
+    {
+        $p = $warehouse->products()
+            ->where('products.id', $product->id)
+            ->firstOrFail();
+
+        return responder()->success($p)
+            ->with([
+                'priceLevels' => function ($query) use ($warehouse) {
+                    $query->where('warehouse_id', $warehouse->id);
+                }
             ])
             ->respond();
     }

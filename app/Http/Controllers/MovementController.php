@@ -2,15 +2,14 @@
 
 namespace App\Http\Controllers;
 
+use App\DTOs\MovementDTO;
 use App\Exceptions\InsufficientAmountException;
 use App\Http\Requests\TrashTransmissionMovementRequest;
 use App\Http\Requests\TransmissionMovementRequest;
-use App\Managers\PricesManager;
-use App\Managers\WarehouseManager;
+use App\Services\WarehouseService;
 use App\Models\PriceLevel;
 use App\Models\User;
 use App\Models\Warehouse;
-use App\Repositories\MovementRepository;
 use App\Http\Requests\ReceiptMovementRequest;
 use App\Models\Product;
 use App\Models\Movement;
@@ -25,23 +24,16 @@ use Illuminate\Support\Facades\Log;
 
 class MovementController extends Controller
 {
-    private MovementRepository $repository;
-    private PricesManager $pricesManager;
-    private WarehouseManager $warehouseManager;
+    private WarehouseService $warehouseService;
 
     /**
      * Create a new controller instance.
      *
      * @return void
      */
-    public function __construct(MovementRepository $repository,
-                                PricesManager $pricesManager,
-                                WarehouseManager $warehouseManager)
+    public function __construct(WarehouseService $warehouseService)
     {
-
-        $this->repository = $repository;
-        $this->pricesManager = $pricesManager;
-        $this->warehouseManager = $warehouseManager;
+        $this->warehouseService = $warehouseService;
     }
 
     public function index(Request $request): JsonResponse
@@ -136,99 +128,58 @@ class MovementController extends Controller
 
     public function trash(TrashTransmissionMovementRequest $request): JsonResponse
     {
-        DB::beginTransaction();
-
         try {
             $data = $request->validated();
-            $priceLevel = PriceLevel::query()->find($data['price_level_id']);
-            $data['price'] = $priceLevel->price;
 
             // Manage warehouses
             $warehouse = Warehouse::query()
                 ->where('type', Warehouse::TYPE_TRASH)
-                ->first();
+                ->firstOrFail();
 
             $data['receipt_warehouse_id'] = $warehouse->id;
 
-            $movement = $this->repository->store($data);
-
-            $this->warehouseManager->transmission($movement, $priceLevel);
-
-            // Manage price levels
-            $this->pricesManager->transmission($movement, $priceLevel);
-
-            DB::commit();
+            $this->warehouseService->transferStock(
+                MovementDTO::fromRequest($data)
+            );
         } catch (\Exception $e) {
-            DB::rollBack();
-
             Log::error('Exception', [
                 'code' => $e->getCode(),
                 'message' => $e->getMessage(),
-                'file' => $e->getFile(),
-                'line' => $e->getLine(),
-                'previous' => $e->getPrevious(),
                 'trace' => $e->getTraceAsString(),
             ]);
 
             return responder()->error(500, $e->getMessage())->respond();
         }
 
-        return responder()->success($movement)->respond();
+        return responder()->success()->respond();
     }
 
     public function receipt(ReceiptMovementRequest $request): JsonResponse
     {
-        $movement = $this->repository->store($request->validated());
+        $this->warehouseService->receiveStock(
+            MovementDTO::fromRequest($request->validated())
+        );
 
-        $this->warehouseManager->receipt($movement);
-        $this->pricesManager->receipt($movement);
-
-        return responder()->success($movement)->respond();
+        return responder()->success()->respond();
     }
 
     public function transmission(TransmissionMovementRequest $request): JsonResponse
     {
-        DB::beginTransaction();
-
         try {
-
-            $data = $request->validated();
-
-            $priceLevel = PriceLevel::query()->find($data['price_level_id']);
-
-            $data['price'] = $priceLevel->price;
-
-
-            $movement = $this->repository->store($data);
-
-
-            $this->warehouseManager->transmission($movement, $priceLevel);
-
-
-            $this->pricesManager->transmission($movement, $priceLevel);
-
-            DB::commit();
-
-
+            $this->warehouseService->transferStock(
+                MovementDTO::fromRequest($request->validated())
+            );
         } catch (\Exception $e) {
-            DB::rollBack();
-
-
             Log::error('Exception', [
                 'code' => $e->getCode(),
                 'message' => $e->getMessage(),
-                'file' => $e->getFile(),
-                'line' => $e->getLine(),
-                'previous' => $e->getPrevious(),
                 'trace' => $e->getTraceAsString(),
             ]);
-
 
             return responder()->error(500, $e->getMessage())->respond();
         }
 
-
-        return responder()->success($movement)->respond();
+        return responder()->success()->respond();
     }
 
     private function calculateMovements(Collection $movements, $warehouse_id): array

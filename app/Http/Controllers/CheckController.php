@@ -2,16 +2,15 @@
 
 namespace App\Http\Controllers;
 
+use App\DTOs\CheckDTO;
 use App\Http\Requests\StoreCheckRequest;
-use App\Managers\PricesManager;
-use App\Managers\WarehouseManager;
+use App\Services\WarehouseService;
 use App\Models\Check;
 use App\Models\Discount;
 use App\Models\Movement;
 use App\Models\PriceLevel;
 use App\Models\Product;
 use App\Models\Warehouse;
-use App\Repositories\CheckRepository;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -20,17 +19,11 @@ use Illuminate\Support\Facades\Log;
 
 class CheckController extends Controller
 {
-    private CheckRepository $repository;
-    private WarehouseManager $warehouseManager;
-    private PricesManager $pricesManager;
+    private WarehouseService $warehouseService;
 
-    public function __construct(CheckRepository $repository,
-                                WarehouseManager $warehouseManager,
-                                PricesManager $pricesManager)
+    public function __construct(WarehouseService $warehouseService)
     {
-        $this->repository = $repository;
-        $this->warehouseManager = $warehouseManager;
-        $this->pricesManager = $pricesManager;
+        $this->warehouseService = $warehouseService;
     }
 
     public function index(Request $request): JsonResponse
@@ -70,57 +63,21 @@ class CheckController extends Controller
 
     public function store(StoreCheckRequest $request): JsonResponse
     {
-        DB::beginTransaction();
-
         try {
-            $data = $request->validated();
-            $data['user_id'] = auth()->id();
-
-            // Process all discounts
-            $discounts = Discount::query()->where('warehouse_id', $data['warehouse_id'])->get();
-
-            $data['discount'] = $discounts->reduce(function ($carry, Discount $discount) {
-                return $carry - (float) $discount->amount;
-            }, 0.00);
-
-            foreach ($discounts as $discount) {
-                $discount->delete();
-            }
-
-            $check = $this->repository->store($data);
-
-            foreach ($data['products'] as $productData) {
-                $product = Product::query()->find($productData['product_id']);
-
-                $priceLevel = PriceLevel::query()->find($productData['price_level_id']);
-
-                $check->products()->save($product, [
-                    'amount_before' => $priceLevel->amount,
-                    'amount_after' => $productData['amount'],
-                    'price_level_id' => $priceLevel->id,
-                    'price' => $priceLevel->price,
-                ]);
-            }
-
-            $this->applyCheck($check);
-
-            DB::commit();
+            $this->warehouseService->checkInventory(
+                CheckDTO::fromRequest($request->validated())
+            );
         } catch (\Exception $exception) {
-            DB::rollBack();
-
             Log::error('Exception', [
                 'code' => $exception->getCode(),
                 'message' => $exception->getMessage(),
-                'file' => $exception->getFile(),
-                'line' => $exception->getLine(),
-                'previous' => $exception->getPrevious(),
                 'trace' => $exception->getTraceAsString(),
             ]);
 
             return responder()->error(500, $exception->getMessage())->respond();
         }
 
-        return responder()->success($check)->respond();
+        return responder()->success()->respond();
     }
 
     public function show(Check $check): JsonResponse

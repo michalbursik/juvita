@@ -4,16 +4,16 @@ namespace Database\Seeders;
 
 use App\Models\Product;
 use App\Models\Warehouse;
-use App\Repositories\WarehouseRepository;
+use App\Services\WarehouseService;
 use Illuminate\Database\Seeder;
 
 class WarehouseSeeder extends Seeder
 {
-    private WarehouseRepository $warehouseRepository;
+    private WarehouseService $warehouseService;
 
-    public function __construct(WarehouseRepository $warehouseRepository)
+    public function __construct(WarehouseService $warehouseService)
     {
-        $this->warehouseRepository = $warehouseRepository;
+        $this->warehouseService = $warehouseService;
     }
 
     /**
@@ -32,18 +32,8 @@ class WarehouseSeeder extends Seeder
             ['name' => 'Kompost/Odpad ', 'type' => Warehouse::TYPE_TRASH],
         ];
 
-        $products = Product::all();
-
-        $pivotAttributes = [];
-        foreach ($products as $key => $product) {
-            $pivotAttributes[$key] = [
-                'amount' => 0,
-                'price' => 0.00,
-            ];
-        }
-
         foreach ($warehouses as $warehouseData) {
-            $warehouse = $this->warehouseRepository->store($warehouseData, $products, $pivotAttributes);
+            $warehouse = $this->warehouseService->createWarehouse($warehouseData);
         }
     }
 }
