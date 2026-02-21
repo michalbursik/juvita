@@ -14,7 +14,10 @@ class ProductFactory extends Factory
     public function definition()
     {
         return [
-            //
+            'name' => $this->faker->word(),
+            'active' => true,
+            'order' => $this->faker->numberBetween(1, 1000),
+            'unit' => \App\Models\Product::DEFAULT_UNIT,
         ];
     }
 }
