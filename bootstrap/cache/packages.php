@@ -18,6 +18,31 @@
       0 => 'Flugg\\Responder\\ResponderServiceProvider',
     ),
   ),
+  'laravel/boost' => 
+  array (
+    'providers' => 
+    array (
+      0 => 'Laravel\\Boost\\BoostServiceProvider',
+    ),
+  ),
+  'laravel/mcp' => 
+  array (
+    'aliases' => 
+    array (
+      'Mcp' => 'Laravel\\Mcp\\Server\\Facades\\Mcp',
+    ),
+    'providers' => 
+    array (
+      0 => 'Laravel\\Mcp\\Server\\McpServiceProvider',
+    ),
+  ),
+  'laravel/roster' => 
+  array (
+    'providers' => 
+    array (
+      0 => 'Laravel\\Roster\\RosterServiceProvider',
+    ),
+  ),
   'laravel/sail' => 
   array (
     'providers' => 
@@ -85,11 +110,29 @@
       0 => 'Pest\\Laravel\\PestServiceProvider',
     ),
   ),
+  'spatie/laravel-event-sourcing' => 
+  array (
+    'aliases' => 
+    array (
+      'Projectionist' => 'Spatie\\EventSourcing\\Facades\\EventSourcing',
+    ),
+    'providers' => 
+    array (
+      0 => 'Spatie\\EventSourcing\\EventSourcingServiceProvider',
+    ),
+  ),
   'spatie/laravel-ray' => 
   array (
     'providers' => 
     array (
       0 => 'Spatie\\LaravelRay\\RayServiceProvider',
+    ),
+  ),
+  'spatie/laravel-schemaless-attributes' => 
+  array (
+    'providers' => 
+    array (
+      0 => 'Spatie\\SchemalessAttributes\\SchemalessAttributesServiceProvider',
     ),
   ),
 );
