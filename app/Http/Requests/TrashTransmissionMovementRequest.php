@@ -26,11 +26,11 @@ class TrashTransmissionMovementRequest extends FormRequest
     {
         return [
             'amount' => 'required|numeric|min:0.1',
-            'price_level_id' => 'required|integer',
+            'price_level_id' => 'required|string',
             'type' => 'required|string',
-            'user_id' => 'nullable|integer',
-            'product_id' => 'required|integer',
-            'issue_warehouse_id' => 'required|integer',
+            'user_id' => 'nullable|string',
+            'product_id' => 'required|string',
+            'issue_warehouse_id' => 'required|string',
         ];
     }
 

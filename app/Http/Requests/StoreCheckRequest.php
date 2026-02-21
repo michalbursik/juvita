@@ -24,12 +24,12 @@ class StoreCheckRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'warehouse_id' => 'required|integer',
+            'warehouse_id' => 'required|string',
             'products' => 'required|array',
             // It will be the same as root warehouse_id
-            'products.*.warehouse_id' => 'required|integer',
-            'products.*.product_id' => 'required|integer',
-            'products.*.price_level_id' => 'required|integer',
+            'products.*.warehouse_id' => 'required|string',
+            'products.*.product_id' => 'required|string',
+            'products.*.price_level_id' => 'required|string',
             'products.*.amount' => 'required|numeric',
         ];
     }

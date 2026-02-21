@@ -19,8 +19,8 @@ class CreateProductWarehouseTable extends Migration
             $table->float('amount', 8, 1);
             $table->float('price', 8, 1);
 
-            $table->foreignId('product_id')->constrained('products');
-            $table->foreignId('warehouse_id')->constrained('warehouses');
+            $table->foreignUuid('product_id')->constrained('products');
+            $table->foreignUuid('warehouse_id')->constrained('warehouses');
 
             $table->timestamps();
         });

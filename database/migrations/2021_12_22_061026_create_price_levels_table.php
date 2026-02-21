@@ -15,7 +15,7 @@ class CreatePriceLevelsTable extends Migration
     public function up()
     {
         Schema::create('price_levels', function (Blueprint $table) {
-            $table->id();
+            $table->uuid('id')->primary();
             $table->float('amount', 8, 1);
             $table->float('price', 8, 1);
 
@@ -25,8 +25,8 @@ class CreatePriceLevelsTable extends Migration
 
             $table->string('status')->default(PriceLevel::STATUS_ACTIVE);
 
-            $table->foreignId('product_id')->constrained('products');
-            $table->foreignId('warehouse_id')->constrained('warehouses');
+            $table->foreignUuid('product_id')->constrained('products');
+            $table->foreignUuid('warehouse_id')->constrained('warehouses');
 
             $table->softDeletes();
             $table->timestamps();

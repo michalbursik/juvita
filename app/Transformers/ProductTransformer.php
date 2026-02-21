@@ -34,7 +34,7 @@ class ProductTransformer extends Transformer
     public function transform(Product $product): array
     {
         $data = [
-            'id' => (int)$product->id,
+            'id' => $product->id,
             'name' => $product->name,
             'origin' => $product->origin,
             'active' => $product->active,

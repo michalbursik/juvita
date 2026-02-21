@@ -5,6 +5,7 @@ namespace App\Models;
 use App\Transformers\UserTransformer;
 use Flugg\Responder\Contracts\Transformable;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
+use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -53,7 +54,7 @@ use Laravel\Sanctum\HasApiTokens;
  */
 class User extends Authenticatable implements Transformable
 {
-    use HasApiTokens, HasFactory, Notifiable;
+    use HasApiTokens, HasFactory, Notifiable, HasUuids;
 
     const ROLE_ADMIN = 'admin';
     const ROLE_EMPLOYEE = 'employee';

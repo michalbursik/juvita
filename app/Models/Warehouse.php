@@ -6,6 +6,7 @@ use App\Transformers\WarehouseTransformer;
 use Awobaz\Compoships\Compoships;
 use Flugg\Responder\Contracts\Transformable;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
@@ -48,7 +49,7 @@ use Korridor\LaravelHasManyMerged\HasManyMergedRelation;
  */
 class Warehouse extends Model implements Transformable
 {
-    use HasFactory, HasManyMergedRelation, SoftDeletes;
+    use HasFactory, HasManyMergedRelation, SoftDeletes, HasUuids;
 
     const TYPE_MAIN = 'warehouse';
     const TYPE_TEMPORARY = 'temporary_warehouse';

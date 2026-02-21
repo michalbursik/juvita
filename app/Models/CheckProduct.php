@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\Pivot;
@@ -9,12 +10,12 @@ use Illuminate\Database\Eloquent\Relations\Pivot;
 /**
  * App\Models\CheckProduct
  *
- * @property int $id
+ * @property string $id
  * @property float $amount_before
  * @property float $amount_after
- * @property int $check_id
- * @property int $product_id
- * @property int|null $price_level_id
+ * @property string $check_id
+ * @property string $product_id
+ * @property string|null $price_level_id
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @method static \Illuminate\Database\Eloquent\Builder|CheckProduct newModelQuery()
@@ -34,5 +35,5 @@ use Illuminate\Database\Eloquent\Relations\Pivot;
  */
 class CheckProduct extends Pivot
 {
-    use HasFactory;
+    use HasFactory, HasUuids;
 }

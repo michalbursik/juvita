@@ -36,7 +36,7 @@ class CheckTransformer extends Transformer
     public function transform(Check $check): array
     {
         return [
-            'id' => (int) $check->id,
+            'id' => $check->id,
             'discount' => (float) $check->discount,
             'created_at' => $check->created_at->format('d. m. Y H:i:s'),
         ];

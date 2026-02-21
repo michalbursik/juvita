@@ -25,13 +25,13 @@ class TransmissionMovementRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'issue_warehouse_id' => 'required|integer|different:receipt_warehouse_id',
-            'receipt_warehouse_id' => 'required|integer|different:issue_warehouse_id',
+            'issue_warehouse_id' => 'required|string|different:receipt_warehouse_id',
+            'receipt_warehouse_id' => 'required|string|different:issue_warehouse_id',
             'type' => 'required|string',
-            'user_id' => 'nullable|integer',
-            'product_id' => 'required|integer',
+            'user_id' => 'nullable|string',
+            'product_id' => 'required|string',
             'amount' => 'required|numeric|min:0.1',
-            'price_level_id' => 'required|integer',
+            'price_level_id' => 'required|string',
         ];
     }
 

@@ -28,9 +28,9 @@ class ReceiptMovementRequest extends FormRequest
             'amount' => 'required|numeric|min:0.1',
             'price' => 'nullable|numeric', // receipt => price, issue => id of price level
             'type' => 'required|string',
-            'user_id' => 'nullable|integer',
-            'product_id' => 'required|integer',
-            'receipt_warehouse_id' => 'required|integer',
+            'user_id' => 'nullable|string',
+            'product_id' => 'required|string',
+            'receipt_warehouse_id' => 'required|string',
         ];
     }
 

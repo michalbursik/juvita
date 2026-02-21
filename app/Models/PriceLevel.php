@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Transformers\PriceLevelTransformer;
 use Flugg\Responder\Contracts\Transformable;
+use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -46,7 +47,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  */
 class PriceLevel extends Model implements Transformable
 {
-    use HasFactory, SoftDeletes;
+    use HasFactory, SoftDeletes, HasUuids;
 
     // Warehouse receipt product with price.
     const STATUS_ACTIVE = 'active';

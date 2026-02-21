@@ -14,15 +14,15 @@ class CreateCheckProductTable extends Migration
     public function up()
     {
         Schema::create('check_product', function (Blueprint $table) {
-            $table->id();
+            $table->uuid('id')->primary();
 
             $table->float('amount_before', 8, 1);
             $table->float('amount_after', 8, 1);
             $table->float('price', 8 , 1)->nullable();
 
-            $table->foreignId('check_id')->constrained('checks');
-            $table->foreignId('product_id')->constrained('products');
-            $table->foreignId('price_level_id')->constrained('price_levels');
+            $table->foreignUuid('check_id')->constrained('checks');
+            $table->foreignUuid('product_id')->constrained('products');
+            $table->foreignUuid('price_level_id')->constrained('price_levels');
 
             $table->timestamps();
         });

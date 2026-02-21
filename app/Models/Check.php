@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Transformers\CheckTransformer;
 use Flugg\Responder\Contracts\Transformable;
+use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -35,7 +36,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
  */
 class Check extends Model implements Transformable
 {
-    use HasFactory;
+    use HasFactory, HasUuids;
 
     protected $fillable = ['discount', 'warehouse_id', 'user_id'];
 

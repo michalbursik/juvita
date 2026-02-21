@@ -33,7 +33,7 @@ class DiscountTransformer extends Transformer
     public function transform(Discount $discount): array
     {
         return [
-            'id' => (int) $discount->id,
+            'id' => $discount->id,
             'amount' => $discount->amount,
             'note' => $discount->note,
             'created_at' => $discount->created_at,

@@ -6,6 +6,7 @@ use App\Transformers\MovementTransformer;
 use Awobaz\Compoships\Compoships;
 use Carbon\Carbon;
 use Flugg\Responder\Contracts\Transformable;
+use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -50,7 +51,7 @@ class Movement extends Model implements Transformable
 
     const TYPE_CHECK = 'check'; // Check changes warehouse amounts
 
-    use HasFactory;
+    use HasFactory, HasUuids;
 
     protected $fillable = ['type', 'amount', 'price', 'product_id', 'issue_warehouse_id', 'receipt_warehouse_id', 'user_id'];
 

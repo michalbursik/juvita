@@ -32,7 +32,7 @@ class PriceLevelTransformer extends Transformer
     public function transform(PriceLevel $priceLevel): array
     {
         return [
-            'id' => (int) $priceLevel->id,
+            'id' => $priceLevel->id,
             'amount' => $priceLevel->amount,
             'price' => $priceLevel->price,
             'validFrom' => $priceLevel->validFrom,

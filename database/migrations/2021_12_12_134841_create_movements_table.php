@@ -16,16 +16,16 @@ class CreateMovementsTable extends Migration
     public function up()
     {
         Schema::create('movements', function (Blueprint $table) {
-            $table->id();
+            $table->uuid('id')->primary();
 
             $table->string('type')->default(Movement::TYPE_ISSUE);
             $table->float('amount', 8, 1);
             $table->float('price', 8, 1)->nullable();
 
-            $table->foreignId('product_id')->constrained('products');
-            $table->foreignId('user_id')->constrained('users');
-            $table->foreignId('issue_warehouse_id')->nullable()->constrained('warehouses');
-            $table->foreignId('receipt_warehouse_id')->nullable()->constrained('warehouses');
+            $table->foreignUuid('product_id')->constrained('products');
+            $table->foreignUuid('user_id')->constrained('users');
+            $table->foreignUuid('issue_warehouse_id')->nullable()->constrained('warehouses');
+            $table->foreignUuid('receipt_warehouse_id')->nullable()->constrained('warehouses');
 
             $table->timestamps();
         });

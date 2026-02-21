@@ -37,7 +37,7 @@ class MovementTransformer extends Transformer
     public function transform(Movement $movement): array
     {
         return [
-            'id' => (int) $movement->id,
+            'id' => $movement->id,
             'type' => $movement->type,
             'translated_type' => __('global.' . $movement->type),
             'amount' => $movement->amount,

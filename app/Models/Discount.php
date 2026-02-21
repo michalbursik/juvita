@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Transformers\DiscountTransformer;
 use Flugg\Responder\Contracts\Transformable;
+use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -33,7 +34,7 @@ use Illuminate\Support\Carbon;
  */
 class Discount extends Model implements Transformable
 {
-    use HasFactory;
+    use HasFactory, HasUuids;
 
     protected $fillable = ['amount', 'note', 'warehouse_id', 'user_id'];
 

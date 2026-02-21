@@ -14,11 +14,11 @@ class CreateDiscountsTable extends Migration
     public function up()
     {
         Schema::create('discounts', function (Blueprint $table) {
-            $table->id();
+            $table->uuid('id')->primary();
             $table->float('amount', 8, 1);
             $table->text('note')->nullable();
-            $table->foreignId('warehouse_id')->constrained('warehouses');
-            $table->foreignId('user_id')->constrained('users');
+            $table->foreignUuid('warehouse_id')->constrained('warehouses');
+            $table->foreignUuid('user_id')->constrained('users');
 
             $table->timestamps();
         });

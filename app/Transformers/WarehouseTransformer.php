@@ -35,7 +35,7 @@ class WarehouseTransformer extends Transformer
     public function transform(Warehouse $warehouse): array
     {
         return [
-            'id' => (int) $warehouse->id,
+            'id' => $warehouse->id,
             'name' => $warehouse->name,
             'type' => $warehouse->type,
         ];

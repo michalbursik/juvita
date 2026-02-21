@@ -14,12 +14,12 @@ class CreateChecksTable extends Migration
     public function up()
     {
         Schema::create('checks', function (Blueprint $table) {
-            $table->id();
+            $table->uuid('id')->primary();
 
             $table->float('discount', 8, 1)->default(0);
 
-            $table->foreignId('warehouse_id')->constrained('warehouses');
-            $table->foreignId('user_id')->constrained('users');
+            $table->foreignUuid('warehouse_id')->constrained('warehouses');
+            $table->foreignUuid('user_id')->constrained('users');
 
             $table->timestamps();
         });
