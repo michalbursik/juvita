@@ -8,8 +8,6 @@ class StoreDiscountRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
-     *
-     * @return bool
      */
     public function authorize(): bool
     {
@@ -18,8 +16,6 @@ class StoreDiscountRequest extends FormRequest
 
     /**
      * Get the validation rules that apply to the request.
-     *
-     * @return array
      */
     public function rules(): array
     {
@@ -34,7 +30,7 @@ class StoreDiscountRequest extends FormRequest
     protected function prepareForValidation()
     {
         $this->merge([
-            'user_id' => auth()->id()
+            'user_id' => auth()->id(),
         ]);
     }
 }

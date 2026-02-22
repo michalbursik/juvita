@@ -23,9 +23,6 @@ class UserTransformer extends Transformer
 
     /**
      * Transform the model.
-     *
-     * @param  User $user
-     * @return array
      */
     public function transform(User $user): array
     {

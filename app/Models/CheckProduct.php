@@ -4,7 +4,6 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\Pivot;
 
 /**
@@ -18,6 +17,7 @@ use Illuminate\Database\Eloquent\Relations\Pivot;
  * @property string|null $price_level_id
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
+ *
  * @method static \Illuminate\Database\Eloquent\Builder|CheckProduct newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|CheckProduct newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|CheckProduct query()
@@ -29,8 +29,11 @@ use Illuminate\Database\Eloquent\Relations\Pivot;
  * @method static \Illuminate\Database\Eloquent\Builder|CheckProduct wherePriceLevelId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|CheckProduct whereProductId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|CheckProduct whereUpdatedAt($value)
+ *
  * @mixin \Eloquent
+ *
  * @property string|null $price
+ *
  * @method static \Illuminate\Database\Eloquent\Builder|CheckProduct wherePrice($value)
  */
 class CheckProduct extends Pivot

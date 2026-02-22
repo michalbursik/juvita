@@ -3,23 +3,20 @@
 namespace App\Http\Controllers;
 
 use App\DTOs\MovementDTO;
-use App\Exceptions\InsufficientAmountException;
-use App\Http\Requests\TrashTransmissionMovementRequest;
+use App\Enums\WarehouseType;
+use App\Http\Requests\ReceiptMovementRequest;
 use App\Http\Requests\TransmissionMovementRequest;
-use App\Services\WarehouseService;
-use App\Models\PriceLevel;
+use App\Http\Requests\TrashTransmissionMovementRequest;
+use App\Models\Movement;
+use App\Models\Product;
 use App\Models\User;
 use App\Models\Warehouse;
-use App\Http\Requests\ReceiptMovementRequest;
-use App\Models\Product;
-use App\Models\Movement;
+use App\Services\WarehouseService;
 use Carbon\Carbon;
-use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 
 class MovementController extends Controller
@@ -41,11 +38,19 @@ class MovementController extends Controller
         $query = Movement::query();
 
         $issue_warehouse_id = $request->input('issue_warehouse_id');
+        if ($issue_warehouse_id === 'trash') {
+            $trashWarehouse = Warehouse::query()->where('type', WarehouseType::TRASH)->first();
+            $issue_warehouse_id = $trashWarehouse?->id;
+        }
         $query->when($issue_warehouse_id, function ($query) use ($issue_warehouse_id) {
             $query->where('issue_warehouse_id', $issue_warehouse_id);
         });
 
         $receipt_warehouse_id = $request->input('receipt_warehouse_id');
+        if ($receipt_warehouse_id === 'trash') {
+            $trashWarehouse = Warehouse::query()->where('type', WarehouseType::TRASH)->first();
+            $receipt_warehouse_id = $trashWarehouse?->id;
+        }
         if (Auth::user()->role === User::ROLE_EMPLOYEE) {
             $receipt_warehouse_id = Auth::user()->warehouse_id;
         }
@@ -53,10 +58,15 @@ class MovementController extends Controller
             $query->where('receipt_warehouse_id', $receipt_warehouse_id);
         });
 
-        $query->when($request->input('warehouse_id'), function ($query) use ($request) {
-            $query->where(function ($query) use ($request) {
-                $query->where('issue_warehouse_id', $request->input('warehouse_id'))
-                    ->orWhere('receipt_warehouse_id', $request->input('warehouse_id'));
+        $warehouse_id = $request->input('warehouse_id');
+        if ($warehouse_id === 'trash') {
+            $trashWarehouse = Warehouse::query()->where('type', WarehouseType::TRASH)->first();
+            $warehouse_id = $trashWarehouse?->id;
+        }
+        $query->when($warehouse_id, function ($query) use ($warehouse_id) {
+            $query->where(function ($query) use ($warehouse_id) {
+                $query->where('issue_warehouse_id', $warehouse_id)
+                    ->orWhere('receipt_warehouse_id', $warehouse_id);
             });
         });
 
@@ -95,7 +105,7 @@ class MovementController extends Controller
         $warehouse_id = $request->input('warehouse_id');
 
         if ($warehouse_id === 'trash') {
-            $warehouse = Warehouse::query()->where('type', Warehouse::TYPE_TRASH)->first();
+            $warehouse = Warehouse::query()->where('type', WarehouseType::TRASH)->first();
         } else {
             $warehouse = Warehouse::query()->find($warehouse_id);
 
@@ -109,7 +119,7 @@ class MovementController extends Controller
         });
 
         // For temporary warehouses show
-        if ($warehouse->type === Warehouse::TYPE_TEMPORARY) {
+        if ($warehouse->type->isTemporary()) {
             $day = str_replace(' ', '', $request->input('day'));
             $day = Carbon::parse($day);
 
@@ -133,14 +143,24 @@ class MovementController extends Controller
 
             // Manage warehouses
             $warehouse = Warehouse::query()
-                ->where('type', Warehouse::TYPE_TRASH)
+                ->where('type', WarehouseType::TRASH)
                 ->firstOrFail();
 
             $data['receipt_warehouse_id'] = $warehouse->id;
 
-            $this->warehouseService->transferStock(
-                MovementDTO::fromRequest($data)
-            );
+            $dto = MovementDTO::fromRequest($data);
+
+            $this->warehouseService->transferStock($dto);
+
+            $movement = Movement::query()
+                ->where('product_id', $dto->productId)
+                ->where('issue_warehouse_id', $dto->issueWarehouseId)
+                ->where('receipt_warehouse_id', $dto->receiptWarehouseId)
+                ->where('user_id', $dto->userId)
+                ->latest()
+                ->first();
+
+            return responder()->success($movement)->respond();
         } catch (\Exception $e) {
             Log::error('Exception', [
                 'code' => $e->getCode(),
@@ -150,25 +170,40 @@ class MovementController extends Controller
 
             return responder()->error(500, $e->getMessage())->respond();
         }
-
-        return responder()->success()->respond();
     }
 
     public function receipt(ReceiptMovementRequest $request): JsonResponse
     {
-        $this->warehouseService->receiveStock(
-            MovementDTO::fromRequest($request->validated())
-        );
+        $dto = MovementDTO::fromRequest($request->validated());
 
-        return responder()->success()->respond();
+        $this->warehouseService->receiveStock($dto);
+
+        $movement = Movement::query()
+            ->where('product_id', $dto->productId)
+            ->where('receipt_warehouse_id', $dto->receiptWarehouseId)
+            ->where('user_id', $dto->userId)
+            ->latest()
+            ->first();
+
+        return responder()->success($movement)->respond();
     }
 
     public function transmission(TransmissionMovementRequest $request): JsonResponse
     {
         try {
-            $this->warehouseService->transferStock(
-                MovementDTO::fromRequest($request->validated())
-            );
+            $dto = MovementDTO::fromRequest($request->validated());
+
+            $this->warehouseService->transferStock($dto);
+
+            $movement = Movement::query()
+                ->where('product_id', $dto->productId)
+                ->where('issue_warehouse_id', $dto->issueWarehouseId)
+                ->where('receipt_warehouse_id', $dto->receiptWarehouseId)
+                ->where('user_id', $dto->userId)
+                ->latest()
+                ->first();
+
+            return responder()->success($movement)->respond();
         } catch (\Exception $e) {
             Log::error('Exception', [
                 'code' => $e->getCode(),
@@ -178,8 +213,6 @@ class MovementController extends Controller
 
             return responder()->error(500, $e->getMessage())->respond();
         }
-
-        return responder()->success()->respond();
     }
 
     private function calculateMovements(Collection $movements, $warehouse_id): array
@@ -192,7 +225,7 @@ class MovementController extends Controller
             $result[$product->id] = [
                 'product_id' => $product->id,
                 'product_name' => $product->name,
-                'amount' => 0
+                'amount' => 0,
             ];
         }
 

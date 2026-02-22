@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Enums\WarehouseType;
 use App\Models\Product;
 use App\Models\User;
 use App\Models\Warehouse;
@@ -16,13 +17,13 @@ class TestDataSeeder extends Seeder
         Warehouse::create([
             'id' => TestConstants::WAREHOUSE_MAIN_ID,
             'name' => 'Main Warehouse',
-            'type' => Warehouse::TYPE_MAIN,
+            'type' => WarehouseType::MAIN,
         ]);
 
         Warehouse::create([
             'id' => TestConstants::WAREHOUSE_TRASH_ID,
             'name' => 'Trash Warehouse',
-            'type' => Warehouse::TYPE_TRASH,
+            'type' => WarehouseType::TRASH,
         ]);
 
         // 2. Users

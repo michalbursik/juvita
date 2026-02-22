@@ -40,40 +40,40 @@ class OverviewController extends Controller
                 'product_name' => $product->name,
                 'warehouses' => [
 
-                ]
+                ],
             ];
 
             foreach ($warehouses as $warehouse) {
-//                $p = $warehouse->products()->find($product->id);
+                //                $p = $warehouse->products()->find($product->id);
 
                 $data[$product->id]['warehouses'][$warehouse->id] = [
-                  'warehouse_name' => $warehouse->name,
-                  'price_levels' => [
-//                      $p->product_warehouse->price => [
-//                          'price' => $p->product_warehouse->price,
-//                          'amount' => 0
-//                      ]
-                  ],
+                    'warehouse_name' => $warehouse->name,
+                    'price_levels' => [
+                        //                      $p->product_warehouse->price => [
+                        //                          'price' => $p->product_warehouse->price,
+                        //                          'amount' => 0
+                        //                      ]
+                    ],
                 ];
             }
         }
 
-//        Log::debug('', [
-//            // Rajcata, Kralov, 80.00
-//            $data[1]['warehouses'][1]['price_levels']['80.00']['amount']
-//        ]);
+        //        Log::debug('', [
+        //            // Rajcata, Kralov, 80.00
+        //            $data[1]['warehouses'][1]['price_levels']['80.00']['amount']
+        //        ]);
 
         // warehouse
         // product (unique - priceLevels)
         // amount
 
         $movements->each(function (Movement $movement) use (&$data) {
-//                 Log::debug('DATA', [
-//                     'product_id' => $movement->product_id,
-//                     'receipt_warehouse_id' => $movement->receipt_warehouse_id,
-//                     'movement_price' => $movement->price,
-//                     'data' => $data[$movement->product_id]['warehouses'][$movement->receipt_warehouse_id]['price_levels'],
-//                ]);
+            //                 Log::debug('DATA', [
+            //                     'product_id' => $movement->product_id,
+            //                     'receipt_warehouse_id' => $movement->receipt_warehouse_id,
+            //                     'movement_price' => $movement->price,
+            //                     'data' => $data[$movement->product_id]['warehouses'][$movement->receipt_warehouse_id]['price_levels'],
+            //                ]);
 
             if ($movement->receipt_warehouse_id) {
                 if (isset($data[$movement->product_id]['warehouses'][$movement->receipt_warehouse_id]['price_levels'][$movement->price])) {
@@ -97,7 +97,6 @@ class OverviewController extends Controller
                 }
             }
         });
-
 
         return $data;
     }

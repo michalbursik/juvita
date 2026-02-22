@@ -8,8 +8,6 @@ use App\Domain\Warehouse\Events\StockTransferred;
 use App\Domain\Warehouse\Projections\WarehouseProjector;
 use App\Models\Movement;
 use App\Models\PriceLevel;
-use App\Models\Product;
-use App\Models\User;
 use App\Models\Warehouse;
 use Database\Seeders\TestConstants;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -23,7 +21,7 @@ class WarehouseProjectorTest extends TestCase
     {
         parent::setUp();
         $this->seed(\Database\Seeders\TestDataSeeder::class);
-        $this->projector = new WarehouseProjector();
+        $this->projector = new WarehouseProjector;
     }
 
     /** @test */
@@ -132,7 +130,7 @@ class WarehouseProjectorTest extends TestCase
         $this->assertDatabaseHas('price_levels', [
             'warehouse_id' => TestConstants::WAREHOUSE_TRASH_ID,
             'amount' => 30,
-            'price' => 10
+            'price' => 10,
         ]);
     }
 }

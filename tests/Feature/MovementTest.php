@@ -1,10 +1,10 @@
 <?php
 
+use App\Models\Movement;
+use App\Models\PriceLevel;
 use App\Models\Product;
 use App\Models\User;
 use App\Models\Warehouse;
-use App\Models\PriceLevel;
-use App\Models\Movement;
 use Database\Seeders\TestConstants;
 
 beforeEach(function () {

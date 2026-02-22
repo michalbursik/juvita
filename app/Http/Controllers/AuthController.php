@@ -21,22 +21,19 @@ class AuthController extends Controller
         $user = auth()->user();
 
         return responder()->success(
-            ["access_token" => $user->createToken('API Token')->plainTextToken]
+            ['access_token' => $user->createToken('API Token')->plainTextToken]
         )->respond();
     }
 
-    public function logout()
-    {
-
-    }
+    public function logout() {}
 
     public function register()
     {
         throw new \Exception('TODO: Implement - Class AuthController => Method register()');
     }
 
-//    public function changePassword(PasswordChangeRequest $request)
-//    {
-//
-//    }
+    //    public function changePassword(PasswordChangeRequest $request)
+    //    {
+    //
+    //    }
 }

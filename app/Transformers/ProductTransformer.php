@@ -4,7 +4,6 @@ namespace App\Transformers;
 
 use App\Models\Product;
 use Flugg\Responder\Transformers\Transformer;
-use Illuminate\Support\Facades\Log;
 
 class ProductTransformer extends Transformer
 {
@@ -27,9 +26,6 @@ class ProductTransformer extends Transformer
 
     /**
      * Transform the model.
-     *
-     * @param Product $product
-     * @return array
      */
     public function transform(Product $product): array
     {

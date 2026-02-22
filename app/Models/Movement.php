@@ -3,7 +3,6 @@
 namespace App\Models;
 
 use App\Transformers\MovementTransformer;
-use Awobaz\Compoships\Compoships;
 use Carbon\Carbon;
 use Flugg\Responder\Contracts\Transformable;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
@@ -28,6 +27,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @property-read \App\Models\Product $product
  * @property-read \App\Models\Warehouse $receiptWarehouse
  * @property-read \App\Models\User $user
+ *
  * @method static \Illuminate\Database\Eloquent\Builder|Movement newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|Movement newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|Movement query()
@@ -41,12 +41,15 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @method static \Illuminate\Database\Eloquent\Builder|Movement whereType($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Movement whereUpdatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Movement whereUserId($value)
+ *
  * @mixin \Eloquent
  */
 class Movement extends Model implements Transformable
 {
     const TYPE_ISSUE = 'issue';
+
     const TYPE_RECEIPT = 'receipt';
+
     const TYPE_TRANSMISSION = 'transmission';
 
     const TYPE_CHECK = 'check'; // Check changes warehouse amounts

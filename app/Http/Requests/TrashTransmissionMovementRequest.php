@@ -9,8 +9,6 @@ class TrashTransmissionMovementRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
-     *
-     * @return bool
      */
     public function authorize(): bool
     {
@@ -19,8 +17,6 @@ class TrashTransmissionMovementRequest extends FormRequest
 
     /**
      * Get the validation rules that apply to the request.
-     *
-     * @return array
      */
     public function rules(): array
     {
@@ -37,7 +33,7 @@ class TrashTransmissionMovementRequest extends FormRequest
     protected function prepareForValidation()
     {
         $this->merge([
-            'type' => Movement::TYPE_TRANSMISSION
+            'type' => Movement::TYPE_TRANSMISSION,
         ]);
     }
 

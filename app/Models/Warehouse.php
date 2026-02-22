@@ -2,8 +2,8 @@
 
 namespace App\Models;
 
+use App\Enums\WarehouseType;
 use App\Transformers\WarehouseTransformer;
-use Awobaz\Compoships\Compoships;
 use Flugg\Responder\Contracts\Transformable;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
@@ -32,6 +32,7 @@ use Korridor\LaravelHasManyMerged\HasManyMergedRelation;
  * @property-read Collection|\App\Models\Movement[] $receiptMovements
  * @property-read int|null $receipt_movements_count
  * @property-read \App\Models\User|null $user
+ *
  * @method static \Database\Factories\WarehouseFactory factory(...$parameters)
  * @method static \Illuminate\Database\Eloquent\Builder|Warehouse newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|Warehouse newQuery()
@@ -41,7 +42,9 @@ use Korridor\LaravelHasManyMerged\HasManyMergedRelation;
  * @method static \Illuminate\Database\Eloquent\Builder|Warehouse whereName($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Warehouse whereType($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Warehouse whereUpdatedAt($value)
+ *
  * @mixin \Eloquent
+ *
  * @property-read Collection|\App\Models\PriceLevel[] $priceLevels
  * @property-read int|null $price_levels_count
  * @property-read Collection|\App\Models\Discount[] $discounts
@@ -49,14 +52,16 @@ use Korridor\LaravelHasManyMerged\HasManyMergedRelation;
  */
 class Warehouse extends Model implements Transformable
 {
-    use HasFactory, HasManyMergedRelation, SoftDeletes, HasUuids;
-
-    const TYPE_MAIN = 'warehouse';
-    const TYPE_TEMPORARY = 'temporary_warehouse';
-    const TYPE_INTERNAL = 'internal_warehouse';
-    const TYPE_TRASH = 'trash_warehouse';
+    use HasFactory, HasManyMergedRelation, HasUuids, SoftDeletes;
 
     protected $fillable = ['name', 'type'];
+
+    protected function casts(): array
+    {
+        return [
+            'type' => WarehouseType::class,
+        ];
+    }
 
     public function products(): BelongsToMany
     {

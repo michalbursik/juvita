@@ -29,9 +29,6 @@ class CheckTransformer extends Transformer
 
     /**
      * Transform the model.
-     *
-     * @param  Check $check
-     * @return array
      */
     public function transform(Check $check): array
     {

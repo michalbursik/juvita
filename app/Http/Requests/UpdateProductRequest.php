@@ -9,8 +9,6 @@ class UpdateProductRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
-     *
-     * @return bool
      */
     public function authorize(): bool
     {
@@ -19,8 +17,6 @@ class UpdateProductRequest extends FormRequest
 
     /**
      * Get the validation rules that apply to the request.
-     *
-     * @return array
      */
     public function rules(): array
     {
@@ -29,14 +25,14 @@ class UpdateProductRequest extends FormRequest
             'origin' => 'nullable|string',
             'order' => 'required|integer',
             'active' => 'required|boolean',
-            'unit' => 'required|string|in:' . Product::getListOfAvailableUnits(),
+            'unit' => 'required|string|in:'.Product::getListOfAvailableUnits(),
         ];
     }
 
     protected function prepareForValidation()
     {
         $this->merge([
-           'active' => $this->active ? true : false
+            'active' => $this->active ? true : false,
         ]);
     }
 

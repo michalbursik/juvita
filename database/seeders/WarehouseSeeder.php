@@ -2,8 +2,7 @@
 
 namespace Database\Seeders;
 
-use App\Models\Product;
-use App\Models\Warehouse;
+use App\Enums\WarehouseType;
 use App\Services\WarehouseService;
 use Illuminate\Database\Seeder;
 
@@ -24,12 +23,12 @@ class WarehouseSeeder extends Seeder
     public function run()
     {
         $warehouses = [
-            ['name' => 'Uherský Brod - Králov', 'type' => Warehouse::TYPE_MAIN],
-            ['name' => 'Vozidlo Jaroslav', 'type' => Warehouse::TYPE_TEMPORARY],
-            ['name' => 'Vozidlo Honza', 'type' => Warehouse::TYPE_TEMPORARY],
-            ['name' => 'Vozidlo Tomáš', 'type' => Warehouse::TYPE_TEMPORARY],
-            ['name' => 'Prodej', 'type' => Warehouse::TYPE_INTERNAL],
-            ['name' => 'Kompost/Odpad ', 'type' => Warehouse::TYPE_TRASH],
+            ['name' => 'Uherský Brod - Králov', 'type' => WarehouseType::MAIN],
+            ['name' => 'Vozidlo Jaroslav', 'type' => WarehouseType::TEMPORARY],
+            ['name' => 'Vozidlo Honza', 'type' => WarehouseType::TEMPORARY],
+            ['name' => 'Vozidlo Tomáš', 'type' => WarehouseType::TEMPORARY],
+            ['name' => 'Prodej', 'type' => WarehouseType::INTERNAL],
+            ['name' => 'Kompost/Odpad ', 'type' => WarehouseType::TRASH],
         ];
 
         foreach ($warehouses as $warehouseData) {

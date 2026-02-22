@@ -21,6 +21,7 @@ use Illuminate\Support\Carbon;
  * @property Carbon|null $updated_at
  * @property-read User $user
  * @property-read Warehouse $warehouse
+ *
  * @method static \Illuminate\Database\Eloquent\Builder|Discount newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|Discount newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|Discount query()
@@ -30,6 +31,7 @@ use Illuminate\Support\Carbon;
  * @method static \Illuminate\Database\Eloquent\Builder|Discount whereUpdatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Discount whereUserId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Discount whereWarehouseId($value)
+ *
  * @mixin \Eloquent
  */
 class Discount extends Model implements Transformable

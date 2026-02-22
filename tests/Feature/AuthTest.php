@@ -1,8 +1,5 @@
 <?php
 
-use App\Models\User;
-use Database\Seeders\TestConstants;
-
 test('user can login and get token', function () {
     $response = $this->postJson('/login', [
         'email' => 'admin@example.com',
@@ -14,8 +11,8 @@ test('user can login and get token', function () {
             'status',
             'success',
             'data' => [
-                'access_token'
-            ]
+                'access_token',
+            ],
         ]);
 });
 

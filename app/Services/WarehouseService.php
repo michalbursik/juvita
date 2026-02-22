@@ -2,13 +2,14 @@
 
 namespace App\Services;
 
-use App\DTOs\MovementDTO;
+use App\Domain\Warehouse\Aggregates\WarehouseAggregate;
 use App\DTOs\CheckDTO;
+use App\DTOs\MovementDTO;
+use App\Enums\WarehouseType;
 use App\Models\Discount;
 use App\Models\PriceLevel;
 use App\Models\Product;
 use App\Models\Warehouse;
-use App\Domain\Warehouse\Aggregates\WarehouseAggregate;
 use Illuminate\Database\Eloquent\Collection;
 
 class WarehouseService
@@ -21,7 +22,7 @@ class WarehouseService
     public function createWarehouse(array $data): Warehouse
     {
         if (empty($data['type'])) {
-            $data['type'] = Warehouse::TYPE_TEMPORARY;
+            $data['type'] = WarehouseType::TEMPORARY;
         }
 
         $warehouse = Warehouse::create($data);
@@ -43,6 +44,7 @@ class WarehouseService
     public function updateWarehouse(Warehouse $warehouse, array $data): Warehouse
     {
         $warehouse->update($data);
+
         return $warehouse;
     }
 
@@ -80,7 +82,7 @@ class WarehouseService
             return $carry - (float) $discount->amount;
         }, 0.00);
 
-        // Prepare products data with amount_before and price from current state
+        // Prepare products data with amount_before and price from the current state
         $preparedProducts = [];
         foreach ($dto->products as $productData) {
             $priceLevel = PriceLevel::findOrFail($productData['price_level_id']);

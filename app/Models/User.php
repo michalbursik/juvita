@@ -4,7 +4,6 @@ namespace App\Models;
 
 use App\Transformers\UserTransformer;
 use Flugg\Responder\Contracts\Transformable;
-use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -33,6 +32,7 @@ use Laravel\Sanctum\HasApiTokens;
  * @property-read \App\Models\Warehouse $warehouse
  * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\Movement[] $movements
  * @property-read int|null $warehouse_movements_count
+ *
  * @method static \Database\Factories\UserFactory factory(...$parameters)
  * @method static \Illuminate\Database\Eloquent\Builder|User newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|User newQuery()
@@ -47,16 +47,19 @@ use Laravel\Sanctum\HasApiTokens;
  * @method static \Illuminate\Database\Eloquent\Builder|User whereRole($value)
  * @method static \Illuminate\Database\Eloquent\Builder|User whereUpdatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|User whereWarehouseId($value)
+ *
  * @mixin \Eloquent
+ *
  * @property-read int|null $movements_count
  * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\Discount[] $discounts
  * @property-read int|null $discounts_count
  */
 class User extends Authenticatable implements Transformable
 {
-    use HasApiTokens, HasFactory, Notifiable, HasUuids;
+    use HasApiTokens, HasFactory, HasUuids, Notifiable;
 
     const ROLE_ADMIN = 'admin';
+
     const ROLE_EMPLOYEE = 'employee';
 
     /**

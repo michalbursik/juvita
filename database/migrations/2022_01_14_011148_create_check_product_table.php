@@ -18,7 +18,7 @@ class CreateCheckProductTable extends Migration
 
             $table->float('amount_before', 8, 1);
             $table->float('amount_after', 8, 1);
-            $table->float('price', 8 , 1)->nullable();
+            $table->float('price', 8, 1)->nullable();
 
             $table->foreignUuid('check_id')->constrained('checks');
             $table->foreignUuid('product_id')->constrained('products');

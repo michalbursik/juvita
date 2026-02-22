@@ -22,6 +22,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
  * @property-read int|null $products_count
  * @property-read \App\Models\User $user
  * @property-read \App\Models\Warehouse $warehouse
+ *
  * @method static \Illuminate\Database\Eloquent\Builder|Check newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|Check newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|Check query()
@@ -30,8 +31,11 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
  * @method static \Illuminate\Database\Eloquent\Builder|Check whereUpdatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Check whereUserId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Check whereWarehouseId($value)
+ *
  * @mixin \Eloquent
+ *
  * @property string $discount
+ *
  * @method static \Illuminate\Database\Eloquent\Builder|Check whereDiscount($value)
  */
 class Check extends Model implements Transformable

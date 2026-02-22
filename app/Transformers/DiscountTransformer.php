@@ -26,9 +26,6 @@ class DiscountTransformer extends Transformer
 
     /**
      * Transform the model.
-     *
-     * @param Discount $discount
-     * @return array
      */
     public function transform(Discount $discount): array
     {

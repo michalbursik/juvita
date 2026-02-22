@@ -28,6 +28,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  * @property-read int|null $warehouse_movements_count
  * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\Warehouse[] $warehouses
  * @property-read int|null $warehouses_count
+ *
  * @method static \Database\Factories\ProductFactory factory(...$parameters)
  * @method static \Illuminate\Database\Eloquent\Builder|Product newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|Product newQuery()
@@ -41,7 +42,9 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  * @method static \Illuminate\Database\Eloquent\Builder|Product whereOrigin($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Product whereUnit($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Product whereUpdatedAt($value)
+ *
  * @mixin \Eloquent
+ *
  * @property-read int|null $movements_count
  */
 class Product extends Model implements Transformable
@@ -51,6 +54,7 @@ class Product extends Model implements Transformable
     protected $fillable = ['name', 'origin', 'active', 'order', 'unit', 'image'];
 
     const DEFAULT_UNIT = 'kg';
+
     const AVAILABLE_UNITS = ['kg', 'ks'];
 
     public function warehouses(): BelongsToMany

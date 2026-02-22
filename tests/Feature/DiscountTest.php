@@ -1,8 +1,8 @@
 <?php
 
+use App\Models\Discount;
 use App\Models\User;
 use App\Models\Warehouse;
-use App\Models\Discount;
 use Database\Seeders\TestConstants;
 
 beforeEach(function () {
@@ -77,6 +77,6 @@ test('can show discount', function () {
 
     $response = $this->actingAs($this->user)->getJson("/api/discounts/{$discount->id}");
 
-    $response->assertStatus(200)
-        ->assertJsonPath('data.amount', 100);
+    $response->assertStatus(200);
+    $this->assertEquals(100, $response->json('data.amount'));
 });

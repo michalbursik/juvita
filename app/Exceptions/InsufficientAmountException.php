@@ -8,9 +8,9 @@ use Throwable;
 class InsufficientAmountException extends Exception
 {
     public function __construct(
-        $message = "",
+        $message = '',
         $code = 0,
-        Throwable $previous = null)
+        ?Throwable $previous = null)
     {
         $newMessage = 'Množství se kterým se snažíte manipulovat není skladem.';
 

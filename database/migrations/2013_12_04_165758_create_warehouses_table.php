@@ -1,6 +1,6 @@
 <?php
 
-use App\Models\Warehouse;
+use App\Enums\WarehouseType;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -17,7 +17,7 @@ class CreateWarehousesTable extends Migration
         Schema::create('warehouses', function (Blueprint $table) {
             $table->uuid('id')->primary();
             $table->string('name');
-            $table->string('type')->default(Warehouse::TYPE_MAIN);
+            $table->string('type')->default(WarehouseType::MAIN->value);
             $table->softDeletes();
             $table->timestamps();
         });

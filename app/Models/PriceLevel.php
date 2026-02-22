@@ -24,6 +24,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property-read \App\Models\Product $product
+ *
  * @method static \Database\Factories\PriceLevelFactory factory(...$parameters)
  * @method static \Illuminate\Database\Eloquent\Builder|PriceLevel newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|PriceLevel newQuery()
@@ -38,8 +39,11 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @method static \Illuminate\Database\Eloquent\Builder|PriceLevel whereValidFrom($value)
  * @method static \Illuminate\Database\Eloquent\Builder|PriceLevel whereValidTo($value)
  * @method static \Illuminate\Database\Eloquent\Builder|PriceLevel whereWarehouseId($value)
+ *
  * @mixin \Eloquent
+ *
  * @property \Illuminate\Support\Carbon|null $deleted_at
+ *
  * @method static \Illuminate\Database\Query\Builder|PriceLevel onlyTrashed()
  * @method static \Illuminate\Database\Eloquent\Builder|PriceLevel whereDeletedAt($value)
  * @method static \Illuminate\Database\Query\Builder|PriceLevel withTrashed()
@@ -47,12 +51,14 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  */
 class PriceLevel extends Model implements Transformable
 {
-    use HasFactory, SoftDeletes, HasUuids;
+    use HasFactory, HasUuids, SoftDeletes;
 
     // Warehouse receipt product with price.
     const STATUS_ACTIVE = 'active';
+
     // All amount of product was issued away from warehouse.
     const STATUS_DISABLED = 'disabled';
+
     // When check issues all amount of product from any warehouse.
     const STATUS_REMOVED = 'removed';
 

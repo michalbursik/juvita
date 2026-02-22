@@ -1,6 +1,5 @@
 <?php
 
-use App\Models\Warehouse;
 use App\Models\Movement;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;

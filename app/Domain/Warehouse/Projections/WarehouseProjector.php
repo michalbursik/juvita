@@ -210,6 +210,7 @@ class WarehouseProjector extends Projector
         if ($validFrom->isSunday()) {
             return $validFrom->nextWeekday()->endOfWeek();
         }
+
         return $validFrom->endOfWeek();
     }
 }

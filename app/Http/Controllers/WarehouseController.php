@@ -2,18 +2,13 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\StoreWarehouseRequest;
-use App\Http\Requests\UpdateWarehouseRequest;
-use App\Models\Discount;
-use App\Models\PriceLevel;
+use App\Enums\WarehouseType;
 use App\Models\Product;
 use App\Models\User;
 use App\Models\Warehouse;
 use App\Services\WarehouseService;
-use App\Transformers\WarehouseTransformer;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 
 class WarehouseController extends Controller
 {
@@ -34,7 +29,7 @@ class WarehouseController extends Controller
     public function store(Request $request): JsonResponse
     {
         $data = $request->validate([
-            'name' => 'required|string'
+            'name' => 'required|string',
         ]);
 
         $warehouse = $this->service->createWarehouse($data);
@@ -45,7 +40,7 @@ class WarehouseController extends Controller
     public function update(Warehouse $warehouse, Request $request): JsonResponse
     {
         $data = $request->validate([
-            'name' => 'required|string'
+            'name' => 'required|string',
         ]);
 
         $warehouse = $this->service->updateWarehouse($warehouse, $data);
@@ -65,7 +60,7 @@ class WarehouseController extends Controller
         $user = auth()->user();
         if ($user->role === User::ROLE_EMPLOYEE && $user->warehouse_id !== $warehouse->id) {
             return redirect()->route('warehouses.show', [
-                'warehouse' => $user->warehouse_id
+                'warehouse' => $user->warehouse_id,
             ]);
         }
 
@@ -73,12 +68,12 @@ class WarehouseController extends Controller
             ->with([
                 'movements' => function ($query) {
                     $query->where('movements.created_at', '>=', now()->subDays(7))
-                    ->orderByDesc('created_at');
+                        ->orderByDesc('created_at');
                 },
                 'products.priceLevels',
                 'products' => function ($query) {
                     $query->where('products.active', true)
-                            ->orderBy('order');
+                        ->orderBy('order');
                 },
             ])
             ->respond();
@@ -94,18 +89,30 @@ class WarehouseController extends Controller
             ->with([
                 'priceLevels' => function ($query) use ($warehouse) {
                     $query->where('warehouse_id', $warehouse->id);
-                }
+                },
             ])
             ->respond();
     }
 
-    /**
-     * @return JsonResponse
-     */
+    public function receipt(Warehouse $warehouse, Product $product): JsonResponse
+    {
+        return $this->showProduct($warehouse, $product);
+    }
+
+    public function issue(Warehouse $warehouse, Product $product): JsonResponse
+    {
+        return $this->showProduct($warehouse, $product);
+    }
+
+    public function transmission(Warehouse $warehouse, Product $product): JsonResponse
+    {
+        return $this->showProduct($warehouse, $product);
+    }
+
     public function trash(): JsonResponse
     {
         $warehouse = Warehouse::query()
-            ->where('type', Warehouse::TYPE_TRASH)
+            ->where('type', WarehouseType::TRASH)
             ->first();
 
         return responder()->success($warehouse)

@@ -9,8 +9,6 @@ class TransmissionMovementRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
-     *
-     * @return bool
      */
     public function authorize(): bool
     {
@@ -19,8 +17,6 @@ class TransmissionMovementRequest extends FormRequest
 
     /**
      * Get the validation rules that apply to the request.
-     *
-     * @return array
      */
     public function rules(): array
     {
@@ -38,7 +34,7 @@ class TransmissionMovementRequest extends FormRequest
     protected function prepareForValidation()
     {
         $this->merge([
-            'type' => Movement::TYPE_TRANSMISSION
+            'type' => Movement::TYPE_TRANSMISSION,
         ]);
     }
 
@@ -50,7 +46,7 @@ class TransmissionMovementRequest extends FormRequest
             'user_id' => 'uživatel',
             'product_id' => 'produkt',
             'price_level_id' => 'cena',
-            'amount' => 'množství'
+            'amount' => 'množství',
         ];
     }
 }

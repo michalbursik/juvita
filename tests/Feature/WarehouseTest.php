@@ -1,8 +1,8 @@
 <?php
 
-use App\Models\Warehouse;
+use App\Enums\WarehouseType;
 use App\Models\User;
-use App\Models\Product;
+use App\Models\Warehouse;
 use Database\Seeders\TestConstants;
 
 beforeEach(function () {
@@ -19,7 +19,7 @@ test('can list warehouses', function () {
 test('can create warehouse', function () {
     $response = $this->actingAs($this->user)->postJson('/api/warehouses', [
         'name' => 'New Warehouse',
-        'type' => Warehouse::TYPE_MAIN,
+        'type' => WarehouseType::MAIN->value,
     ]);
 
     $response->assertStatus(200);
@@ -31,7 +31,7 @@ test('can update warehouse', function () {
 
     $response = $this->actingAs($this->user)->putJson("/api/warehouses/{$warehouse->id}", [
         'name' => 'Updated Name',
-        'type' => Warehouse::TYPE_MAIN,
+        'type' => WarehouseType::MAIN->value,
     ]);
 
     $response->assertStatus(200);
@@ -64,7 +64,7 @@ test('can get trash warehouse', function () {
 });
 
 test('can show warehouse product', function () {
-    $response = $this->actingAs($this->user)->getJson("/api/warehouses/" . TestConstants::WAREHOUSE_MAIN_ID . "/products/" . TestConstants::PRODUCT_APPLE_ID);
+    $response = $this->actingAs($this->user)->getJson('/api/warehouses/'.TestConstants::WAREHOUSE_MAIN_ID.'/products/'.TestConstants::PRODUCT_APPLE_ID);
 
     $response->assertStatus(200)
         ->assertJsonPath('data.id', TestConstants::PRODUCT_APPLE_ID);

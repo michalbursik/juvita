@@ -6,15 +6,12 @@ use App\DTOs\ProductDTO;
 use App\Http\Requests\StoreProductRequest;
 use App\Http\Requests\UpdateProductRequest;
 use App\Models\Product;
-use App\Models\Warehouse;
 use App\Services\ProductService;
-use Flugg\Responder\Serializers\NoopSerializer;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
 class ProductController extends Controller
 {
-
     private ProductService $service;
 
     public function __construct(ProductService $service)
@@ -44,7 +41,7 @@ class ProductController extends Controller
         return responder()->success($product)
             ->with([
                 'movements',
-                'priceLevels'
+                'priceLevels',
             ])
             ->respond();
     }

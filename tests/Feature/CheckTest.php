@@ -1,10 +1,10 @@
 <?php
 
+use App\Models\Check;
+use App\Models\PriceLevel;
 use App\Models\Product;
 use App\Models\User;
 use App\Models\Warehouse;
-use App\Models\PriceLevel;
-use App\Models\Check;
 use Database\Seeders\TestConstants;
 
 beforeEach(function () {
@@ -34,8 +34,8 @@ test('can perform inventory check', function () {
                 'price_level_id' => $this->priceLevel->id,
                 'warehouse_id' => $this->warehouse->id,
                 'amount' => 7,
-            ]
-        ]
+            ],
+        ],
     ]);
 
     $response->assertStatus(200);
@@ -57,7 +57,7 @@ test('can perform inventory check', function () {
 });
 
 test('can list checks', function () {
-    Check::create(['warehouse_id' => $this->warehouse->id, 'user_id' => $this->user->id]);
+    Check::create(['warehouse_id' => $this->warehouse->id, 'user_id' => $this->user->id, 'discount' => 0]);
 
     $response = $this->actingAs($this->user)->getJson('/api/warehouses/checks');
 
@@ -73,7 +73,7 @@ test('can fetch all products for check', function () {
 });
 
 test('can show check', function () {
-    $check = Check::create(['warehouse_id' => $this->warehouse->id, 'user_id' => $this->user->id]);
+    $check = Check::create(['warehouse_id' => $this->warehouse->id, 'user_id' => $this->user->id, 'discount' => 0]);
 
     $response = $this->actingAs($this->user)->getJson("/api/warehouses/checks/{$check->id}");
 

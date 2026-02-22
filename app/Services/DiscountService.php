@@ -22,6 +22,7 @@ class DiscountService
     public function updateDiscount(Discount $discount, array $data): Discount
     {
         $discount->update($data);
+
         return $discount;
     }
 

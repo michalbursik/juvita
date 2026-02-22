@@ -2,6 +2,7 @@
 
 namespace Database\Factories;
 
+use App\Enums\WarehouseType;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 class WarehouseFactory extends Factory
@@ -15,7 +16,7 @@ class WarehouseFactory extends Factory
     {
         return [
             'name' => $this->faker->company(),
-            'type' => \App\Models\Warehouse::TYPE_MAIN,
+            'type' => WarehouseType::MAIN,
         ];
     }
 }

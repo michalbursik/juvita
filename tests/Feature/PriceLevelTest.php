@@ -1,8 +1,8 @@
 <?php
 
-use App\Models\User;
 use App\Models\PriceLevel;
 use App\Models\Product;
+use App\Models\User;
 use App\Models\Warehouse;
 use Database\Seeders\TestConstants;
 

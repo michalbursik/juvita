@@ -2,7 +2,6 @@
 
 namespace App\Transformers;
 
-use App\Models\PriceLevel;
 use App\Models\Warehouse;
 use Flugg\Responder\Transformers\Transformer;
 
@@ -28,9 +27,6 @@ class WarehouseTransformer extends Transformer
 
     /**
      * Transform the model.
-     *
-     * @param Warehouse $warehouse
-     * @return array
      */
     public function transform(Warehouse $warehouse): array
     {

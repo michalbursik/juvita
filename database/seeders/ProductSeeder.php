@@ -67,7 +67,6 @@ class ProductSeeder extends Seeder
             ['name' => 'Švestky', 'unit' => 'ks', 'image' => '/images/plums.jpg', 'order' => 490],
             ['name' => 'Bloomy', 'unit' => 'ks', 'image' => '/images/blumy.jpeg', 'order' => 500],
 
-
         ];
 
         foreach ($products as $productData) {

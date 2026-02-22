@@ -5,7 +5,6 @@ namespace App\Exceptions;
 use Illuminate\Auth\AuthenticationException;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
-use Illuminate\Support\Facades\Log;
 use Illuminate\Validation\ValidationException;
 use Throwable;
 
@@ -65,7 +64,6 @@ class Handler extends ExceptionHandler
         if ($e instanceof AuthenticationException) {
             $code = $status = 403;
         }
-
 
         if ($request->wantsJson() || $request->expectsJson()) {
             return responder()->error($code, $message)->respond($status)->setStatusCode($status);

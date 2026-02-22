@@ -13,7 +13,7 @@ class PriceLevelTransformer extends Transformer
      * @var string[]
      */
     protected $relations = [
-        'product' => ProductTransformer::class
+        'product' => ProductTransformer::class,
     ];
 
     /**
@@ -25,9 +25,6 @@ class PriceLevelTransformer extends Transformer
 
     /**
      * Transform the model.
-     *
-     * @param  PriceLevel $priceLevel
-     * @return array
      */
     public function transform(PriceLevel $priceLevel): array
     {
