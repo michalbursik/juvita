@@ -11,19 +11,34 @@ We have implemented:
 
 Next steps:
 - Laravel Cloud deployment
-- Livewire integration (replace Nuxt)
 - Laravel responder/transporter review (keep or move to native?)
-- Hook up a makefile for typical tasks
-- Authentication (Inertia/Livewire session-based vs Sanctum)
-- Laravel Sail / Docker setup for local dev
-- Final migration of production data to the event store
+- Final migration of production data to the event store 
 
 Architecture:
 - app/Domain: Core logic, Events, Aggregates, Projectors.
 - app/Services: Orchestration, Business flows.
 - app/DTOs: Typed data contracts.
 - app/Http: Thin Controllers.
+- app/Livewire: UI components and logic (Migrated from Nuxt).
+- resources/views/livewire: Frontend templates (Tailwind CSS).
 - database/migrations: Re-indexed to UUIDs and Decimals.
+
+Implemented Improvements:
+- Migrated frontend from Nuxt.js to Livewire + Tailwind CSS for better DX and deployment.
+- Replaced separate API calls with direct Service/DTO usage in Livewire components.
+- Standardized UI colors for movement types (Receipt: Emerald, Issue: Rose, Transmission: Amber, Check: Blue).
+- Optimized "Overviews" and stock level tracking (pivot-based) to avoid expensive re-computations.
+- Implemented responsive Tailwind-based Numeric Pad with a shared `HasNumericPad` trait.
+- Added database indexes to `movements` and `price_levels` tables to optimize frequent filtering and stock lookups.
+- Restored API login support for tests while maintaining session-based auth for the web UI.
+- Fixed decimal precision for all quantity/price columns (Decimal 10,1).
+- Improved Product Image upload UI by making the entire dashed area clickable and improving hover states.
+- Corrected storage link for product images to ensure they are served from the correct application port (8080).
+- Refactored all Livewire views to leverage reusable Blade components (`x-button`, `x-input`, `x-card`, `x-table`, etc.) for better maintainability and style consistency.
+- Extracted and migrated legacy product images and static assets from the defunct Nuxt.js directory to `public/images/`.
+
+Improvements: (What we want to improve, refactor, optimize, etc. - FUTURE)
+- 
 
 [//]: # (TODO Project guidelines)
 [//]: # (If you need more context, check "~/.ai/guidlines/*.md")
