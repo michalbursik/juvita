@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Users;
 
+use App\Enums\UserRole;
 use App\Models\User;
 use App\Models\Warehouse;
 use Illuminate\Support\Facades\Hash;
@@ -16,7 +17,7 @@ class Create extends Component
 
     public $password;
 
-    public $role = 'employee';
+    public $role = UserRole::EMPLOYEE->value;
 
     public $warehouseId;
 
@@ -24,13 +25,13 @@ class Create extends Component
         'name' => 'required|string|max:255',
         'email' => 'required|string|email|max:255|unique:users',
         'password' => 'required|string|min:8',
-        'role' => 'required|in:admin,employee',
+        'role' => 'required',
         'warehouseId' => 'required|exists:warehouses,id',
     ];
 
     public function mount()
     {
-        if (auth()->user()->role !== 'admin') {
+        if (auth()->user()->role->isEmployee()) {
             abort(403);
         }
 

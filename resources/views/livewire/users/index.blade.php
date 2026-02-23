@@ -21,7 +21,7 @@
                     <td class="px-6 py-4 font-bold text-gray-900">{{ $user->name }}</td>
                     <td class="px-6 py-4 text-gray-600">{{ $user->email }}</td>
                     <td class="px-6 py-4">
-                        @if($user->role === 'admin')
+                        @if($user->role->isAdmin())
                             <span class="inline-flex items-center px-2.5 py-0.5 rounded text-xs font-medium bg-purple-100 text-purple-800">Admin</span>
                         @else
                             <span class="inline-flex items-center px-2.5 py-0.5 rounded text-xs font-medium bg-blue-100 text-blue-800">Zaměstnanec</span>

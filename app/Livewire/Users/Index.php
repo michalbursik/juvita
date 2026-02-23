@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Users;
 
+use App\Enums\UserRole;
 use App\Models\User;
 use Livewire\Attributes\Layout;
 use Livewire\Component;
@@ -16,7 +17,7 @@ class Index extends Component
     #[Layout('layouts.app')]
     public function render()
     {
-        if (auth()->user()->role !== 'admin') {
+        if (auth()->user()->role->isEmployee()) {
             abort(403);
         }
 
@@ -30,7 +31,16 @@ class Index extends Component
         if ($id === auth()->id()) {
             return;
         }
+
         $user = User::findOrFail($id);
+
+        if ($user->role->isAdmin()) {
+            $adminsCount = User::where('role', UserRole::ADMIN)->count();
+            if ($adminsCount <= 1) {
+                return;
+            }
+        }
+
         $user->delete();
     }
 }

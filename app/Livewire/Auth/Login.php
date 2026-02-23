@@ -32,7 +32,7 @@ class Login extends Component
         if (Auth::attempt(['email' => $this->email, 'password' => $this->password])) {
             session()->regenerate();
 
-            if (Auth::user()->role === 'admin') {
+            if (Auth::user()->role->isAdmin()) {
                 return redirect()->intended('/warehouses');
             }
 

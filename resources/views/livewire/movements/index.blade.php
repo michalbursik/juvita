@@ -14,7 +14,7 @@
                     </x-select>
                 </div>
 
-                @if(auth()->user()->role === 'admin')
+                @if(auth()->user()->role->isAdmin())
                     <div>
                         <x-label value="Typ" />
                         <x-select wire:model.live="type" class="w-full">
@@ -48,7 +48,7 @@
 
                 <div>
                     <x-label value="Příjmový sklad" />
-                    <x-select wire:model.live="receiptWarehouseId" class="w-full disabled:bg-gray-100" :disabled="auth()->user()->role === 'employee'">
+                    <x-select wire:model.live="receiptWarehouseId" class="w-full disabled:bg-gray-100" @if(auth()->user()->role->isEmployee()) disabled @endif>
                         <option value="">Všechny příjmové sklady</option>
                         @foreach($warehouses as $w)
                             <option value="{{ $w->id }}">{{ $w->name }}</option>

@@ -16,7 +16,7 @@ class Index extends Component
     #[Layout('layouts.app')]
     public function render()
     {
-        if (auth()->user()->role !== 'admin') {
+        if (auth()->user()->role->isEmployee()) {
             abort(403);
         }
 

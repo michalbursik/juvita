@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Enums\UserRole;
 use App\Transformers\UserTransformer;
 use Flugg\Responder\Contracts\Transformable;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
@@ -58,10 +59,6 @@ class User extends Authenticatable implements Transformable
 {
     use HasApiTokens, HasFactory, HasUuids, Notifiable;
 
-    const ROLE_ADMIN = 'admin';
-
-    const ROLE_EMPLOYEE = 'employee';
-
     /**
      * The attributes that are mass assignable.
      *
@@ -86,9 +83,15 @@ class User extends Authenticatable implements Transformable
      *
      * @var array
      */
-    protected $casts = [
-        'email_verified_at' => 'datetime',
-    ];
+    protected function casts(): array
+    {
+        return [
+            'email_verified_at' => 'datetime',
+            'created_at' => 'datetime',
+            'updated_at' => 'datetime',
+            'role' => UserRole::class,
+        ];
+    }
 
     public function warehouse(): BelongsTo
     {

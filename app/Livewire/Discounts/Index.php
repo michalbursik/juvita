@@ -13,7 +13,7 @@ class Index extends Component
     {
         $query = Discount::with(['warehouse', 'user'])->orderByDesc('created_at');
 
-        if (auth()->user()->role === 'employee') {
+        if (auth()->user()->role->isEmployee()) {
             $query->where('warehouse_id', auth()->user()->warehouse_id);
         }
 

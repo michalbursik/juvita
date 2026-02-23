@@ -13,7 +13,7 @@ class Index extends Component
 
     public function mount(WarehouseService $warehouseService)
     {
-        if (auth()->user()->role !== 'admin') {
+        if (auth()->user()->role->isEmployee()) {
             return redirect()->route('warehouses.show', auth()->user()->warehouse_id);
         }
 
@@ -28,6 +28,10 @@ class Index extends Component
 
     public function deleteWarehouse($id, WarehouseService $warehouseService)
     {
+        if (auth()->user()->role->isEmployee()) {
+            abort(403);
+        }
+
         $warehouse = Warehouse::findOrFail($id);
         $warehouseService->deleteWarehouse($warehouse);
         $this->warehouses = $warehouseService->listWarehouses(includeInactive: true);

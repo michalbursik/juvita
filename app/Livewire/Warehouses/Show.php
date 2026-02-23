@@ -24,7 +24,7 @@ class Show extends Component
     public function mount(Warehouse $warehouse, WarehouseService $warehouseService)
     {
         $user = auth()->user();
-        if ($user->role === 'employee' && $user->warehouse_id !== $warehouse->id) {
+        if ($user->role->isEmployee() && $user->warehouse_id !== $warehouse->id) {
             return redirect()->route('warehouses.show', $user->warehouse_id);
         }
 

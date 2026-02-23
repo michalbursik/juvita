@@ -19,7 +19,7 @@ class Index extends Component
 
     public function mount()
     {
-        if (auth()->user()->role !== 'admin') {
+        if (auth()->user()->role->isEmployee()) {
             abort(403);
         }
 

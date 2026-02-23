@@ -18,7 +18,7 @@ class AdminMiddleware
         /** @var User $user */
         $user = $request->user();
 
-        if ($user->role === User::ROLE_EMPLOYEE) {
+        if ($user->role->isEmployee()) {
             return redirect()->route('warehouses.show', [
                 'warehouse' => $user->warehouse_id,
             ]);

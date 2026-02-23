@@ -24,13 +24,13 @@ class Create extends Component
     #[Layout('layouts.app')]
     public function render()
     {
-        if (auth()->user()->role !== 'admin') {
+        if (auth()->user()->role->isEmployee()) {
             abort(403);
         }
 
         return view('livewire.warehouses.create', [
             'types' => collect(WarehouseType::cases())
-                ->filter(fn ($type) => !$type->isTrash())
+                ->filter(fn ($type) => ! $type->isTrash())
                 ->mapWithKeys(fn ($type) => [$type->value => $type->label()])
                 ->toArray(),
         ]);

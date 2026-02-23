@@ -26,7 +26,7 @@ class Edit extends Component
 
     public function mount(Warehouse $warehouse)
     {
-        if (auth()->user()->role !== 'admin') {
+        if (auth()->user()->role->isEmployee()) {
             abort(403);
         }
 

@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Users;
 
+use App\Enums\UserRole;
 use App\Models\User;
 use App\Models\Warehouse;
 use Illuminate\Support\Facades\Hash;
@@ -28,21 +29,21 @@ class Edit extends Component
             'name' => 'required|string|max:255',
             'email' => 'required|string|email|max:255|unique:users,email,'.$this->user->id,
             'password' => 'nullable|string|min:8',
-            'role' => 'required|in:admin,employee',
+            'role' => 'required',
             'warehouseId' => 'required|exists:warehouses,id',
         ];
     }
 
     public function mount(User $user)
     {
-        if (auth()->user()->role !== 'admin') {
+        if (auth()->user()->role->isEmployee()) {
             abort(403);
         }
 
         $this->user = $user;
         $this->name = $user->name;
         $this->email = $user->email;
-        $this->role = $user->role;
+        $this->role = $user->role->value;
         $this->warehouseId = $user->warehouse_id;
     }
 
@@ -57,6 +58,15 @@ class Edit extends Component
     public function submit()
     {
         $this->validate();
+
+        if ($this->user->role->isAdmin() && $this->role !== UserRole::ADMIN->value) {
+            $adminsCount = User::where('role', UserRole::ADMIN)->count();
+            if ($adminsCount <= 1) {
+                $this->addError('role', 'Nemůžete změnit roli posledního administrátora.');
+
+                return;
+            }
+        }
 
         $data = [
             'name' => $this->name,

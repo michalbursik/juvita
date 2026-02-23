@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Enums\UserRole;
 use App\Enums\WarehouseType;
 use App\Models\Product;
 use App\Models\User;
@@ -32,7 +33,7 @@ class TestDataSeeder extends Seeder
             'name' => 'Admin User',
             'email' => 'admin@example.com',
             'password' => Hash::make('password'),
-            'role' => User::ROLE_ADMIN,
+            'role' => UserRole::ADMIN->value,
             'warehouse_id' => TestConstants::WAREHOUSE_MAIN_ID,
         ]);
 
@@ -41,7 +42,7 @@ class TestDataSeeder extends Seeder
             'name' => 'Employee User',
             'email' => 'employee@example.com',
             'password' => Hash::make('password'),
-            'role' => User::ROLE_EMPLOYEE,
+            'role' => UserRole::EMPLOYEE->value,
             'warehouse_id' => TestConstants::WAREHOUSE_MAIN_ID,
         ]);
 

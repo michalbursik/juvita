@@ -76,7 +76,7 @@
                         <!-- Navigation Links -->
                         <div class="hidden space-x-8 sm:-my-px sm:ml-10 sm:flex">
                             @auth
-                                @if(auth()->user()->role === 'admin')
+                                @if(auth()->user()->role->isAdmin())
                                     <x-nav-link href="{{ route('overviews.index') }}" :active="request()->routeIs('overviews.*')">
                                         Přehledy
                                     </x-nav-link>
@@ -94,6 +94,9 @@
                                     </x-nav-link>
                                     <x-nav-link href="{{ route('products.index') }}" :active="request()->routeIs('products.*')">
                                         Produkty
+                                    </x-nav-link>
+                                    <x-nav-link href="{{ route('users.index') }}" :active="request()->routeIs('users.*')">
+                                        Uživatelé
                                     </x-nav-link>
                                     <x-nav-link href="{{ route('warehouses.trash') }}" :active="request()->routeIs('warehouses.trash')">
                                         Kompost/Odpad

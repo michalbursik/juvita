@@ -44,7 +44,7 @@ Route::post('logout', function () {
 // App Routes
 Route::middleware('auth')->group(function () {
     Route::get('/', function () {
-        if (auth()->user()->role === 'admin') {
+        if (auth()->user()->role->isAdmin()) {
             return redirect()->route('warehouses.index');
         }
 
