@@ -99,9 +99,12 @@ class WarehouseProjector extends Projector
     {
         DB::transaction(function () use ($event) {
             $priceLevel = PriceLevel::findOrFail($event->priceLevelId);
+            $toWarehouse = Warehouse::findOrFail($event->toWarehouseId);
+
+            $type = $toWarehouse->type->isTrash() ? Movement::TYPE_ISSUE : Movement::TYPE_TRANSMISSION;
 
             Movement::create([
-                'type' => Movement::TYPE_TRANSMISSION,
+                'type' => $type,
                 'amount' => $event->amount,
                 'price' => $priceLevel->price,
                 'product_id' => $event->productId,
@@ -124,7 +127,6 @@ class WarehouseProjector extends Projector
             }
 
             // Receipt to destination
-            $toWarehouse = Warehouse::find($event->toWarehouseId);
             $productTo = $toWarehouse->products()->find($event->productId);
             $productTo->product_warehouse->amount = round((float) $productTo->product_warehouse->amount + (float) $event->amount, 1);
             $productTo->product_warehouse->price = $priceLevelPrice;
