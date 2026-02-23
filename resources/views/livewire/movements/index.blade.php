@@ -50,7 +50,7 @@
 
                 <div>
                     <x-label value="Příjmový sklad" />
-                    <x-select wire:model.live="receiptWarehouseId" class="w-full disabled:bg-gray-100" @if(auth()->user()->role->isEmployee()) disabled @endif>
+                    <x-select wire:model.live="receiptWarehouseId" class="w-full disabled:bg-gray-100" :disabled="auth()->user()->role->isEmployee()">
                         <option value="">Všechny příjmové sklady</option>
                         @foreach($warehouses as $w)
                             <option value="{{ $w->id }}">{{ $w->name }}</option>
