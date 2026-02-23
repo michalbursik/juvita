@@ -7,14 +7,13 @@ use App\Enums\WarehouseType;
 use App\Http\Requests\ReceiptMovementRequest;
 use App\Http\Requests\TransmissionMovementRequest;
 use App\Http\Requests\TrashTransmissionMovementRequest;
+use App\Http\Resources\MovementResource;
 use App\Models\Movement;
 use App\Models\Product;
-use App\Models\User;
 use App\Models\Warehouse;
 use App\Services\WarehouseService;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Collection;
-use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
@@ -33,7 +32,7 @@ class MovementController extends Controller
         $this->warehouseService = $warehouseService;
     }
 
-    public function index(Request $request): JsonResponse
+    public function index(Request $request)
     {
         $query = Movement::query();
 
@@ -51,7 +50,7 @@ class MovementController extends Controller
             $trashWarehouse = Warehouse::query()->where('type', WarehouseType::TRASH)->first();
             $receipt_warehouse_id = $trashWarehouse?->id;
         }
-        if (Auth::user()->role === User::ROLE_EMPLOYEE) {
+        if (Auth::user()->role->isEmployee()) {
             $receipt_warehouse_id = Auth::user()->warehouse_id;
         }
         $query->when($receipt_warehouse_id, function ($query) use ($receipt_warehouse_id) {
@@ -97,10 +96,10 @@ class MovementController extends Controller
             ->orderByDesc('created_at')
             ->paginate($request->input('perPage'), ['*'], 'currentPage');
 
-        return responder()->success($movements)->respond();
+        return MovementResource::collection($movements);
     }
 
-    public function fetchAllAmounts(Request $request): JsonResponse
+    public function fetchAllAmounts(Request $request)
     {
         $warehouse_id = $request->input('warehouse_id');
 
@@ -133,10 +132,10 @@ class MovementController extends Controller
 
         $movementAmounts = $this->calculateMovements($movements, $warehouse->id);
 
-        return responder()->success($movementAmounts)->respond();
+        return response()->json(['data' => $movementAmounts]);
     }
 
-    public function trash(TrashTransmissionMovementRequest $request): JsonResponse
+    public function trash(TrashTransmissionMovementRequest $request)
     {
         try {
             $data = $request->validated();
@@ -160,7 +159,7 @@ class MovementController extends Controller
                 ->latest()
                 ->first();
 
-            return responder()->success($movement)->respond();
+            return new MovementResource($movement);
         } catch (\Exception $e) {
             Log::error('Exception', [
                 'code' => $e->getCode(),
@@ -168,11 +167,11 @@ class MovementController extends Controller
                 'trace' => $e->getTraceAsString(),
             ]);
 
-            return responder()->error(500, $e->getMessage())->respond();
+            return response()->json(['message' => $e->getMessage()], 500);
         }
     }
 
-    public function receipt(ReceiptMovementRequest $request): JsonResponse
+    public function receipt(ReceiptMovementRequest $request)
     {
         $dto = MovementDTO::fromRequest($request->validated());
 
@@ -185,10 +184,10 @@ class MovementController extends Controller
             ->latest()
             ->first();
 
-        return responder()->success($movement)->respond();
+        return new MovementResource($movement);
     }
 
-    public function transmission(TransmissionMovementRequest $request): JsonResponse
+    public function transmission(TransmissionMovementRequest $request)
     {
         try {
             $dto = MovementDTO::fromRequest($request->validated());
@@ -203,7 +202,7 @@ class MovementController extends Controller
                 ->latest()
                 ->first();
 
-            return responder()->success($movement)->respond();
+            return new MovementResource($movement);
         } catch (\Exception $e) {
             Log::error('Exception', [
                 'code' => $e->getCode(),
@@ -211,7 +210,7 @@ class MovementController extends Controller
                 'trace' => $e->getTraceAsString(),
             ]);
 
-            return responder()->error(500, $e->getMessage())->respond();
+            return response()->json(['message' => $e->getMessage()], 500);
         }
     }
 

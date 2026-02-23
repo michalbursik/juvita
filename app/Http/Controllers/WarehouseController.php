@@ -27,7 +27,7 @@ class WarehouseController extends Controller
         return WarehouseResource::collection($warehouses);
     }
 
-    public function store(Request $request): WarehouseResource
+    public function store(Request $request)
     {
         $data = $request->validate([
             'name' => 'required|string',
@@ -35,7 +35,7 @@ class WarehouseController extends Controller
 
         $warehouse = $this->service->createWarehouse($data);
 
-        return new WarehouseResource($warehouse);
+        return (new WarehouseResource($warehouse))->response()->setStatusCode(200);
     }
 
     public function update(Warehouse $warehouse, Request $request): WarehouseResource
@@ -115,24 +115,23 @@ class WarehouseController extends Controller
             if ($request->expectsJson() || $request->is('api/*')) {
                 return new WarehouseResource($trashWarehouse);
             }
+
             return redirect()->route('warehouses.show', $trashWarehouse->id);
         }
 
         if (auth()->user()->role->isAdmin()) {
+            if ($request->expectsJson() || $request->is('api/*')) {
+                return response()->json(['data' => null], 200);
+            }
+
             try {
                 $trashWarehouse = $this->service->createWarehouse([
                     'name' => 'Kompost/Odpad',
                     'type' => WarehouseType::TRASH,
                 ]);
 
-                if ($request->expectsJson() || $request->is('api/*')) {
-                    return new WarehouseResource($trashWarehouse);
-                }
                 return redirect()->route('warehouses.show', $trashWarehouse->id);
             } catch (\Exception $e) {
-                if ($request->expectsJson() || $request->is('api/*')) {
-                    return response()->json(['message' => 'Nepodařilo se vytvořit sklad pro odpad.'], 500);
-                }
                 return redirect()->route('warehouses.index')->with('error', 'Nepodařilo se vytvořit sklad pro odpad.');
             }
         }
@@ -140,6 +139,7 @@ class WarehouseController extends Controller
         if ($request->expectsJson() || $request->is('api/*')) {
             return response()->json(['message' => 'Sklad pro odpad nebyl nalezen.'], 404);
         }
+
         return redirect()->route('warehouses.index')->with('error', 'Sklad pro odpad nebyl nalezen.');
     }
 }

@@ -24,7 +24,7 @@ class OverviewController extends Controller
 
         $data = $this->calculateMovements($movements);
 
-        return response()->json($data);
+        return response()->json(['data' => $data]);
     }
 
     private function calculateMovements(Collection $movements): array

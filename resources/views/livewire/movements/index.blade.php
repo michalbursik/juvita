@@ -16,7 +16,7 @@
                     </x-select>
                 </div>
 
-                @if(auth()->user()->isAdmin())
+                @if(auth()->user()->role->isAdmin())
                     <div>
                         <x-label value="Typ" />
                         <x-select wire:model.live="type" class="w-full">

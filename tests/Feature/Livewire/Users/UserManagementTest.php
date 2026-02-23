@@ -68,7 +68,7 @@ test('cannot demote the last admin', function () {
         ->assertHasErrors(['role']);
 
     $this->admin->refresh();
-    expect($this->admin->role)->toBe('admin');
+    expect($this->admin->role->value)->toBe('admin');
 });
 
 test('can demote admin if not the last one', function () {
@@ -83,5 +83,5 @@ test('can demote admin if not the last one', function () {
         ->assertRedirect(route('users.index'));
 
     $secondAdmin->refresh();
-    expect($secondAdmin->role)->toBe('employee');
+    expect($secondAdmin->role->value)->toBe('employee');
 });

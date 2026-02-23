@@ -51,7 +51,7 @@ class ProductController extends Controller
             ProductDTO::fromRequest($request->validated())
         );
 
-        return new ProductResource($product);
+        return (new ProductResource($product))->response()->setStatusCode(200);
     }
 
     public function update(UpdateProductRequest $request, Product $product)

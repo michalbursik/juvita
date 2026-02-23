@@ -38,7 +38,7 @@ namespace App\Models{
  * @property-read \App\Models\CheckProduct|null $product_check
  * @method static \Database\Factories\CheckFactory factory($count = null, $state = [])
  */
-	class Check extends \Eloquent implements \Flugg\Responder\Contracts\Transformable {}
+	class Check extends \Eloquent {}
 }
 
 namespace App\Models{
@@ -94,10 +94,12 @@ namespace App\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|Discount whereWarehouseId($value)
  * @mixin \Eloquent
  * @property string|null $note
+ * @property \App\Enums\DiscountStatus $status
  * @method static \Database\Factories\DiscountFactory factory($count = null, $state = [])
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Discount whereNote($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Discount whereStatus($value)
  */
-	class Discount extends \Eloquent implements \Flugg\Responder\Contracts\Transformable {}
+	class Discount extends \Eloquent {}
 }
 
 namespace App\Models{
@@ -132,9 +134,10 @@ namespace App\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|Movement whereUpdatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Movement whereUserId($value)
  * @mixin \Eloquent
+ * @property-read string $translated_type
  * @method static \Database\Factories\MovementFactory factory($count = null, $state = [])
  */
-	class Movement extends \Eloquent implements \Flugg\Responder\Contracts\Transformable {}
+	class Movement extends \Eloquent {}
 }
 
 namespace App\Models{
@@ -173,7 +176,7 @@ namespace App\Models{
  * @method static \Illuminate\Database\Query\Builder|PriceLevel withTrashed()
  * @method static \Illuminate\Database\Query\Builder|PriceLevel withoutTrashed()
  */
-	class PriceLevel extends \Eloquent implements \Flugg\Responder\Contracts\Transformable {}
+	class PriceLevel extends \Eloquent {}
 }
 
 namespace App\Models{
@@ -211,7 +214,7 @@ namespace App\Models{
  * @mixin \Eloquent
  * @property-read int|null $movements_count
  */
-	class Product extends \Eloquent implements \Flugg\Responder\Contracts\Transformable {}
+	class Product extends \Eloquent {}
 }
 
 namespace App\Models{
@@ -254,7 +257,7 @@ namespace App\Models{
  * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\Discount[] $discounts
  * @property-read int|null $discounts_count
  */
-	class User extends \Eloquent implements \Flugg\Responder\Contracts\Transformable {}
+	class User extends \Eloquent {}
 }
 
 namespace App\Models{
@@ -290,11 +293,13 @@ namespace App\Models{
  * @property-read Collection|\App\Models\Discount[] $discounts
  * @property-read int|null $discounts_count
  * @property \Illuminate\Support\Carbon|null $deleted_at
+ * @property bool $active
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Warehouse onlyTrashed()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Warehouse whereActive($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Warehouse whereDeletedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Warehouse withTrashed(bool $withTrashed = true)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Warehouse withoutTrashed()
  */
-	class Warehouse extends \Eloquent implements \Flugg\Responder\Contracts\Transformable {}
+	class Warehouse extends \Eloquent {}
 }
 

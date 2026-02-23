@@ -3,8 +3,6 @@
 namespace App\Models;
 
 use App\Enums\UserRole;
-use App\Transformers\UserTransformer;
-use Flugg\Responder\Contracts\Transformable;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -55,7 +53,7 @@ use Laravel\Sanctum\HasApiTokens;
  * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\Discount[] $discounts
  * @property-read int|null $discounts_count
  */
-class User extends Authenticatable implements Transformable
+class User extends Authenticatable
 {
     use HasApiTokens, HasFactory, HasUuids, Notifiable;
 
@@ -78,20 +76,12 @@ class User extends Authenticatable implements Transformable
         'remember_token',
     ];
 
-    /**
-     * The attributes that should be cast.
-     *
-     * @var array
-     */
-    protected function casts(): array
-    {
-        return [
-            'email_verified_at' => 'datetime',
-            'created_at' => 'datetime',
-            'updated_at' => 'datetime',
-            'role' => UserRole::class,
-        ];
-    }
+    protected $casts = [
+        'email_verified_at' => 'datetime',
+        'created_at' => 'datetime',
+        'updated_at' => 'datetime',
+        'role' => UserRole::class,
+    ];
 
     public function warehouse(): BelongsTo
     {
@@ -106,10 +96,5 @@ class User extends Authenticatable implements Transformable
     public function discounts(): HasMany
     {
         return $this->hasMany(Discount::class);
-    }
-
-    public function transformer(): string
-    {
-        return UserTransformer::class;
     }
 }

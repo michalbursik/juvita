@@ -2,8 +2,6 @@
 
 namespace App\Models;
 
-use App\Transformers\CheckTransformer;
-use Flugg\Responder\Contracts\Transformable;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -38,11 +36,16 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
  *
  * @method static \Illuminate\Database\Eloquent\Builder|Check whereDiscount($value)
  */
-class Check extends Model implements Transformable
+class Check extends Model
 {
     use HasFactory, HasUuids;
 
     protected $fillable = ['discount', 'warehouse_id', 'user_id'];
+
+    protected $casts = [
+        'created_at' => 'datetime',
+        'updated_at' => 'datetime',
+    ];
 
     public function products(): BelongsToMany
     {
@@ -60,10 +63,5 @@ class Check extends Model implements Transformable
     public function warehouse(): BelongsTo
     {
         return $this->belongsTo(Warehouse::class);
-    }
-
-    public function transformer(): string
-    {
-        return CheckTransformer::class;
     }
 }

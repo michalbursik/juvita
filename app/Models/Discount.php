@@ -3,8 +3,6 @@
 namespace App\Models;
 
 use App\Enums\DiscountStatus;
-use App\Transformers\DiscountTransformer;
-use Flugg\Responder\Contracts\Transformable;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -35,20 +33,17 @@ use Illuminate\Support\Carbon;
  *
  * @mixin \Eloquent
  */
-class Discount extends Model implements Transformable
+class Discount extends Model
 {
     use HasFactory, HasUuids;
 
     protected $fillable = ['amount', 'note', 'warehouse_id', 'user_id', 'status'];
 
-    protected function casts(): array
-    {
-        return [
-            'status' => DiscountStatus::class,
-            'created_at' => 'datetime',
-            'updated_at' => 'datetime',
-        ];
-    }
+    protected $casts = [
+        'status' => DiscountStatus::class,
+        'created_at' => 'datetime',
+        'updated_at' => 'datetime',
+    ];
 
     public function warehouse(): BelongsTo
     {
@@ -58,10 +53,5 @@ class Discount extends Model implements Transformable
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
-    }
-
-    public function transformer(): string
-    {
-        return DiscountTransformer::class;
     }
 }

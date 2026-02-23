@@ -2,8 +2,6 @@
 
 namespace App\Models;
 
-use App\Transformers\PriceLevelTransformer;
-use Flugg\Responder\Contracts\Transformable;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -49,7 +47,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @method static \Illuminate\Database\Query\Builder|PriceLevel withTrashed()
  * @method static \Illuminate\Database\Query\Builder|PriceLevel withoutTrashed()
  */
-class PriceLevel extends Model implements Transformable
+class PriceLevel extends Model
 {
     use HasFactory, HasUuids, SoftDeletes;
 
@@ -64,13 +62,13 @@ class PriceLevel extends Model implements Transformable
 
     protected $fillable = ['amount', 'price', 'validFrom', 'validTo', 'status', 'product_id', 'warehouse_id'];
 
+    protected $casts = [
+        'created_at' => 'datetime',
+        'updated_at' => 'datetime',
+    ];
+
     public function product(): BelongsTo
     {
         return $this->belongsTo(Product::class);
-    }
-
-    public function transformer(): string
-    {
-        return PriceLevelTransformer::class;
     }
 }

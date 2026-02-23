@@ -2,9 +2,6 @@
 
 namespace App\Models;
 
-use App\Transformers\MovementTransformer;
-use Carbon\Carbon;
-use Flugg\Responder\Contracts\Transformable;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -44,7 +41,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  *
  * @mixin \Eloquent
  */
-class Movement extends Model implements Transformable
+class Movement extends Model
 {
     const TYPE_ISSUE = 'issue';
 
@@ -57,6 +54,11 @@ class Movement extends Model implements Transformable
     use HasFactory, HasUuids;
 
     protected $fillable = ['type', 'amount', 'price', 'product_id', 'issue_warehouse_id', 'receipt_warehouse_id', 'user_id'];
+
+    protected $casts = [
+        'created_at' => 'datetime',
+        'updated_at' => 'datetime',
+    ];
 
     public function user(): BelongsTo
     {
@@ -78,15 +80,8 @@ class Movement extends Model implements Transformable
         return $this->belongsTo(Product::class);
     }
 
-    public function getCreatedAtAttribute($created_at): string
+    public function getTranslatedTypeAttribute(): string
     {
-        return (new Carbon($created_at))
-            ->timezone('Europe/Prague')
-            ->format('d. m. Y H:i:s');
-    }
-
-    public function transformer(): string
-    {
-        return MovementTransformer::class;
+        return __('global.'.$this->type);
     }
 }

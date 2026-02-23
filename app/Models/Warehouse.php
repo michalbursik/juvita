@@ -3,8 +3,6 @@
 namespace App\Models;
 
 use App\Enums\WarehouseType;
-use App\Transformers\WarehouseTransformer;
-use Flugg\Responder\Contracts\Transformable;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -50,19 +48,16 @@ use Korridor\LaravelHasManyMerged\HasManyMergedRelation;
  * @property-read Collection|\App\Models\Discount[] $discounts
  * @property-read int|null $discounts_count
  */
-class Warehouse extends Model implements Transformable
+class Warehouse extends Model
 {
     use HasFactory, HasManyMergedRelation, HasUuids, SoftDeletes;
 
     protected $fillable = ['name', 'type', 'active'];
 
-    protected function casts(): array
-    {
-        return [
-            'type' => WarehouseType::class,
-            'active' => 'boolean',
-        ];
-    }
+    protected $casts = [
+        'type' => WarehouseType::class,
+        'active' => 'boolean',
+    ];
 
     public function products(): BelongsToMany
     {
@@ -109,10 +104,5 @@ class Warehouse extends Model implements Transformable
     public function discounts(): HasMany
     {
         return $this->hasMany(Discount::class);
-    }
-
-    public function transformer(): string
-    {
-        return WarehouseTransformer::class;
     }
 }

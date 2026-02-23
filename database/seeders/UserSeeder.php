@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Enums\UserRole;
 use App\Models\User;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
@@ -20,35 +21,35 @@ class UserSeeder extends Seeder
                 'name' => 'Josef Bursík',
                 'email' => 'josef.bursik@seznam.cz',
                 'password' => Hash::make('samuraj'),
-                'role' => User::ROLE_ADMIN,
+                'role' => UserRole::ADMIN->value,
                 'warehouse_id' => 1,
             ],
             [
                 'name' => 'Martin Bahula',
                 'email' => 'bahula@seznam.cz',
                 'password' => Hash::make('seba381'),
-                'role' => User::ROLE_ADMIN,
+                'role' => UserRole::ADMIN->value,
                 'warehouse_id' => 1,
             ],
             [
                 'name' => 'Jaroslav Nožička',
                 'email' => 'jaroslav@juvita.cz',
                 'password' => Hash::make('okurek'),
-                'role' => User::ROLE_EMPLOYEE,
+                'role' => UserRole::EMPLOYEE->value,
                 'warehouse_id' => 2,
             ],
             [
                 'name' => 'Honza Hlaváček',
                 'email' => 'honza@juvita.cz',
                 'password' => Hash::make('precedenc'),
-                'role' => User::ROLE_EMPLOYEE,
+                'role' => UserRole::EMPLOYEE->value,
                 'warehouse_id' => 3,
             ],
             [
                 'name' => 'Tomáš Strapina',
                 'email' => 'tomas@juvita.cz',
                 'password' => Hash::make('kultivator'),
-                'role' => User::ROLE_EMPLOYEE,
+                'role' => UserRole::EMPLOYEE->value,
                 'warehouse_id' => 4,
             ],
         ];

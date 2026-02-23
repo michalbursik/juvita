@@ -2,8 +2,6 @@
 
 namespace App\Models;
 
-use App\Transformers\ProductTransformer;
-use Flugg\Responder\Contracts\Transformable;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -47,11 +45,17 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  *
  * @property-read int|null $movements_count
  */
-class Product extends Model implements Transformable
+class Product extends Model
 {
     use HasFactory, HasUuids;
 
     protected $fillable = ['name', 'origin', 'active', 'order', 'unit', 'image'];
+
+    protected $casts = [
+        'active' => 'boolean',
+        'created_at' => 'datetime',
+        'updated_at' => 'datetime',
+    ];
 
     const DEFAULT_UNIT = 'kg';
 
@@ -75,10 +79,5 @@ class Product extends Model implements Transformable
     public static function getListOfAvailableUnits($separator = ','): string
     {
         return implode($separator, self::AVAILABLE_UNITS);
-    }
-
-    public function transformer(): string
-    {
-        return ProductTransformer::class;
     }
 }

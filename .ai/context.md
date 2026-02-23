@@ -12,7 +12,7 @@ We have implemented:
 Next steps:
 - Laravel Cloud deployment
 - Laravel responder/transporter review (keep or move to native?)
-- Final migration of production data to the event store 
+- Final migration of production data to the event store (We've made a few changes -> e.g. transmission to trash is now issue - not transmission) 
 
 Architecture:
 - app/Domain: Core logic, Events, Aggregates, Projectors.
@@ -26,22 +26,26 @@ Architecture:
 Implemented Improvements:
 - Migrated frontend from Nuxt.js to Livewire + Tailwind CSS for better DX and deployment.
 - Replaced separate API calls with direct Service/DTO usage in Livewire components.
-- Standardized UI colors for movement types (Receipt: Emerald, Issue: Rose, Transmission: Amber, Check: Blue).
-- Optimized "Overviews" and stock level tracking (pivot-based) to avoid expensive re-computations.
-- Implemented responsive Tailwind-based Numeric Pad with a shared `HasNumericPad` trait.
-- Added database indexes to `movements` and `price_levels` tables to optimize frequent filtering and stock lookups.
-- Restored API login support for tests while maintaining session-based auth for the web UI.
-- Fixed decimal precision for all quantity/price columns (Decimal 10,1).
-- Started migration from `laravel-responder` to native Laravel `JsonResource` (WarehouseController as PoC).
-- Improved Product Image upload UI by making the entire dashed area clickable and improving hover states.
-- Corrected storage link for product images to ensure they are served from the correct application port (8080).
-- Refactored all Livewire views to leverage reusable Blade components (`x-button`, `x-input`, `x-card`, `x-table`, etc.) for better maintainability and style consistency.
-- Extracted and migrated legacy product images and static assets from the defunct Nuxt.js directory to `public/images/`.
+- Standardized UI colors for movement types (Receipt: Emerald, Issue: Rose, Transmission: Amber, Check: Blue). [DONE]
+- Optimized "Overviews" and stock level tracking (pivot-based) to avoid expensive re-computations. [DONE]
+- Implemented responsive Tailwind-based Numeric Pad with a shared `HasNumericPad` trait. [DONE]
+- Added database indexes to `movements` and `price_levels` tables to optimize frequent filtering and stock lookups. [DONE]
+- Restored API login support for tests while maintaining session-based auth for the web UI. [DONE]
+- Fixed decimal precision for all quantity/price columns (Decimal 10,1). [DONE]
+- Refactored User roles to a type-safe `UserRole` enum and updated all guards/UI. [DONE]
+- Implemented warehouse "hiding" via `active` flag, filtered from user-facing selectors. [DONE]
+- Migrated all controllers from `laravel-responder` to native Laravel `JsonResource` and JSON responses. [DONE]
+- Refactored all models to use `protected $casts = [...]` property instead of `casts()` method. [DONE]
+- Removed `laravel-responder` boilerplate (`Transformable` / `transformer()`) from models. [DONE]
+- Cleaned up all remaining legacy role constants and fixed seeder references to use the `UserRole` enum. [DONE]
+- Improved Product Image upload UI by making the entire dashed area clickable and improving hover states. [DONE]
+- Corrected storage link for product images to ensure they are served from the correct application port (8080). [DONE]
+- Refactored all Livewire views to leverage reusable Blade components (`x-button`, `x-input`, `x-card`, `x-table`, etc.) for better maintainability and style consistency. [DONE]
+- Extracted and migrated legacy product images and static assets from the defunct Nuxt.js directory to `public/images/`. [DONE]
+- Added product name search filter to the inventory check creation screen for faster entry. [DONE]
 
 Improvements: (What we want to improve, refactor, optimize, etc. - FUTURE)
-- discounts are removing, we dont want that, we want to keep them (description)
-- check order of (something), whe you fill up data, its hard to get to the latest one (need to find it first)
-- add images (based on products on production)
+- add images (based on products in production)
 
 [//]: # (TODO Project guidelines)
 [//]: # (If you need more context, check "~/.ai/guidlines/*.md")

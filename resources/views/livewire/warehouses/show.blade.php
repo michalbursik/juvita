@@ -1,7 +1,7 @@
 <div>
     <div class="flex flex-col md:flex-row md:items-center justify-between mb-8 gap-4">
         <div class="flex items-center">
-            @if (auth()->user()->isAdmin())
+            @if (auth()->user()->role->isAdmin())
                 <a href="{{ route('warehouses.index') }}" class="mr-4 p-2 text-gray-400 hover:text-gray-600 bg-white rounded shadow-sm border border-gray-200 transition-all duration-200">
                     <i class="bi bi-arrow-left"></i>
                 </a>
@@ -9,7 +9,7 @@
             <h2 class="text-3xl font-extrabold text-gray-900">{{ $warehouse->name }}</h2>
         </div>
 
-        @if (auth()->user()->isAdmin())
+        @if (auth()->user()->role->isAdmin())
             <div class="w-full md:w-64">
                 <x-select wire:change="changeWarehouse($event.target.value)" class="w-full">
                     <option disabled selected>Přepnout sklad</option>
@@ -40,7 +40,7 @@
 
                 <!-- Quick Actions -->
                 <div class="flex shadow-sm rounded-b overflow-hidden border-x border-b border-gray-200">
-                    @if(auth()->user()->isAdmin() && $warehouse->type->isMain())
+                    @if(auth()->user()->role->isAdmin() && $warehouse->type->isMain())
                         <a href="{{ route('warehouses.products.receipt', [$warehouse->id, $product->id]) }}" class="flex-1 py-2 flex justify-center items-center bg-emerald-50 text-emerald-600 hover:bg-emerald-100 transition-colors border-r border-gray-100" title="Příjem">
                             <i class="bi bi-plus-lg font-bold"></i>
                         </a>
