@@ -10,6 +10,7 @@ class DiscountService
     public function listDiscounts(): LengthAwarePaginator
     {
         return Discount::query()
+            ->with(['warehouse', 'user'])
             ->orderByDesc('created_at')
             ->paginate(request()->input('perPage'), ['*'], 'currentPage');
     }
@@ -28,6 +29,10 @@ class DiscountService
 
     public function deleteDiscount(Discount $discount): void
     {
+        if ($discount->status->isApplied()) {
+            throw new \Exception('Použitou slevu již nelze smazat.');
+        }
+
         $discount->delete();
     }
 }

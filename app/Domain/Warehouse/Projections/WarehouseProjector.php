@@ -6,6 +6,7 @@ use App\Domain\Warehouse\Events\InventoryChecked;
 use App\Domain\Warehouse\Events\StockIssued;
 use App\Domain\Warehouse\Events\StockReceived;
 use App\Domain\Warehouse\Events\StockTransferred;
+use App\Enums\DiscountStatus;
 use App\Models\Check;
 use App\Models\Discount;
 use App\Models\Movement;
@@ -200,8 +201,10 @@ class WarehouseProjector extends Projector
                 }
             }
 
-            // Cleanup discounts (already handled by service logic usually, but projector should reflect state)
-            Discount::where('warehouse_id', $event->warehouseId)->delete();
+            // Mark active discounts as applied instead of deleting them
+            Discount::where('warehouse_id', $event->warehouseId)
+                ->where('status', DiscountStatus::ACTIVE)
+                ->update(['status' => DiscountStatus::APPLIED]);
         });
     }
 

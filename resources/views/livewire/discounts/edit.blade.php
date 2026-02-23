@@ -34,6 +34,17 @@
                         </div>
                         <x-input-error for="amount" />
                     </div>
+
+                    <div>
+                        <x-label for="note" value="Popis" />
+                        <x-input type="text"
+                                 wire:model="note"
+                                 id="note"
+                                 class="w-full"
+                                 placeholder="Důvod slevy..."
+                        />
+                        <x-input-error for="note" />
+                    </div>
                 </div>
 
                 <x-slot name="footer">

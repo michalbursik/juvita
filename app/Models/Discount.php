@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Enums\DiscountStatus;
 use App\Transformers\DiscountTransformer;
 use Flugg\Responder\Contracts\Transformable;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
@@ -38,7 +39,16 @@ class Discount extends Model implements Transformable
 {
     use HasFactory, HasUuids;
 
-    protected $fillable = ['amount', 'note', 'warehouse_id', 'user_id'];
+    protected $fillable = ['amount', 'note', 'warehouse_id', 'user_id', 'status'];
+
+    protected function casts(): array
+    {
+        return [
+            'status' => DiscountStatus::class,
+            'created_at' => 'datetime',
+            'updated_at' => 'datetime',
+        ];
+    }
 
     public function warehouse(): BelongsTo
     {

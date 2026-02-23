@@ -38,7 +38,7 @@ Implemented Improvements:
 - Extracted and migrated legacy product images and static assets from the defunct Nuxt.js directory to `public/images/`.
 
 Improvements: (What we want to improve, refactor, optimize, etc. - FUTURE)
-- 
+- discounts are removing, we dont want that, we want to keep them (description)
 
 [//]: # (TODO Project guidelines)
 [//]: # (If you need more context, check "~/.ai/guidlines/*.md")

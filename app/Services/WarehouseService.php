@@ -5,6 +5,7 @@ namespace App\Services;
 use App\Domain\Warehouse\Aggregates\WarehouseAggregate;
 use App\DTOs\CheckDTO;
 use App\DTOs\MovementDTO;
+use App\Enums\DiscountStatus;
 use App\Enums\WarehouseType;
 use App\Models\Discount;
 use App\Models\PriceLevel;
@@ -83,7 +84,9 @@ class WarehouseService
 
     public function checkInventory(CheckDTO $dto): void
     {
-        $discounts = Discount::where('warehouse_id', $dto->warehouseId)->get();
+        $discounts = Discount::where('warehouse_id', $dto->warehouseId)
+            ->where('status', DiscountStatus::ACTIVE)
+            ->get();
         $discountAmount = $discounts->reduce(function ($carry, Discount $discount) {
             return $carry - (float) $discount->amount;
         }, 0.00);

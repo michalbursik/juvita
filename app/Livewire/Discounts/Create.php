@@ -13,9 +13,12 @@ class Create extends Component
 
     public $amount;
 
+    public $note;
+
     protected $rules = [
         'warehouseId' => 'required|exists:warehouses,id',
         'amount' => 'required|numeric|min:0.01',
+        'note' => 'nullable|string|max:255',
     ];
 
     #[Layout('layouts.app')]
@@ -33,6 +36,7 @@ class Create extends Component
         Discount::create([
             'warehouse_id' => $this->warehouseId,
             'amount' => $this->amount,
+            'note' => $this->note,
             'user_id' => auth()->id(),
         ]);
 
