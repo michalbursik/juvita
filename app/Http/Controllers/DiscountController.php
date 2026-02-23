@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\StoreDiscountRequest;
 use App\Http\Requests\UpdateDiscountRequest;
+use App\Http\Resources\DiscountResource;
 use App\Models\Discount;
 use App\Services\DiscountService;
 use Illuminate\Http\JsonResponse;
@@ -18,36 +19,38 @@ class DiscountController extends Controller
         $this->service = $service;
     }
 
-    public function index(Request $request): JsonResponse
+    public function index(Request $request)
     {
         $discounts = $this->service->listDiscounts();
 
-        return responder()->success($discounts)->respond();
+        return DiscountResource::collection($discounts);
     }
 
-    public function show(Discount $discount): JsonResponse
+    public function show(Discount $discount)
     {
-        return responder()->success($discount)->respond();
+        $discount->load(['warehouse', 'user']);
+
+        return new DiscountResource($discount);
     }
 
     public function store(StoreDiscountRequest $request): JsonResponse
     {
         $discount = $this->service->createDiscount($request->validated());
 
-        return responder()->success($discount)->respond();
+        return (new DiscountResource($discount->load(['warehouse', 'user'])))->response()->setStatusCode(200);
     }
 
-    public function update(UpdateDiscountRequest $request, Discount $discount): JsonResponse
+    public function update(UpdateDiscountRequest $request, Discount $discount)
     {
         $discount = $this->service->updateDiscount($discount, $request->validated());
 
-        return responder()->success($discount)->respond();
+        return new DiscountResource($discount->load(['warehouse', 'user']));
     }
 
     public function destroy(Discount $discount): JsonResponse
     {
         $this->service->deleteDiscount($discount);
 
-        return responder()->success()->respond();
+        return response()->json(null, 200);
     }
 }

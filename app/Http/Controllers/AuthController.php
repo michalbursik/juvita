@@ -12,17 +12,21 @@ class AuthController extends Controller
     public function login(LoginRequest $request): JsonResponse
     {
         if (! Auth::attempt($request->validated())) {
-            return responder()
-                ->error(401, 'Přihlašovací údaje se neshodují.')
-                ->respond(401);
+            return response()->json([
+                'message' => 'Přihlašovací údaje se neshodují.',
+            ], 401);
         }
 
         /** @var User $user */
         $user = auth()->user();
 
-        return responder()->success(
-            ['access_token' => $user->createToken('API Token')->plainTextToken]
-        )->respond();
+        return response()->json([
+            'status' => 'success',
+            'success' => true,
+            'data' => [
+                'access_token' => $user->createToken('API Token')->plainTextToken,
+            ],
+        ], 200);
     }
 
     public function logout() {}

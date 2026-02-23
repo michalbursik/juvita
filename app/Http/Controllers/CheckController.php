@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\DTOs\CheckDTO;
 use App\Http\Requests\StoreCheckRequest;
+use App\Http\Resources\CheckResource;
+use App\Http\Resources\ProductResource;
 use App\Models\Check;
 use App\Models\Warehouse;
 use App\Services\WarehouseService;
@@ -20,22 +22,20 @@ class CheckController extends Controller
         $this->warehouseService = $warehouseService;
     }
 
-    public function index(Request $request): JsonResponse
+    public function index(Request $request)
     {
-        $query = Check::query();
-
-        $checks = $query
+        $checks = Check::query()
             ->orderByDesc('created_at')
             ->paginate(null, ['*'], 'currentPage');
 
-        return responder()->success($checks)->respond();
+        return CheckResource::collection($checks);
     }
 
-    public function fetchAllProducts(Request $request): JsonResponse
+    public function fetchAllProducts(Request $request)
     {
         $warehouse_id = $request->input('warehouse_id');
 
-        $warehouse = Warehouse::find($warehouse_id);
+        $warehouse = Warehouse::findOrFail($warehouse_id);
 
         $products = $warehouse
             ->products()
@@ -43,14 +43,11 @@ class CheckController extends Controller
             ->orderByDesc('order')
             ->get();
 
-        return responder()
-            ->success($products)
-            ->with([
-                'priceLevels' => function ($query) use ($warehouse_id) {
-                    $query->where('warehouse_id', $warehouse_id);
-                },
-            ])
-            ->respond();
+        $products->load(['priceLevels' => function ($query) use ($warehouse_id) {
+            $query->where('warehouse_id', $warehouse_id);
+        }]);
+
+        return ProductResource::collection($products);
     }
 
     public function store(StoreCheckRequest $request): JsonResponse
@@ -66,15 +63,16 @@ class CheckController extends Controller
                 'trace' => $exception->getTraceAsString(),
             ]);
 
-            return responder()->error(500, $exception->getMessage())->respond();
+            return response()->json(['message' => $exception->getMessage()], 500);
         }
 
-        return responder()->success()->respond();
+        return response()->json(null, 200);
     }
 
-    public function show(Check $check): JsonResponse
+    public function show(Check $check)
     {
-        return responder()->success($check)->respond();
-    }
+        $check->load(['warehouse', 'user', 'products']);
 
+        return new CheckResource($check);
+    }
 }

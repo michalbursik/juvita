@@ -3,8 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Enums\WarehouseType;
+use App\Http\Resources\ProductResource;
+use App\Http\Resources\WarehouseResource;
 use App\Models\Product;
-use App\Models\User;
 use App\Models\Warehouse;
 use App\Services\WarehouseService;
 use Illuminate\Http\JsonResponse;
@@ -23,10 +24,10 @@ class WarehouseController extends Controller
     {
         $warehouses = $this->service->listWarehouses();
 
-        return responder()->success($warehouses)->respond();
+        return WarehouseResource::collection($warehouses);
     }
 
-    public function store(Request $request): JsonResponse
+    public function store(Request $request): WarehouseResource
     {
         $data = $request->validate([
             'name' => 'required|string',
@@ -34,10 +35,10 @@ class WarehouseController extends Controller
 
         $warehouse = $this->service->createWarehouse($data);
 
-        return responder()->success($warehouse)->respond();
+        return new WarehouseResource($warehouse);
     }
 
-    public function update(Warehouse $warehouse, Request $request): JsonResponse
+    public function update(Warehouse $warehouse, Request $request): WarehouseResource
     {
         $data = $request->validate([
             'name' => 'required|string',
@@ -45,66 +46,64 @@ class WarehouseController extends Controller
 
         $warehouse = $this->service->updateWarehouse($warehouse, $data);
 
-        return responder()->success($warehouse)->respond();
+        return new WarehouseResource($warehouse);
     }
 
     public function destroy(Warehouse $warehouse): JsonResponse
     {
         $this->service->deleteWarehouse($warehouse);
 
-        return responder()->success()->respond();
+        return response()->json(null, 200);
     }
 
     public function show(Warehouse $warehouse)
     {
         $user = auth()->user();
-        if ($user->role === User::ROLE_EMPLOYEE && $user->warehouse_id !== $warehouse->id) {
+        if ($user->role->isEmployee() && $user->warehouse_id !== $warehouse->id) {
             return redirect()->route('warehouses.show', [
                 'warehouse' => $user->warehouse_id,
             ]);
         }
 
-        return responder()->success($warehouse)
-            ->with([
-                'movements' => function ($query) {
-                    $query->where('movements.created_at', '>=', now()->subDays(7))
-                        ->orderByDesc('created_at');
-                },
-                'products.priceLevels',
-                'products' => function ($query) {
-                    $query->where('products.active', true)
-                        ->orderBy('order');
-                },
-            ])
-            ->respond();
+        $warehouse->load([
+            'movements' => function ($query) {
+                $query->where('movements.created_at', '>=', now()->subDays(7))
+                    ->orderByDesc('created_at');
+            },
+            'products.priceLevels',
+            'products' => function ($query) {
+                $query->where('products.active', true)
+                    ->orderBy('order');
+            },
+        ]);
+
+        return new WarehouseResource($warehouse);
     }
 
-    public function showProduct(Warehouse $warehouse, Product $product): JsonResponse
+    public function showProduct(Warehouse $warehouse, Product $product): ProductResource
     {
         $p = $warehouse->products()
             ->where('products.id', $product->id)
             ->firstOrFail();
 
-        return responder()->success($p)
-            ->with([
-                'priceLevels' => function ($query) use ($warehouse) {
-                    $query->where('warehouse_id', $warehouse->id);
-                },
-            ])
-            ->respond();
+        $p->load(['priceLevels' => function ($query) use ($warehouse) {
+            $query->where('warehouse_id', $warehouse->id);
+        }]);
+
+        return new ProductResource($p);
     }
 
-    public function receipt(Warehouse $warehouse, Product $product): JsonResponse
+    public function receipt(Warehouse $warehouse, Product $product): ProductResource
     {
         return $this->showProduct($warehouse, $product);
     }
 
-    public function issue(Warehouse $warehouse, Product $product): JsonResponse
+    public function issue(Warehouse $warehouse, Product $product): ProductResource
     {
         return $this->showProduct($warehouse, $product);
     }
 
-    public function transmission(Warehouse $warehouse, Product $product): JsonResponse
+    public function transmission(Warehouse $warehouse, Product $product): ProductResource
     {
         return $this->showProduct($warehouse, $product);
     }

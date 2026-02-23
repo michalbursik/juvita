@@ -32,6 +32,7 @@ Implemented Improvements:
 - Added database indexes to `movements` and `price_levels` tables to optimize frequent filtering and stock lookups.
 - Restored API login support for tests while maintaining session-based auth for the web UI.
 - Fixed decimal precision for all quantity/price columns (Decimal 10,1).
+- Started migration from `laravel-responder` to native Laravel `JsonResource` (WarehouseController as PoC).
 - Improved Product Image upload UI by making the entire dashed area clickable and improving hover states.
 - Corrected storage link for product images to ensure they are served from the correct application port (8080).
 - Refactored all Livewire views to leverage reusable Blade components (`x-button`, `x-input`, `x-card`, `x-table`, etc.) for better maintainability and style consistency.

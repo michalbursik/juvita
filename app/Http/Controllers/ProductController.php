@@ -5,9 +5,9 @@ namespace App\Http\Controllers;
 use App\DTOs\ProductDTO;
 use App\Http\Requests\StoreProductRequest;
 use App\Http\Requests\UpdateProductRequest;
+use App\Http\Resources\ProductResource;
 use App\Models\Product;
 use App\Services\ProductService;
-use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
 class ProductController extends Controller
@@ -19,60 +19,59 @@ class ProductController extends Controller
         $this->service = $service;
     }
 
-    public function index(Request $request): JsonResponse
+    public function index(Request $request)
     {
         $query = Product::query();
 
         $warehouse_id = $request->input('priceLevels.warehouse_id');
 
         $query->when($warehouse_id, function ($query) use ($warehouse_id) {
-            $query->where('priceLevels.warehouse_id', $warehouse_id);
+            $query->whereHas('priceLevels', function ($q) use ($warehouse_id) {
+                $q->where('warehouse_id', $warehouse_id);
+            });
         });
 
         $products = $query
             ->orderBy($request->input('orderBy', 'created_at'))
             ->paginate($request->input('perPage'), ['*'], 'currentPage');
 
-        return responder()->success($products)->respond();
+        return ProductResource::collection($products);
     }
 
-    public function show(Product $product): JsonResponse
+    public function show(Product $product)
     {
-        return responder()->success($product)
-            ->with([
-                'movements',
-                'priceLevels',
-            ])
-            ->respond();
+        $product->load(['movements', 'priceLevels']);
+
+        return new ProductResource($product);
     }
 
-    public function store(StoreProductRequest $request): JsonResponse
+    public function store(StoreProductRequest $request)
     {
         $product = $this->service->createProduct(
             ProductDTO::fromRequest($request->validated())
         );
 
-        return responder()->success($product)->respond();
+        return new ProductResource($product);
     }
 
-    public function update(UpdateProductRequest $request, Product $product): JsonResponse
+    public function update(UpdateProductRequest $request, Product $product)
     {
         $this->service->updateProduct(
             $product,
             ProductDTO::fromRequest($request->validated())
         );
 
-        return responder()->success($product)->respond();
+        return new ProductResource($product);
     }
 
-    public function destroy(Product $product): JsonResponse
+    public function destroy(Product $product)
     {
         $this->service->deleteProduct($product);
 
-        return responder()->success()->respond();
+        return response()->json(null, 200);
     }
 
-    public function nextOrder(): JsonResponse
+    public function nextOrder()
     {
         $product = Product::query()
             ->orderByDesc('order')
@@ -84,6 +83,6 @@ class ProductController extends Controller
             $order = $product->order + 10;
         }
 
-        return responder()->success(['order' => $order])->respond();
+        return response()->json(['data' => ['order' => $order]]);
     }
 }

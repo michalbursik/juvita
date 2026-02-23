@@ -8,7 +8,6 @@ use App\Models\Warehouse;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
-use Illuminate\Support\Facades\Log;
 
 class OverviewController extends Controller
 {
@@ -25,14 +24,14 @@ class OverviewController extends Controller
 
         $data = $this->calculateMovements($movements);
 
-        return responder()->success($data)->respond();
+        return response()->json($data);
     }
 
     private function calculateMovements(Collection $movements): array
     {
         $data = [];
 
-        $warehouses = Warehouse::all();
+        $warehouses = Warehouse::where('active', true)->get();
         $products = Product::all();
 
         foreach ($products as $product) {
@@ -44,37 +43,15 @@ class OverviewController extends Controller
             ];
 
             foreach ($warehouses as $warehouse) {
-                //                $p = $warehouse->products()->find($product->id);
-
                 $data[$product->id]['warehouses'][$warehouse->id] = [
                     'warehouse_name' => $warehouse->name,
                     'price_levels' => [
-                        //                      $p->product_warehouse->price => [
-                        //                          'price' => $p->product_warehouse->price,
-                        //                          'amount' => 0
-                        //                      ]
                     ],
                 ];
             }
         }
 
-        //        Log::debug('', [
-        //            // Rajcata, Kralov, 80.00
-        //            $data[1]['warehouses'][1]['price_levels']['80.00']['amount']
-        //        ]);
-
-        // warehouse
-        // product (unique - priceLevels)
-        // amount
-
         $movements->each(function (Movement $movement) use (&$data) {
-            //                 Log::debug('DATA', [
-            //                     'product_id' => $movement->product_id,
-            //                     'receipt_warehouse_id' => $movement->receipt_warehouse_id,
-            //                     'movement_price' => $movement->price,
-            //                     'data' => $data[$movement->product_id]['warehouses'][$movement->receipt_warehouse_id]['price_levels'],
-            //                ]);
-
             if ($movement->receipt_warehouse_id) {
                 if (isset($data[$movement->product_id]['warehouses'][$movement->receipt_warehouse_id]['price_levels'][$movement->price])) {
                     $data[$movement->product_id]['warehouses'][$movement->receipt_warehouse_id]['price_levels'][$movement->price]['amount'] += $movement->amount;

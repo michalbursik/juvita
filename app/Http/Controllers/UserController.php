@@ -2,14 +2,15 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Resources\UserResource;
 use App\Models\User;
 
 class UserController extends Controller
 {
     public function index()
     {
-        $users = User::all();
+        $users = User::with('warehouse')->get();
 
-        return responder()->success($users)->respond();
+        return UserResource::collection($users);
     }
 }
