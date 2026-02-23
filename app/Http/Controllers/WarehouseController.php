@@ -108,16 +108,38 @@ class WarehouseController extends Controller
         return $this->showProduct($warehouse, $product);
     }
 
-    public function trash(): JsonResponse
+    public function trash(Request $request)
     {
-        $warehouse = Warehouse::query()
-            ->where('type', WarehouseType::TRASH)
-            ->first();
+        $trashWarehouse = Warehouse::where('type', WarehouseType::TRASH)->first();
+        if ($trashWarehouse) {
+            if ($request->expectsJson() || $request->is('api/*')) {
+                return new WarehouseResource($trashWarehouse);
+            }
+            return redirect()->route('warehouses.show', $trashWarehouse->id);
+        }
 
-        return responder()->success($warehouse)
-            ->with(['movements', 'products' => function ($query) {
-                $query->where('products.active', true);
-            }])
-            ->respond();
+        if (auth()->user()->role->isAdmin()) {
+            try {
+                $trashWarehouse = $this->service->createWarehouse([
+                    'name' => 'Kompost/Odpad',
+                    'type' => WarehouseType::TRASH,
+                ]);
+
+                if ($request->expectsJson() || $request->is('api/*')) {
+                    return new WarehouseResource($trashWarehouse);
+                }
+                return redirect()->route('warehouses.show', $trashWarehouse->id);
+            } catch (\Exception $e) {
+                if ($request->expectsJson() || $request->is('api/*')) {
+                    return response()->json(['message' => 'Nepodařilo se vytvořit sklad pro odpad.'], 500);
+                }
+                return redirect()->route('warehouses.index')->with('error', 'Nepodařilo se vytvořit sklad pro odpad.');
+            }
+        }
+
+        if ($request->expectsJson() || $request->is('api/*')) {
+            return response()->json(['message' => 'Sklad pro odpad nebyl nalezen.'], 404);
+        }
+        return redirect()->route('warehouses.index')->with('error', 'Sklad pro odpad nebyl nalezen.');
     }
 }

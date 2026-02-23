@@ -5,4 +5,5 @@ return [
     'receipt' => 'Příjemka',
     'transmission' => 'Převodka',
     'check' => 'Kontrola',
+    'trash' => 'Odpad',
 ];

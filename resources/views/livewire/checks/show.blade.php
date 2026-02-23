@@ -13,7 +13,7 @@
         </x-card>
         <x-card class="p-6">
             <x-label value="Datum" class="text-xs text-gray-400 mb-1" />
-            <div class="text-xl font-bold text-gray-800">{{ $check->created_at }}</div>
+            <div class="text-xl font-bold text-gray-800">{{ $check->created_at->format('d. m. Y H:i:s') }}</div>
         </x-card>
         <x-card class="p-6">
             <x-label value="Kontroloval" class="text-xs text-gray-400 mb-1" />

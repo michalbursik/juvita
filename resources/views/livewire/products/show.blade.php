@@ -56,7 +56,7 @@
                         @endif
                     </td>
                     <td class="px-6 py-4 text-gray-600">{{ $m->user->name }}</td>
-                    <td class="px-6 py-4 text-gray-500 whitespace-nowrap">{{ $m->created_at }}</td>
+                    <td class="px-6 py-4 text-gray-500 whitespace-nowrap">{{ $m->created_at->format('d. m. Y H:i:s') }}</td>
                 </tr>
             @empty
                 <tr>

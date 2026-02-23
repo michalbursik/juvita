@@ -7,13 +7,19 @@
     </div>
 
     <x-card class="mb-8">
-        <div class="max-w-md">
-            <x-label for="warehouse_id" value="Sklad" />
-            <x-select wire:model.live="warehouseId" class="w-full text-lg font-bold">
-                @foreach($warehouses as $warehouse)
-                    <option value="{{ $warehouse->id }}">{{ $warehouse->name }}</option>
-                @endforeach
-            </x-select>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 max-w-3xl">
+            <div>
+                <x-label for="warehouse_id" value="Sklad" />
+                <x-select wire:model.live="warehouseId" class="w-full text-lg font-bold">
+                    @foreach($warehouses as $warehouse)
+                        <option value="{{ $warehouse->id }}">{{ $warehouse->name }}</option>
+                    @endforeach
+                </x-select>
+            </div>
+            <div>
+                <x-label for="search" value="Hledat produkt" />
+                <x-input type="text" id="search" wire:model.live="search" placeholder="Začni psát název produktu…" class="w-full" />
+            </div>
         </div>
     </x-card>
 
@@ -28,7 +34,7 @@
                         <th class="px-6 py-4" style="width: 250px;">Skladem (fyzicky)</th>
                     </x-slot>
 
-                    @foreach($priceLevels as $pl)
+                    @foreach($this->filteredPriceLevels as $pl)
                         <tr class="hover:bg-gray-50 transition-colors align-middle">
                             <td class="px-6 py-4 font-bold text-gray-900 text-lg">{{ $pl->product->name }}</td>
                             <td class="px-6 py-4 text-right text-gray-600 font-medium">{{ number_format($pl->price, 2, ',', ' ') }} Kč</td>
@@ -49,8 +55,16 @@
 
                     @php $discount = $this->getDiscountAmount(); @endphp
                     @if($discount != 0)
-                        <tr class="bg-rose-50/50">
-                            <td colspan="3" class="px-6 py-4 text-right text-sm font-bold text-rose-600 uppercase">Sleva</td>
+                        @foreach($discounts as $d)
+                            <tr class="bg-rose-50/30">
+                                <td colspan="3" class="px-6 py-2 text-right text-xs font-bold text-rose-500 uppercase italic">
+                                    Sleva: {{ $d->note ?? 'Bez popisu' }}
+                                </td>
+                                <td class="px-6 py-2 text-sm font-bold text-rose-500">-{{ number_format($d->amount, 2, ',', ' ') }} Kč</td>
+                            </tr>
+                        @endforeach
+                        <tr class="bg-rose-50/50 border-t border-rose-100">
+                            <td colspan="3" class="px-6 py-4 text-right text-sm font-bold text-rose-600 uppercase">Sleva celkem</td>
                             <td class="px-6 py-4 text-lg font-black text-rose-600">{{ number_format($discount, 2, ',', ' ') }} Kč</td>
                         </tr>
                     @endif

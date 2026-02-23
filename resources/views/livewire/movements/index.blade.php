@@ -1,5 +1,7 @@
 <div>
-    <h2 class="text-3xl font-extrabold text-gray-900 mb-8 text-center md:text-left">Přehled všech pohybů</h2>
+    <div class="flex flex-col md:flex-row md:items-center justify-between mb-8 gap-4">
+        <h2 class="text-3xl font-extrabold text-gray-900 text-center md:text-left">Přehled všech pohybů</h2>
+    </div>
 
     <x-card no-padding class="mb-8">
         <x-slot name="header">
@@ -14,7 +16,7 @@
                     </x-select>
                 </div>
 
-                @if(auth()->user()->role->isAdmin())
+                @if(auth()->user()->isAdmin())
                     <div>
                         <x-label value="Typ" />
                         <x-select wire:model.live="type" class="w-full">
@@ -92,14 +94,14 @@
                     <td class="px-6 py-4 text-gray-600">{{ $m->receiptWarehouse->name ?? '-' }}</td>
                     <td class="px-6 py-4 font-bold text-gray-900">{{ $m->product->name }}</td>
                     <td class="px-6 py-4 text-center">
-                        <span class="px-2.5 py-0.5 rounded text-xs font-medium {{ $badgeClass }}">
+                        <span class="px-2.5 py-0.5 rounded text-xs font-medium {{ $badgeClass }}" title="{{ $m->translated_type }}">
                             {{ $m->translated_type }}
                         </span>
                     </td>
                     <td class="px-6 py-4 text-right font-mono">{{ $m->amount }} {{ $m->product->unit }}</td>
                     <td class="px-6 py-4 text-right whitespace-nowrap">{{ number_format($m->price, 2, ',', ' ') }} Kč</td>
                     <td class="px-6 py-4 text-gray-600">{{ $m->user->name }}</td>
-                    <td class="px-6 py-4 text-gray-500 whitespace-nowrap">{{ $m->created_at }}</td>
+                    <td class="px-6 py-4 text-gray-500 whitespace-nowrap">{{ $m->created_at->format('d. m. Y H:i:s') }}</td>
                 </tr>
             @endforeach
         </x-table>

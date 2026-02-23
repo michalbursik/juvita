@@ -40,6 +40,8 @@ Implemented Improvements:
 
 Improvements: (What we want to improve, refactor, optimize, etc. - FUTURE)
 - discounts are removing, we dont want that, we want to keep them (description)
+- check order of (something), whe you fill up data, its hard to get to the latest one (need to find it first)
+- add images (based on products on production)
 
 [//]: # (TODO Project guidelines)
 [//]: # (If you need more context, check "~/.ai/guidlines/*.md")
