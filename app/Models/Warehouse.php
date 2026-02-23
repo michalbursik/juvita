@@ -54,12 +54,13 @@ class Warehouse extends Model implements Transformable
 {
     use HasFactory, HasManyMergedRelation, HasUuids, SoftDeletes;
 
-    protected $fillable = ['name', 'type'];
+    protected $fillable = ['name', 'type', 'active'];
 
     protected function casts(): array
     {
         return [
             'type' => WarehouseType::class,
+            'active' => 'boolean',
         ];
     }
 

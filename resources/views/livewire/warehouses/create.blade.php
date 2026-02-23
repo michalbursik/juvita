@@ -25,6 +25,12 @@
                         </x-select>
                         <x-input-error for="type" />
                     </div>
+
+                    <div class="flex items-center gap-3">
+                        <x-input type="checkbox" wire:model="active" id="active" class="rounded border-gray-300 text-indigo-600 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50" />
+                        <x-label for="active" value="Aktivní" class="mb-0" />
+                        <x-input-error for="active" />
+                    </div>
                 </div>
 
                 <x-slot name="footer">

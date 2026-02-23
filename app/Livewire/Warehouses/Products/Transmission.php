@@ -2,8 +2,8 @@
 
 namespace App\Livewire\Warehouses\Products;
 
-use App\Enums\WarehouseType;
 use App\DTOs\MovementDTO;
+use App\Enums\WarehouseType;
 use App\Livewire\Traits\HasNumericPad;
 use App\Models\PriceLevel;
 use App\Models\Product;
@@ -34,13 +34,15 @@ class Transmission extends Component
 
     public $loading = false;
 
-    public function mount(Warehouse $warehouse, Product $product)
+    public function mount(Warehouse $warehouse, Product $product, WarehouseService $warehouseService)
     {
         $this->warehouse = $warehouse;
         $this->product = $product;
-        $this->allWarehouses = Warehouse::all();
+        $this->allWarehouses = $warehouseService->listWarehouses();
 
-        $this->issueWarehouseId = Warehouse::where('type', WarehouseType::MAIN)->first()?->id ?? $warehouse->id;
+        $this->issueWarehouseId = Warehouse::where('type', WarehouseType::MAIN)
+            ->where('active', true)
+            ->first()?->id ?? $warehouse->id;
 
         $userWarehouseId = auth()->user()->warehouse_id;
         $this->receiptWarehouseId = $userWarehouseId;

@@ -14,9 +14,15 @@ use Illuminate\Database\Eloquent\Collection;
 
 class WarehouseService
 {
-    public function listWarehouses(): Collection
+    public function listWarehouses(bool $includeInactive = false): Collection
     {
-        return Warehouse::all();
+        $query = Warehouse::query();
+
+        if (! $includeInactive) {
+            $query->where('active', true);
+        }
+
+        return $query->get();
     }
 
     public function createWarehouse(array $data): Warehouse

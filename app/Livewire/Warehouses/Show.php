@@ -38,7 +38,7 @@ class Show extends Component
             },
         ]);
 
-        $this->allWarehouses = Warehouse::all();
+        $this->allWarehouses = $warehouseService->listWarehouses();
 
         // Get movement amounts from product_warehouse pivot
         $this->calculateMovementAmounts();

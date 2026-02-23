@@ -16,9 +16,12 @@ class Edit extends Component
 
     public $type;
 
+    public $active;
+
     protected $rules = [
         'name' => 'required|string|max:255',
         'type' => 'required',
+        'active' => 'boolean',
     ];
 
     public function mount(Warehouse $warehouse)
@@ -30,6 +33,7 @@ class Edit extends Component
         $this->warehouse = $warehouse;
         $this->name = $warehouse->name;
         $this->type = $warehouse->type->value;
+        $this->active = $warehouse->active;
     }
 
     #[Layout('layouts.app')]
@@ -49,6 +53,7 @@ class Edit extends Component
         $warehouseService->updateWarehouse($this->warehouse, [
             'name' => $this->name,
             'type' => $this->type,
+            'active' => $this->active,
         ]);
 
         return redirect()->route('warehouses.index');

@@ -13,9 +13,12 @@ class Create extends Component
 
     public $type = WarehouseType::TEMPORARY;
 
+    public $active = true;
+
     protected $rules = [
         'name' => 'required|string|max:255',
         'type' => 'required',
+        'active' => 'boolean',
     ];
 
     #[Layout('layouts.app')]
@@ -40,6 +43,7 @@ class Create extends Component
         $warehouseService->createWarehouse([
             'name' => $this->name,
             'type' => $this->type,
+            'active' => $this->active,
         ]);
 
         return redirect()->route('warehouses.index');

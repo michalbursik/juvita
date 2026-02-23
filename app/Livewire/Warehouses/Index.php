@@ -17,7 +17,7 @@ class Index extends Component
             return redirect()->route('warehouses.show', auth()->user()->warehouse_id);
         }
 
-        $this->warehouses = $warehouseService->listWarehouses();
+        $this->warehouses = $warehouseService->listWarehouses(includeInactive: true);
     }
 
     #[Layout('layouts.app')]
@@ -30,6 +30,19 @@ class Index extends Component
     {
         $warehouse = Warehouse::findOrFail($id);
         $warehouseService->deleteWarehouse($warehouse);
-        $this->warehouses = $warehouseService->listWarehouses();
+        $this->warehouses = $warehouseService->listWarehouses(includeInactive: true);
+    }
+
+    public function toggleActive($id, WarehouseService $warehouseService)
+    {
+        if (auth()->user()->role->isEmployee()) {
+            abort(403);
+        }
+
+        $warehouse = Warehouse::findOrFail($id);
+        $warehouseService->updateWarehouse($warehouse, [
+            'active' => ! $warehouse->active,
+        ]);
+        $this->warehouses = $warehouseService->listWarehouses(includeInactive: true);
     }
 }
