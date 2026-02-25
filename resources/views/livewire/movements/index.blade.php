@@ -1,11 +1,11 @@
 <div>
-    <div class="flex flex-col md:flex-row md:items-center justify-between mb-8 gap-4">
-        <h2 class="text-3xl font-extrabold text-gray-900 text-center md:text-left">Přehled všech pohybů</h2>
+    <div class="flex flex-col md:flex-row md:items-center justify-between mb-4 sm:mb-8 gap-4">
+        <h2 class="text-xl sm:text-3xl font-extrabold text-gray-900 text-center md:text-left">Přehled všech pohybů</h2>
     </div>
 
     <x-card no-padding class="mb-8">
         <x-slot name="header">
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
                 <div>
                     <x-label value="Produkt" />
                     <x-select wire:model.live="productId" class="w-full">
@@ -60,7 +60,61 @@
             </div>
         </x-slot>
 
-        <x-table>
+        <div class="md:hidden">
+            @foreach($movements as $m)
+                @php
+                    $rowClass = match($m->type) {
+                        'receipt' => 'bg-emerald-50/30',
+                        'issue' => 'bg-rose-50/30',
+                        'transmission' => 'bg-amber-50/30',
+                        'check' => 'bg-blue-50/30',
+                        default => ''
+                    };
+                    $badgeClass = match($m->type) {
+                        'receipt' => 'bg-emerald-100 text-emerald-700',
+                        'issue' => 'bg-rose-100 text-rose-700',
+                        'transmission' => 'bg-amber-100 text-amber-700',
+                        'check' => 'bg-blue-100 text-blue-700',
+                        default => 'bg-gray-100 text-gray-700'
+                    };
+                @endphp
+                <div class="p-4 border-b border-gray-100 {{ $rowClass }}">
+                    <div class="flex justify-between items-start mb-2">
+                        <div>
+                            <div class="font-bold text-gray-900">{{ $m->product->name }}</div>
+                            <div class="text-xs text-gray-500">{{ $m->created_at->format('d. m. Y H:i:s') }}</div>
+                        </div>
+                        <span class="px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider {{ $badgeClass }}">
+                            {{ $m->translated_type }}
+                        </span>
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-2 text-sm">
+                        <div>
+                            <div class="text-gray-400 text-[10px] uppercase font-bold">Z:</div>
+                            <div class="text-gray-600">{{ $m->issueWarehouse->name ?? '-' }}</div>
+                        </div>
+                        <div>
+                            <div class="text-gray-400 text-[10px] uppercase font-bold">Do:</div>
+                            <div class="text-gray-600">{{ $m->receiptWarehouse->name ?? '-' }}</div>
+                        </div>
+                        <div>
+                            <div class="text-gray-400 text-[10px] uppercase font-bold">Počet:</div>
+                            <div class="font-mono font-bold">{{ $m->amount }} {{ $m->product->unit }}</div>
+                        </div>
+                        <div>
+                            <div class="text-gray-400 text-[10px] uppercase font-bold">Cena:</div>
+                            <div class="font-bold">{{ number_format($m->price, 2, ',', ' ') }} Kč</div>
+                        </div>
+                    </div>
+                    <div class="mt-2 flex items-center text-xs text-gray-500">
+                        <i class="bi bi-person mr-1"></i> {{ $m->user->name }}
+                    </div>
+                </div>
+            @endforeach
+        </div>
+
+        <x-table class="hidden md:table">
             <x-slot name="header">
                 <th class="px-6 py-4">Výdejní</th>
                 <th class="px-6 py-4">Příjmový</th>

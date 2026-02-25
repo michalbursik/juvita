@@ -143,12 +143,51 @@
                             </div>
                         @endguest
                     </div>
+                    <div class="flex items-center sm:hidden">
+                        @auth
+                            <div class="relative" x-data="{ open: false }">
+                                <button @click="open = !open" class="inline-flex items-center justify-center p-2 rounded-md text-gray-400 hover:text-gray-500 hover:bg-gray-100 focus:outline-none focus:bg-gray-100 focus:text-gray-500 transition duration-150 ease-in-out">
+                                    <svg class="h-6 w-6" stroke="currentColor" fill="none" viewBox="0 0 24 24">
+                                        <path :class="{'hidden': open, 'inline-flex': !open }" class="inline-flex" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+                                        <path :class="{'hidden': !open, 'inline-flex': open }" class="hidden" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                                    </svg>
+                                </button>
+                                <div x-show="open" @click.away="open = false" class="origin-top-right absolute right-0 mt-2 w-screen max-w-[250px] rounded shadow-lg py-1 bg-white ring-1 ring-black ring-opacity-5 focus:outline-none z-50" x-cloak>
+                                    <div class="px-4 py-2 border-b border-gray-100 font-bold text-gray-700">
+                                        {{ auth()->user()->name }}
+                                    </div>
+                                    @if(auth()->user()->role->isAdmin())
+                                        <a href="{{ route('overviews.index') }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 {{ request()->routeIs('overviews.*') ? 'bg-gray-50 font-bold' : '' }}">Přehledy</a>
+                                        <a href="{{ route('warehouses.index') }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 {{ request()->routeIs('warehouses.*') ? 'bg-gray-50 font-bold' : '' }}">Sklady</a>
+                                        <a href="{{ route('movements.index') }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 {{ request()->routeIs('movements.*') ? 'bg-gray-50 font-bold' : '' }}">Pohyby</a>
+                                        <a href="{{ route('discounts.index') }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 {{ request()->routeIs('discounts.*') ? 'bg-gray-50 font-bold' : '' }}">Slevy</a>
+                                        <a href="{{ route('checks.index') }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 {{ request()->routeIs('checks.*') ? 'bg-gray-50 font-bold' : '' }}">Kontroly</a>
+                                        <a href="{{ route('products.index') }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 {{ request()->routeIs('products.*') ? 'bg-gray-50 font-bold' : '' }}">Produkty</a>
+                                        <a href="{{ route('users.index') }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 {{ request()->routeIs('users.*') ? 'bg-gray-50 font-bold' : '' }}">Uživatelé</a>
+                                        <a href="{{ route('warehouses.trash') }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 {{ request()->routeIs('warehouses.trash') ? 'bg-gray-50 font-bold' : '' }}">Kompost/Odpad</a>
+                                    @else
+                                        <a href="{{ route('warehouses.show', auth()->user()->warehouse_id) }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Můj sklad</a>
+                                        <a href="{{ route('movements.index') }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Pohyby</a>
+                                        <a href="{{ route('discounts.index') }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Slevy</a>
+                                    @endif
+                                    <div class="border-t border-gray-100">
+                                        <form method="POST" action="{{ route('logout') }}">
+                                            @csrf
+                                            <button type="submit" class="block w-full text-left px-4 py-2 text-sm text-rose-600 font-bold hover:bg-rose-50">
+                                                Odhlásit se
+                                            </button>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                        @endauth
+                    </div>
                 </div>
             </div>
         </nav>
 
-        <main class="py-12">
-            <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
+        <main class="py-6 sm:py-12">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 @if(isset($slot))
                     {{ $slot }}
                 @endif

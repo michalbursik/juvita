@@ -1,16 +1,16 @@
 <div>
-    <div class="flex flex-col md:flex-row md:items-center justify-between mb-8 gap-4">
-        <div class="flex items-center">
+    <div class="flex flex-col md:flex-row md:items-center justify-between mb-4 sm:mb-8 gap-4">
+        <div class="flex items-center justify-center md:justify-start">
             @if (auth()->user()->role->isAdmin())
                 <a href="{{ route('warehouses.index') }}" class="mr-4 p-2 text-gray-400 hover:text-gray-600 bg-white rounded shadow-sm border border-gray-200 transition-all duration-200">
                     <i class="bi bi-arrow-left"></i>
                 </a>
             @endif
-            <h2 class="text-3xl font-extrabold text-gray-900">{{ $warehouse->name }}</h2>
+            <h2 class="text-xl sm:text-3xl font-extrabold text-gray-900">{{ $warehouse->name }}</h2>
         </div>
 
         @if (auth()->user()->role->isAdmin())
-            <div class="w-full md:w-64">
+            <div class="w-full md:w-64 flex justify-center md:justify-end">
                 <x-select wire:change="changeWarehouse($event.target.value)" class="w-full">
                     <option disabled selected>Přepnout sklad</option>
                     @foreach ($allWarehouses as $wh)
@@ -62,7 +62,52 @@
             <h3 class="text-lg font-bold text-gray-800">Pohyby za poslední týden</h3>
         </x-slot>
 
-        <x-table>
+        <div class="md:hidden">
+            @forelse ($warehouse->movements as $movement)
+                @php
+                    $rowClass = match($movement->type) {
+                        'receipt' => 'bg-emerald-50/30',
+                        'issue' => 'bg-rose-50/30',
+                        'transmission' => 'bg-amber-50/30',
+                        'check' => 'bg-blue-50/30',
+                        default => ''
+                    };
+                    $badgeClass = match($movement->type) {
+                        'receipt' => 'bg-emerald-100 text-emerald-700',
+                        'issue' => 'bg-rose-100 text-rose-700',
+                        'transmission' => 'bg-amber-100 text-amber-700',
+                        'check' => 'bg-blue-100 text-blue-700',
+                        default => 'bg-gray-100 text-gray-700'
+                    };
+                @endphp
+                <div class="p-4 border-b border-gray-100 {{ $rowClass }}">
+                    <div class="flex justify-between items-start mb-2">
+                        <div>
+                            <div class="font-bold text-gray-900">{{ $movement->product->name }}</div>
+                            <div class="text-[10px] text-gray-500">{{ $movement->created_at->format('d. m. Y H:i:s') }}</div>
+                        </div>
+                        <span class="px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider {{ $badgeClass }}">
+                            {{ $movement->translated_type }}
+                        </span>
+                    </div>
+                    <div class="flex justify-between items-end">
+                        <div class="text-[10px] text-gray-500">
+                            <i class="bi bi-person mr-1"></i>{{ $movement->user->name }}
+                        </div>
+                        <div class="text-right">
+                            <div class="font-mono font-bold text-sm">{{ $movement->amount }} {{ $movement->product->unit }}</div>
+                            <div class="text-[10px] text-gray-500">{{ number_format($movement->price, 2, ',', ' ') }} Kč</div>
+                        </div>
+                    </div>
+                </div>
+            @empty
+                <div class="p-8 text-center text-gray-400 italic">
+                    Žádné pohyby za poslední týden
+                </div>
+            @endforelse
+        </div>
+
+        <x-table class="hidden md:table">
             <x-slot name="header">
                 <th class="px-6 py-3">Produkt</th>
                 <th class="px-6 py-3 text-center">Typ</th>

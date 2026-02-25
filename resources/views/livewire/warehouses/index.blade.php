@@ -1,9 +1,11 @@
 <div>
-    <div class="flex justify-between items-center mb-6">
-        <h2 class="text-2xl font-bold text-gray-800">Sklady</h2>
-        <x-button :href="route('warehouses.trash')" tag="a" variant="secondary" class="text-sm">
-            <i class="bi bi-trash mr-2"></i> Kompost/Odpad
-        </x-button>
+    <div class="flex flex-col md:flex-row md:items-center justify-between mb-4 sm:mb-8 gap-4">
+        <h2 class="text-xl sm:text-2xl font-extrabold text-gray-900 text-center md:text-left">Sklady</h2>
+        <div class="flex justify-center md:justify-end">
+            <x-button :href="route('warehouses.trash')" tag="a" variant="secondary" class="text-sm">
+                <i class="bi bi-trash mr-2"></i> Kompost/Odpad
+            </x-button>
+        </div>
     </div>
 
     <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">

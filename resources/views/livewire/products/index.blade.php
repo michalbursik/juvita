@@ -1,13 +1,50 @@
 <div>
-    <div class="flex flex-col md:flex-row md:items-center justify-between mb-8 gap-4">
-        <h2 class="text-3xl font-extrabold text-gray-900">Správa produktů</h2>
-        <x-button :href="route('products.create')" tag="a">
-            <i class="bi bi-plus-lg mr-2"></i> Přidat produkt
-        </x-button>
+    <div class="flex flex-col md:flex-row md:items-center justify-between mb-4 sm:mb-8 gap-4">
+        <h2 class="text-xl sm:text-3xl font-extrabold text-gray-900 text-center md:text-left">Správa produktů</h2>
+        <div class="flex justify-center md:justify-end">
+            <x-button :href="route('products.create')" tag="a">
+                <i class="bi bi-plus-lg mr-2"></i> Přidat produkt
+            </x-button>
+        </div>
     </div>
 
     <x-card no-padding>
-        <x-table>
+        <div class="md:hidden">
+            @foreach($products as $product)
+                <div class="p-4 border-b border-gray-100 flex items-center gap-4">
+                    <img src="{{ $product->image ? asset('storage/'.$product->image) : 'https://via.placeholder.com/50' }}"
+                         alt="{{ $product->name }}"
+                         class="h-12 w-12 rounded object-cover bg-gray-100 flex-shrink-0">
+
+                    <div class="flex-grow">
+                        <div class="flex justify-between items-start">
+                            <div class="font-bold text-gray-900">{{ $product->name }}</div>
+                            <div class="text-xs font-mono text-gray-400">#{{ $product->order }}</div>
+                        </div>
+                        <div class="flex justify-between items-center mt-1">
+                            <div class="text-sm text-gray-600">{{ $product->origin }} · <span class="uppercase">{{ $product->unit }}</span></div>
+                            <div>
+                                @if($product->active)
+                                    <span class="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-bold bg-emerald-100 text-emerald-800">AKTIVNÍ</span>
+                                @else
+                                    <span class="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-bold bg-rose-100 text-rose-800">NEAKTIVNÍ</span>
+                                @endif
+                            </div>
+                        </div>
+                        <div class="flex justify-end space-x-4 mt-2">
+                            <a href="{{ route('products.edit', $product->id) }}" class="text-indigo-600 hover:text-indigo-900 text-sm font-bold uppercase">Upravit</a>
+                            <button wire:click="deleteProduct('{{ $product->id }}')"
+                                    wire:confirm="Opravdu smazat tento produkt?"
+                                    class="text-rose-600 hover:text-rose-900 text-sm font-bold uppercase">
+                                Smazat
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            @endforeach
+        </div>
+
+        <x-table class="hidden md:table">
             <x-slot name="header">
                 <th class="px-6 py-4">Pořadí</th>
                 <th class="px-6 py-4">Foto</th>
